@@ -1,0 +1,214 @@
+@import "tailwindcss";
+
+/*
+ * STARS design tokens.
+ * Brand anchors come from the existing STARS mark (navy, star gold, berry).
+ * Supporting tones are calm and low-saturation on purpose: the audience
+ * includes sensory-sensitive children and stressed caregivers.
+ * All text/background pairs used below meet WCAG 2.2 AA.
+ */
+@theme {
+  --color-ink: #17153a;
+  --color-ink-soft: #3b3960;
+  --color-muted: #5b5a78;
+  --color-cream: #fbf7ef;
+  --color-paper: #ffffff;
+  --color-sand: #f3ecdf;
+  --color-line: #e4dccd;
+  --color-gold: #f2c230;
+  --color-gold-deep: #9a6f00;
+  --color-berry: #c4323a;
+  --color-berry-deep: #a1222a;
+  --color-teal: #2f8f8a;
+  --color-teal-deep: #1f6b67;
+  --color-sky: #dcebf5;
+  --color-coral: #e8735a;
+  --color-coral-deep: #b0452c;
+  --color-blue: #4f86c6;
+  --color-blue-deep: #2d5f99;
+
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 1.75rem;
+  --shadow-soft: 0 1px 2px rgb(23 21 58 / 0.04), 0 12px 40px -12px rgb(23 21 58 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(23 21 58 / 0.06), 0 24px 60px -18px rgb(23 21 58 / 0.28);
+
+  --ease-gentle: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-variation-settings: "SOFT" 100, "WONK" 0;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-teal);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  /* Lenis smooth-scroll integration */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-teal-deep;
+  }
+  .eyebrow::before {
+    content: "";
+    @apply inline-block h-2 w-2 rotate-45 rounded-[2px] bg-gold;
+  }
+
+  .display-xl {
+    @apply font-display text-[clamp(2.6rem,6.4vw,5.6rem)] leading-[0.98] font-medium;
+  }
+  .display-lg {
+    @apply font-display text-[clamp(2.1rem,4.6vw,3.9rem)] leading-[1.04] font-medium;
+  }
+  .display-md {
+    @apply font-display text-[clamp(1.6rem,2.8vw,2.3rem)] leading-[1.12] font-medium;
+  }
+  .lede {
+    @apply text-[clamp(1.05rem,1.4vw,1.25rem)] leading-relaxed text-ink-soft;
+  }
+
+  /* Frosted panel that keeps copy legible over the 3D scene. */
+  .glass {
+    background: color-mix(in oklab, var(--color-cream) 78%, transparent);
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    @apply rounded-[var(--radius-card)] border border-white/60 shadow-[var(--shadow-soft)];
+  }
+
+  .card {
+    @apply rounded-[var(--radius-card)] border border-line bg-paper shadow-[var(--shadow-soft)];
+  }
+
+  .container-x {
+    @apply mx-auto w-full max-w-[1240px] px-4 sm:px-6 lg:px-10;
+  }
+
+  .copy-col {
+    @apply w-full lg:max-w-[560px];
+  }
+}
+
+/* ── Reveal-on-scroll (progressive enhancement; content is visible without JS) ── */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition:
+    opacity 0.9s var(--ease-gentle),
+    transform 0.9s var(--ease-gentle);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js [data-reveal][data-revealed="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Calm mode: sensory-friendly, no motion ── */
+html[data-calm="true"] *,
+html[data-calm="true"] *::before,
+html[data-calm="true"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+html[data-calm="true"] [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+.animate-breathe {
+  animation: breathe 8s ease-in-out infinite;
+}
+
+/* Copy that floats over the 3D scene gets a frosted panel on small screens,
+   where the scene sits behind the text instead of beside it. */
+@layer components {
+  .over-scene {
+    @apply rounded-[var(--radius-card)] p-6 sm:p-8 lg:rounded-none lg:p-0;
+    background: color-mix(in oklab, var(--color-cream) 82%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  @media (min-width: 64rem) {
+    .over-scene {
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+}
