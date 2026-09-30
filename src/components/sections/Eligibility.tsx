@@ -66,7 +66,7 @@ export function Eligibility() {
             ))}
           </ol>
           <Reveal className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href="/schedule-a-tour?reason=eligibility" size="lg" arrow>
+            <ButtonLink href="/getting-started#inquiry" size="lg" arrow>
               Start a conversation
             </ButtonLink>
             <ButtonLink href={site.phone.href} size="lg" variant="ghost">

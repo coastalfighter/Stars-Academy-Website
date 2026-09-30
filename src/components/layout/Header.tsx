@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { primaryNav, site } from "@/content/site";
+import { primaryNav, site, utilityNav } from "@/content/site";
 import { services } from "@/content/services";
 import { ButtonLink } from "@/components/ui/Button";
 import { StarMark } from "@/components/ui/StarMark";
@@ -14,6 +15,7 @@ export function Header() {
   const menuId = useId();
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname() ?? "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -66,7 +68,12 @@ export function Header() {
         <div className="container-x flex h-9 items-center justify-between text-xs">
           <p>Pediatric developmental day treatment · Batesville, Arkansas</p>
           <p className="flex items-center gap-5">
-            <span>{site.hours.display}</span>
+            {utilityNav.map((item) => (
+              <Link key={item.href} href={item.href} className="underline-offset-4 hover:text-cream hover:underline">
+                {item.label}
+              </Link>
+            ))}
+            <span aria-hidden="true" className="text-cream/30">|</span>
             <a className="font-semibold text-gold underline-offset-4 hover:underline" href={site.phone.href}>
               {site.phone.display}
             </a>
@@ -88,12 +95,13 @@ export function Header() {
             </span>
           </Link>
 
-          <ul className="hidden items-center gap-1 lg:flex">
+          <ul className="hidden items-center gap-1 xl:flex">
             {primaryNav.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="rounded-full px-3.5 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-ink/5 hover:text-ink"
+                  aria-current={pathname === item.href || pathname.startsWith(`${item.href}/`) ? "page" : undefined}
+                  className="rounded-full px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-ink/5 hover:text-ink aria-[current=page]:bg-ink/5 aria-[current=page]:text-ink xl:px-3.5"
                 >
                   {item.label}
                 </Link>
@@ -115,7 +123,7 @@ export function Header() {
             <button
               ref={toggleRef}
               type="button"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-white/70 lg:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-white/70 xl:hidden"
               aria-expanded={open}
               aria-controls={menuId}
               onClick={() => setOpen((o) => !o)}
@@ -137,13 +145,22 @@ export function Header() {
         id={menuId}
         ref={panelRef}
         hidden={!open}
-        className="h-[calc(100dvh-4.5rem)] overflow-y-auto bg-cream/95 backdrop-blur-xl lg:hidden"
+        className="h-[calc(100dvh-4.5rem)] overflow-y-auto md:h-[calc(100dvh-6.75rem)] bg-cream/95 backdrop-blur-xl xl:hidden"
       >
         <div className="container-x flex flex-col gap-8 py-8">
           <ul className="flex flex-col gap-1">
             {primaryNav.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} onClick={close} className="block rounded-2xl px-3 py-3 font-display text-2xl">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <ul className="flex flex-wrap gap-2">
+            {utilityNav.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} onClick={close} className="inline-flex min-h-11 items-center rounded-full border border-ink/10 bg-white/70 px-4 text-sm font-semibold">
                   {item.label}
                 </Link>
               </li>

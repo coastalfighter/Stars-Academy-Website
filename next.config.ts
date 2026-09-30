@@ -62,7 +62,6 @@ const nextConfig: NextConfig = {
       { source: "/physical-therapy", destination: "/services/physical-therapy", permanent: true },
       { source: "/nursing", destination: "/services/nursing-care", permanent: true },
       { source: "/classrooms", destination: "/services/developmental-classrooms", permanent: true },
-      { source: "/contact-us", destination: "/schedule-a-tour", permanent: false },
     ];
   },
 };

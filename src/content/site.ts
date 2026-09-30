@@ -10,7 +10,7 @@ export const site = {
   acronym: ["Striving", "To", "Achieve", "Real", "Success"] as const,
   description:
     "STARS Academy is a pediatric developmental day treatment program in Batesville, Arkansas. Speech, occupational and physical therapy, licensed nursing care and developmental classrooms for children from birth to age six — together, with one team.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.starsacademyar.com",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.mystarsacademy.org",
   founded: 2009,
   phone: {
     display: "870-793-3200",
@@ -31,6 +31,18 @@ export const site = {
     country: "US",
     mapsUrl: "https://www.google.com/maps/search/?api=1&query=200+General+St.,+Batesville,+AR+72501",
   },
+  social: {
+    facebook: "https://www.facebook.com/mystarsacademy/",
+    instagram: "https://www.instagram.com/mystarsacademy/",
+  },
+  /** Secure, externally hosted forms (Adobe Sign) used by the current site. */
+  secureForms: {
+    enrollmentPacket:
+      "https://na4.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhACX2ZpXOJn_gHX7sIR_bcsOkK9_GYNEDGClHSud3fLZXWrK1COPp9ZxumVs-XZ7Gg*",
+    employmentApplication:
+      "https://na4.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhCMwQ2jnd6xwJVEtTjA4cAO3e9AMU9yotSxgFUvjDH89-se2zjb3BVDgbtudWBzcEo*",
+  },
+  consciousDisciplineUrl: "https://consciousdiscipline.com/",
   ages: "Birth to age 6",
   funding: "Medicaid, including ARKids First-A, SSI and TEFRA",
   stats: [
@@ -44,18 +56,25 @@ export const site = {
 export type NavItem = { label: string; href: string; description?: string };
 
 export const primaryNav: NavItem[] = [
-  { label: "Our approach", href: "/#approach" },
-  { label: "Services", href: "/#services" },
-  { label: "Getting started", href: "/#eligibility" },
-  { label: "Referral partners", href: "/#referrals" },
-  { label: "Careers", href: "/#careers" },
+  { label: "Our approach", href: "/approach" },
+  { label: "Services", href: "/services" },
+  { label: "Getting started", href: "/getting-started" },
+  { label: "Referral partners", href: "/referrals" },
+  { label: "Careers", href: "/careers" },
+];
+
+export const utilityNav: NavItem[] = [
+  { label: "Current families", href: "/families" },
+  { label: "About", href: "/about-us" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Contact", href: "/contact-us" },
 ];
 
 export const pathways: { audience: string; action: string; href: string }[] = [
-  { audience: "Parents & caregivers", action: "Explore STARS for my child", href: "/#eligibility" },
-  { audience: "Physicians & schools", action: "Refer a child", href: "/#referrals" },
-  { audience: "Therapists, nurses & educators", action: "Work at STARS", href: "/#careers" },
-  { audience: "Curious first?", action: "Walk through the door", href: "/schedule-a-tour" },
+  { audience: "Parents & caregivers", action: "Explore STARS for my child", href: "/getting-started" },
+  { audience: "Current STARS families", action: "Find family information", href: "/families" },
+  { audience: "Physicians & schools", action: "Refer a child", href: "/referrals" },
+  { audience: "Therapists, nurses & educators", action: "Work at STARS", href: "/careers" },
 ];
 
 export const pillars = [

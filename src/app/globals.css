@@ -212,3 +212,23 @@ html[data-calm="true"] [data-reveal] {
     }
   }
 }
+
+/* Long-form policy text. */
+@layer components {
+  .prose-stars {
+    @apply text-lg leading-relaxed text-ink-soft;
+  }
+  .prose-stars h2 {
+    @apply mt-12 mb-4 font-display text-3xl text-ink first:mt-0;
+  }
+  .prose-stars p + p {
+    @apply mt-4;
+  }
+  .prose-stars ul {
+    @apply mt-4 space-y-2 pl-6;
+    list-style: disc;
+  }
+  .prose-stars a {
+    @apply font-semibold text-teal-deep underline decoration-2 underline-offset-4;
+  }
+}

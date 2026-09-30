@@ -36,5 +36,25 @@ Once STARS confirms an item, add it to `src/content/*.ts`.
 - [ ] Currently open clinical roles and licensure requirements
 - [ ] Interview steps and typical hiring timeline
 
+## Legal & compliance (Milestone 2)
+- [ ] **Complete USDA nondiscrimination statement** (with program-information and complaint-filing instructions), exactly as provided by the sponsoring agency — `/nondiscrimination` currently shows the short form only
+- [ ] Compliance review of the website privacy notice (`/privacy`), which describes this build: no analytics, form submissions delivered by email/webhook and not stored, calm-mode preference kept in the visitor's browser
+- [ ] Link to the HIPAA Notice of Privacy Practices (PDF)
+- [ ] Hosting provider name and log-retention period
+- [ ] Main fax number and general inbox (e.g. info@mystarsacademy.org) for the Contact page
+- [ ] Direct emails per team (enrollment, referrals, current families, HR)
+
+## Current families (Milestone 2)
+- [ ] Announcements (closures, events, reminders)
+- [ ] Holiday closure calendar for the current school year
+- [ ] How weather/emergency closures are announced (the FAQ answer is withheld until confirmed)
+- [ ] Van pick-up/drop-off windows, what to do if a child won't ride, how to request route changes
+- [ ] Illness/exclusion policy and required medication forms
+- [ ] When kindergarten-transition conversations begin and what to prepare
+- [ ] Parent handbook, forms and family videos
+
+## Careers (Milestone 2)
+- [ ] Résumé collection: the new site sends applicants to the Adobe Sign application (which accepts attachments) rather than accepting file uploads on the website — confirm this is acceptable
+
 ## Leadership review
 - [ ] STARS leadership to review the "Our approach" descriptions and examples for accuracy

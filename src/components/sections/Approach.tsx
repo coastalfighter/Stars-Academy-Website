@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { approachPrinciples } from "@/content/site";
 import { photos } from "@/content/photos";
 import { Reveal } from "@/components/ui/Reveal";
@@ -39,6 +40,12 @@ export function Approach() {
               </Reveal>
             ))}
           </ul>
+
+          <Reveal className="mt-8">
+            <Link href="/approach" className="font-semibold text-teal-deep underline decoration-2 underline-offset-4">
+              Read about our approach
+            </Link>
+          </Reveal>
 
           <Reveal className="mt-10 overflow-hidden rounded-[var(--radius-card)] shadow-[var(--shadow-lift)]">
             <Image

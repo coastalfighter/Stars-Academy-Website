@@ -6,16 +6,23 @@ import { buttonClass } from "@/components/ui/Button";
 import {
   AUDIENCES,
   AUDIENCE_LABELS,
+  CHILD_AGES,
+  CHILD_AGE_LABELS,
+  CONTACT_LABELS,
+  CONTACT_METHODS,
+  DOCTOR_ANSWERS,
+  DOCTOR_LABELS,
+  POSITIONS,
+  POSITION_LABELS,
   REASONS,
   REASON_LABELS,
   inquirySchema,
   toFieldErrors,
+  type Audience,
   type FieldErrors,
   type Inquiry,
+  type Reason,
 } from "@/lib/validation/inquiry";
-
-type Audience = (typeof AUDIENCES)[number];
-type Reason = (typeof REASONS)[number];
 
 type Status =
   | { kind: "idle" }
@@ -23,30 +30,78 @@ type Status =
   | { kind: "success"; message: string }
   | { kind: "error"; message: string };
 
-type Props = {
+export type InquiryFormProps = {
   defaultAudience?: Audience;
   defaultReason?: Reason;
+  /** Preselected role for job applications. */
+  defaultPosition?: (typeof POSITIONS)[number];
+  /** Audiences offered. A single entry hides the "I am a…" question. */
+  audiences?: readonly Audience[];
+  /** Reasons offered. A single entry hides the "How can we help?" question. */
+  reasons?: readonly Reason[];
+  submitLabel?: string;
+  /** Extra guidance shown on the success screen. */
+  successNote?: ReactNode;
+  /** Hint under the message field. */
+  messageHint?: string;
   /** Injected for tests; defaults to window.fetch. */
   fetchImpl?: typeof fetch;
 };
 
-const FIELD_ORDER: (keyof Inquiry)[] = ["audience", "reason", "name", "organization", "phone", "email", "preferredContact", "message", "consent"];
+const FIELD_ORDER: (keyof Inquiry)[] = [
+  "audience",
+  "reason",
+  "name",
+  "organization",
+  "position",
+  "startDate",
+  "childAge",
+  "phone",
+  "email",
+  "preferredContact",
+  "message",
+  "consent",
+];
 
 const LABELS: Partial<Record<keyof Inquiry, string>> = {
   audience: "I am a…",
   reason: "How can we help?",
   name: "Your name",
   organization: "Practice, school or organization",
+  position: "Position",
+  startDate: "Earliest start date",
+  childAge: "Child’s age",
+  hasPrimaryDoctor: "Does your child have a primary care doctor?",
   phone: "Phone",
   email: "Email",
-  preferredContact: "Preferred contact",
+  preferredContact: "Best way to reach you",
   message: "Anything you’d like us to know",
   consent: "Confirmation",
 };
 
-export function InquiryForm({ defaultAudience = "family", defaultReason = "tour", fetchImpl }: Props) {
+const str = (data: FormData, key: string, fallback = "") => {
+  const v = data.get(key);
+  return typeof v === "string" ? v : fallback;
+};
+
+export function InquiryForm({
+  defaultAudience,
+  defaultReason,
+  defaultPosition,
+  audiences = AUDIENCES,
+  reasons = REASONS,
+  submitLabel = "Send my request",
+  successNote,
+  messageHint = "Optional. General questions only — for example, best times to reach you.",
+  fetchImpl,
+}: InquiryFormProps) {
   const formId = useId();
-  const [audience, setAudience] = useState<Audience>(defaultAudience);
+  const [audience, setAudience] = useState<Audience>(
+    defaultAudience && audiences.includes(defaultAudience) ? defaultAudience : (audiences[0] ?? "family"),
+  );
+  const [reason, setReason] = useState<Reason>(
+    defaultReason && reasons.includes(defaultReason) ? defaultReason : (reasons[0] ?? "tour"),
+  );
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [startedAt, setStartedAt] = useState(0);
@@ -64,26 +119,39 @@ export function InquiryForm({ defaultAudience = "family", defaultReason = "tour"
   }, [status.kind]);
 
   const needsOrg = audience === "physician" || audience === "school";
+  const isEnrollment = audience === "family" && (reason === "eligibility" || reason === "tour");
+  const isJob = reason === "careers" && audience === "job-seeker";
   const id = (name: string) => `${formId}-${name}`;
   const describedBy = (name: keyof Inquiry, hint?: boolean) =>
     [hint ? id(`${name}-hint`) : null, errors[name] ? id(`${name}-error`) : null].filter(Boolean).join(" ") || undefined;
+  const fieldProps = (name: keyof Inquiry, hint?: boolean) => ({
+    id: id(name),
+    name,
+    "aria-invalid": Boolean(errors[name]),
+    "aria-describedby": describedBy(name, hint),
+    className: inputClass(errors[name]),
+  });
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
     const payload = {
-      audience: String(data.get("audience") ?? ""),
-      reason: String(data.get("reason") ?? ""),
-      name: String(data.get("name") ?? ""),
-      organization: String(data.get("organization") ?? ""),
-      phone: String(data.get("phone") ?? ""),
-      email: String(data.get("email") ?? ""),
-      preferredContact: String(data.get("preferredContact") ?? "phone"),
-      language: String(data.get("language") ?? "en"),
-      message: String(data.get("message") ?? ""),
+      audience,
+      reason,
+      name: str(data, "name"),
+      organization: str(data, "organization"),
+      phone: str(data, "phone"),
+      email: str(data, "email"),
+      preferredContact: str(data, "preferredContact", "phone"),
+      language: str(data, "language", "en"),
+      childAge: str(data, "childAge"),
+      hasPrimaryDoctor: str(data, "hasPrimaryDoctor"),
+      position: str(data, "position"),
+      startDate: str(data, "startDate"),
+      message: str(data, "message"),
       consent: data.get("consent") === "on",
-      website: String(data.get("website") ?? ""),
+      website: str(data, "website"),
       startedAt,
     };
 
@@ -135,6 +203,7 @@ export function InquiryForm({ defaultAudience = "family", defaultReason = "tour"
         </svg>
         <h2 className="mt-5 font-display text-3xl">Thank you.</h2>
         <p className="lede mx-auto mt-3 max-w-md">{status.message}</p>
+        {successNote ? <div className="mx-auto mt-5 max-w-md text-ink-soft">{successNote}</div> : null}
         <p className="mt-6 text-sm text-muted">
           Need us sooner? Call{" "}
           <a className="font-semibold text-ink underline" href={site.phone.href}>
@@ -151,9 +220,11 @@ export function InquiryForm({ defaultAudience = "family", defaultReason = "tour"
 
   const errorKeys = FIELD_ORDER.filter((k) => errors[k]);
   const submitting = status.kind === "submitting";
+  const showAudience = audiences.length > 1;
+  const showReason = reasons.length > 1;
 
   return (
-    <form noValidate onSubmit={onSubmit} className="card space-y-6 p-6 sm:p-10" aria-describedby={id("phi")}>
+    <form noValidate onSubmit={onSubmit} className="card relative space-y-6 p-6 sm:p-10" aria-describedby={id("phi")}>
       {errorKeys.length > 0 ? (
         <div ref={summaryRef} tabIndex={-1} role="alert" className="rounded-2xl border-2 border-berry/60 bg-berry/5 p-5 outline-none">
           <h2 className="font-semibold text-berry-deep">Please fix the following:</h2>
@@ -180,66 +251,40 @@ export function InquiryForm({ defaultAudience = "family", defaultReason = "tour"
         </p>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field label={LABELS.audience ?? ""} htmlFor={id("audience")} error={errors.audience} errorId={id("audience-error")} required>
-          <select
-            id={id("audience")}
-            name="audience"
-            value={audience}
-            onChange={(e) => setAudience(e.target.value as Audience)}
-            aria-invalid={Boolean(errors.audience)}
-            aria-describedby={describedBy("audience")}
-            className={inputClass(errors.audience)}
-          >
-            {AUDIENCES.map((a) => (
-              <option key={a} value={a}>
-                {AUDIENCE_LABELS[a]}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field label={LABELS.reason ?? ""} htmlFor={id("reason")} error={errors.reason} errorId={id("reason-error")} required>
-          <select
-            id={id("reason")}
-            name="reason"
-            defaultValue={defaultReason}
-            aria-invalid={Boolean(errors.reason)}
-            aria-describedby={describedBy("reason")}
-            className={inputClass(errors.reason)}
-          >
-            {REASONS.map((r) => (
-              <option key={r} value={r}>
-                {REASON_LABELS[r]}
-              </option>
-            ))}
-          </select>
-        </Field>
-      </div>
+      {showAudience || showReason ? (
+        <div className="grid gap-5 sm:grid-cols-2">
+          {showAudience ? (
+            <Field label={LABELS.audience ?? ""} htmlFor={id("audience")} error={errors.audience} errorId={id("audience-error")} required>
+              <select {...fieldProps("audience")} value={audience} onChange={(e) => setAudience(e.target.value as Audience)}>
+                {audiences.map((a) => (
+                  <option key={a} value={a}>
+                    {AUDIENCE_LABELS[a]}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          ) : null}
+          {showReason ? (
+            <Field label={LABELS.reason ?? ""} htmlFor={id("reason")} error={errors.reason} errorId={id("reason-error")} required>
+              <select {...fieldProps("reason")} value={reason} onChange={(e) => setReason(e.target.value as Reason)}>
+                {reasons.map((r) => (
+                  <option key={r} value={r}>
+                    {REASON_LABELS[r]}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label={LABELS.name ?? ""} htmlFor={id("name")} error={errors.name} errorId={id("name-error")} required>
-          <input
-            id={id("name")}
-            name="name"
-            autoComplete="name"
-            required
-            maxLength={100}
-            aria-invalid={Boolean(errors.name)}
-            aria-describedby={describedBy("name")}
-            className={inputClass(errors.name)}
-          />
+          <input {...fieldProps("name")} autoComplete="name" required maxLength={100} />
         </Field>
         {needsOrg ? (
           <Field label={LABELS.organization ?? ""} htmlFor={id("organization")} error={errors.organization} errorId={id("organization-error")} required>
-            <input
-              id={id("organization")}
-              name="organization"
-              autoComplete="organization"
-              maxLength={150}
-              aria-invalid={Boolean(errors.organization)}
-              aria-describedby={describedBy("organization")}
-              className={inputClass(errors.organization)}
-            />
+            <input {...fieldProps("organization")} autoComplete="organization" maxLength={150} />
           </Field>
         ) : (
           <Field label="Preferred language" htmlFor={id("language")}>
@@ -251,41 +296,70 @@ export function InquiryForm({ defaultAudience = "family", defaultReason = "tour"
         )}
       </div>
 
+      {isEnrollment ? (
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field label={LABELS.childAge ?? ""} htmlFor={id("childAge")} error={errors.childAge} errorId={id("childAge-error")}>
+            <select {...fieldProps("childAge")} defaultValue="">
+              <option value="">Choose one (optional)</option>
+              {CHILD_AGES.map((a) => (
+                <option key={a} value={a}>
+                  {CHILD_AGE_LABELS[a]}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label={LABELS.hasPrimaryDoctor ?? ""} htmlFor={id("hasPrimaryDoctor")}>
+            <select {...fieldProps("hasPrimaryDoctor")} defaultValue="">
+              <option value="">Choose one (optional)</option>
+              {DOCTOR_ANSWERS.map((a) => (
+                <option key={a} value={a}>
+                  {DOCTOR_LABELS[a]}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
+      ) : null}
+
+      {isJob ? (
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field label={LABELS.position ?? ""} htmlFor={id("position")} error={errors.position} errorId={id("position-error")} required>
+            <select {...fieldProps("position")} defaultValue={defaultPosition ?? ""}>
+              <option value="" disabled>
+                Choose one
+              </option>
+              {POSITIONS.map((p) => (
+                <option key={p} value={p}>
+                  {POSITION_LABELS[p]}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label={LABELS.startDate ?? ""} htmlFor={id("startDate")} error={errors.startDate} errorId={id("startDate-error")}>
+            <input {...fieldProps("startDate")} type="date" />
+          </Field>
+        </div>
+      ) : null}
+
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label={LABELS.phone ?? ""} htmlFor={id("phone")} error={errors.phone} errorId={id("phone-error")}>
-          <input
-            id={id("phone")}
-            name="phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            maxLength={25}
-            aria-invalid={Boolean(errors.phone)}
-            aria-describedby={describedBy("phone")}
-            className={inputClass(errors.phone)}
-          />
+          <input {...fieldProps("phone")} type="tel" inputMode="tel" autoComplete="tel" maxLength={25} />
         </Field>
         <Field label={LABELS.email ?? ""} htmlFor={id("email")} error={errors.email} errorId={id("email-error")}>
-          <input
-            id={id("email")}
-            name="email"
-            type="email"
-            autoComplete="email"
-            maxLength={254}
-            aria-invalid={Boolean(errors.email)}
-            aria-describedby={describedBy("email")}
-            className={inputClass(errors.email)}
-          />
+          <input {...fieldProps("email")} type="email" autoComplete="email" maxLength={254} />
         </Field>
       </div>
 
       <fieldset>
         <legend className="text-sm font-semibold">{LABELS.preferredContact}</legend>
         <div className="mt-2 flex flex-wrap gap-3">
-          {(["phone", "email"] as const).map((m) => (
-            <label key={m} className="flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-cream px-4 has-[:checked]:border-teal has-[:checked]:bg-teal/10">
+          {CONTACT_METHODS.map((m) => (
+            <label
+              key={m}
+              className="flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-cream px-4 has-[:checked]:border-teal has-[:checked]:bg-teal/10"
+            >
               <input type="radio" name="preferredContact" value={m} defaultChecked={m === "phone"} className="h-4 w-4 accent-teal" />
-              <span className="text-sm font-semibold">{m === "phone" ? "By phone" : "By email"}</span>
+              <span className="text-sm font-semibold">{CONTACT_LABELS[m]}</span>
             </label>
           ))}
         </div>
@@ -296,18 +370,10 @@ export function InquiryForm({ defaultAudience = "family", defaultReason = "tour"
         htmlFor={id("message")}
         error={errors.message}
         errorId={id("message-error")}
-        hint="Optional. General questions only — for example, best times to reach you."
+        hint={messageHint}
         hintId={id("message-hint")}
       >
-        <textarea
-          id={id("message")}
-          name="message"
-          rows={4}
-          maxLength={1000}
-          aria-invalid={Boolean(errors.message)}
-          aria-describedby={describedBy("message", true)}
-          className={inputClass(errors.message)}
-        />
+        <textarea {...fieldProps("message", true)} rows={4} maxLength={1000} />
       </Field>
 
       {/* Honeypot: hidden from people and assistive tech, attractive to bots. */}
@@ -327,7 +393,7 @@ export function InquiryForm({ defaultAudience = "family", defaultReason = "tour"
             className="mt-1 h-5 w-5 shrink-0 accent-teal"
           />
           <span>
-            I haven’t included my child’s name, date of birth, diagnosis or insurance details, and I agree that STARS
+            I haven’t included a child’s name, date of birth, diagnosis or insurance details, and I agree that STARS
             may contact me about this request.
           </span>
         </label>
@@ -346,7 +412,7 @@ export function InquiryForm({ defaultAudience = "family", defaultReason = "tour"
 
       <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
         <button type="submit" disabled={submitting} aria-busy={submitting} className={buttonClass("primary", "lg")}>
-          {submitting ? "Sending…" : "Send my request"}
+          {submitting ? "Sending…" : submitLabel}
         </button>
         <p className="text-sm text-muted">
           Prefer to talk?{" "}

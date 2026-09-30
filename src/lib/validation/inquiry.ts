@@ -9,26 +9,72 @@ import { z } from "zod";
  * `detectPhi` rejects free text that looks like it contains them.
  */
 
-export const AUDIENCES = ["family", "physician", "school", "job-seeker", "other"] as const;
-export const REASONS = ["tour", "eligibility", "referral", "question", "careers"] as const;
-export const CONTACT_METHODS = ["phone", "email"] as const;
+export const AUDIENCES = ["family", "current-family", "physician", "school", "job-seeker", "other"] as const;
+export const REASONS = ["tour", "eligibility", "referral", "current-family", "careers", "question"] as const;
+export const CONTACT_METHODS = ["phone", "text", "email"] as const;
 export const LANGUAGES = ["en", "es"] as const;
+/** Child's age band — an age alone is not an identifier, and it helps triage enrollment. */
+export const CHILD_AGES = ["under-1", "1", "2", "3", "4", "5", "6"] as const;
+export const DOCTOR_ANSWERS = ["yes", "no", "not-sure"] as const;
+export const POSITIONS = ["ecds", "ecdt", "van-rider", "van-driver", "clinical", "not-sure"] as const;
 
-export const AUDIENCE_LABELS: Record<(typeof AUDIENCES)[number], string> = {
+export type Audience = (typeof AUDIENCES)[number];
+export type Reason = (typeof REASONS)[number];
+
+export const AUDIENCE_LABELS: Record<Audience, string> = {
   family: "Parent or caregiver",
+  "current-family": "Current STARS family",
   physician: "Physician, NP/PA or clinic staff",
   school: "School, district or early intervention",
-  "job-seeker": "Therapist, nurse or educator",
+  "job-seeker": "Therapist, nurse, educator or job seeker",
   other: "Someone else",
 };
 
-export const REASON_LABELS: Record<(typeof REASONS)[number], string> = {
+export const REASON_LABELS: Record<Reason, string> = {
   tour: "Schedule a tour",
   eligibility: "See if STARS is right for a child",
   referral: "Refer a patient or student",
-  question: "Ask a question",
-  careers: "Ask about working at STARS",
+  "current-family": "A question about my child’s day at STARS",
+  careers: "Working at STARS",
+  question: "Something else",
 };
+
+export const CONTACT_LABELS: Record<(typeof CONTACT_METHODS)[number], string> = {
+  phone: "Phone call",
+  text: "Text message",
+  email: "Email",
+};
+
+export const CHILD_AGE_LABELS: Record<(typeof CHILD_AGES)[number], string> = {
+  "under-1": "Under 12 months",
+  "1": "1 year",
+  "2": "2 years",
+  "3": "3 years",
+  "4": "4 years",
+  "5": "5 years",
+  "6": "6 years",
+};
+
+export const DOCTOR_LABELS: Record<(typeof DOCTOR_ANSWERS)[number], string> = {
+  yes: "Yes",
+  no: "No",
+  "not-sure": "Not sure",
+};
+
+export const POSITION_LABELS: Record<(typeof POSITIONS)[number], string> = {
+  ecds: "Early Childhood Developmental Specialist",
+  ecdt: "Early Childhood Developmental Technician",
+  "van-rider": "Van Rider",
+  "van-driver": "Van Driver",
+  clinical: "Therapists & Nurses",
+  "not-sure": "Not sure yet — tell me about openings",
+};
+
+/** Optional enum: accepts "" (not answered) or one of the values. */
+const optionalEnum = <T extends readonly [string, ...string[]]>(values: T) =>
+  z.union([z.literal(""), z.enum(values)]).optional().default("");
+
+const isoDate = /^\d{4}-\d{2}-\d{2}$/;
 
 /** Minimum time a human needs to fill the form; faster submissions are bots. */
 export const MIN_FILL_MS = 2500;
@@ -77,6 +123,15 @@ export const inquirySchema = z
       .refine((v) => v === "" || phoneRegex.test(v), "Please enter a 10-digit U.S. phone number."),
     preferredContact: z.enum(CONTACT_METHODS).default("phone"),
     language: z.enum(LANGUAGES).default("en"),
+    childAge: optionalEnum(CHILD_AGES),
+    hasPrimaryDoctor: optionalEnum(DOCTOR_ANSWERS),
+    position: optionalEnum(POSITIONS),
+    startDate: z
+      .string()
+      .trim()
+      .optional()
+      .default("")
+      .refine((v) => v === "" || (isoDate.test(v) && !Number.isNaN(Date.parse(v))), "Please enter a valid date."),
     message: trimmed(1000).optional().default(""),
     consent: z.literal(true, { message: "Please confirm you have not included medical information." }),
     /** Honeypot — real visitors never see or fill this field. */
@@ -91,8 +146,11 @@ export const inquirySchema = z
     if (data.preferredContact === "email" && !data.email) {
       ctx.addIssue({ code: "custom", path: ["email"], message: "Add an email address, or choose phone as your preferred contact." });
     }
-    if (data.preferredContact === "phone" && !data.phone) {
+    if ((data.preferredContact === "phone" || data.preferredContact === "text") && !data.phone) {
       ctx.addIssue({ code: "custom", path: ["phone"], message: "Add a phone number, or choose email as your preferred contact." });
+    }
+    if (data.reason === "careers" && data.audience === "job-seeker" && !data.position) {
+      ctx.addIssue({ code: "custom", path: ["position"], message: "Please choose the role you’re interested in." });
     }
     if ((data.audience === "physician" || data.audience === "school") && !data.organization) {
       ctx.addIssue({ code: "custom", path: ["organization"], message: "Please enter your practice, school or organization." });

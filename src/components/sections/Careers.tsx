@@ -57,9 +57,14 @@ export function Careers() {
             ))}
           </ul>
           <Reveal className="mt-8">
-            <ButtonLink href="/schedule-a-tour?audience=job-seeker&reason=careers" variant="secondary" size="lg" arrow>
-              Tell us about you
-            </ButtonLink>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <ButtonLink href="/careers/apply" variant="secondary" size="lg" arrow>
+                Apply now
+              </ButtonLink>
+              <ButtonLink href="/careers" variant="light" size="lg">
+                Explore careers
+              </ButtonLink>
+            </div>
           </Reveal>
         </div>
       </div>

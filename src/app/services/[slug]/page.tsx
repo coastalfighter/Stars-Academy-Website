@@ -6,6 +6,9 @@ import { site } from "@/content/site";
 import { ButtonLink, Arrow } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { PageHero } from "@/components/page/PageHero";
+import { FaqList } from "@/components/page/FaqList";
+import { faqsById } from "@/content/faq";
 
 type Params = Promise<{ slug: string }>;
 
@@ -48,35 +51,27 @@ export default async function ServicePage({ params }: { params: Params }) {
         }}
       />
 
-      <header className="relative overflow-hidden pt-32 md:pt-40">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-24 -top-10 h-[28rem] w-[28rem] rounded-full opacity-25 blur-3xl"
-          style={{ background: service.color }}
-        />
-        <div className="container-x relative pb-16">
-          <nav aria-label="Breadcrumb" className="text-sm text-muted">
-            <ol className="flex flex-wrap items-center gap-2">
-              <li><Link href="/" className="underline-offset-4 hover:underline">Home</Link></li>
-              <li aria-hidden="true">/</li>
-              <li><Link href="/#services" className="underline-offset-4 hover:underline">Services</Link></li>
-              <li aria-hidden="true">/</li>
-              <li aria-current="page" className="font-semibold text-ink">{service.name}</li>
-            </ol>
-          </nav>
-          <p className="eyebrow mt-8">{service.eyebrow}</p>
-          <h1 className="display-xl mt-5 max-w-4xl">{service.headline}</h1>
-          <p className="lede mt-6 max-w-3xl">{service.intro}</p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href="/schedule-a-tour?reason=eligibility" size="lg" arrow>
+      <PageHero
+        crumbs={[
+          { label: "Services", href: "/services" },
+          { label: service.name, href: `/services/${service.slug}` },
+        ]}
+        eyebrow={service.eyebrow}
+        title={service.headline}
+        lede={service.intro}
+        star={index}
+        accent={service.color}
+        actions={
+          <>
+            <ButtonLink href="/getting-started" size="lg" arrow>
               See if your child qualifies
             </ButtonLink>
             <ButtonLink href="/schedule-a-tour" size="lg" variant="ghost">
               Schedule a tour
             </ButtonLink>
-          </div>
-        </div>
-      </header>
+          </>
+        }
+      />
 
       <section aria-labelledby="what-heading" className="bg-paper py-20">
         <div className="container-x grid gap-10 lg:grid-cols-2">
@@ -198,9 +193,22 @@ export default async function ServicePage({ params }: { params: Params }) {
                 <li key={s} className="rounded-2xl bg-paper p-4 leading-snug shadow-[var(--shadow-soft)]">{s}</li>
               ))}
             </ul>
-            <ButtonLink href="/#referrals" variant="ghost" className="mt-8" arrow>
+            <ButtonLink href="/referrals" variant="ghost" className="mt-8" arrow>
               How to refer a child
             </ButtonLink>
+          </div>
+        </section>
+      ) : null}
+
+      {service.slug === "nursing-care" ? (
+        <section aria-labelledby="svc-faq-title" className="py-20">
+          <div className="container-x grid gap-10 lg:grid-cols-12">
+            <h2 id="svc-faq-title" className="display-md lg:col-span-4">
+              Common questions about nursing care
+            </h2>
+            <div className="lg:col-span-8">
+              <FaqList items={faqsById(["medically-complex"])} />
+            </div>
           </div>
         </section>
       ) : null}

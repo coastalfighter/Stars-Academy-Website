@@ -37,7 +37,7 @@ export function Hero() {
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <ButtonLink href="/#eligibility" size="lg" arrow>
+            <ButtonLink href="/getting-started" size="lg" arrow>
               See if STARS is right for your child
             </ButtonLink>
             <ButtonLink href="/schedule-a-tour" size="lg" variant="ghost">

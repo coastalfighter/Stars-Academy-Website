@@ -35,7 +35,7 @@ export function Referrals() {
           </Reveal>
 
           <Reveal className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href="/schedule-a-tour?audience=physician&reason=referral" size="lg" arrow>
+            <ButtonLink href="/referrals#make-referral" size="lg" arrow>
               Start a referral
             </ButtonLink>
             <ButtonLink href={site.phone.href} size="lg" variant="ghost">

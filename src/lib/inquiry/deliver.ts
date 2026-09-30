@@ -1,5 +1,13 @@
 import { createHmac } from "node:crypto";
-import { AUDIENCE_LABELS, REASON_LABELS, type Inquiry } from "@/lib/validation/inquiry";
+import {
+  AUDIENCE_LABELS,
+  CHILD_AGE_LABELS,
+  CONTACT_LABELS,
+  DOCTOR_LABELS,
+  POSITION_LABELS,
+  REASON_LABELS,
+  type Inquiry,
+} from "@/lib/validation/inquiry";
 
 export type DeliveryChannel = "email" | "webhook";
 export type DeliveryResult =
@@ -25,7 +33,12 @@ export function toPayload(inquiry: Inquiry, receivedAt: Date) {
     email: inquiry.email,
     phone: inquiry.phone,
     preferredContact: inquiry.preferredContact,
+    preferredContactLabel: CONTACT_LABELS[inquiry.preferredContact],
     language: inquiry.language,
+    childAge: inquiry.childAge ? CHILD_AGE_LABELS[inquiry.childAge] : "",
+    hasPrimaryDoctor: inquiry.hasPrimaryDoctor ? DOCTOR_LABELS[inquiry.hasPrimaryDoctor] : "",
+    position: inquiry.position ? POSITION_LABELS[inquiry.position] : "",
+    startDate: inquiry.startDate,
     message: inquiry.message,
   };
 }
@@ -38,8 +51,12 @@ export function renderEmail(payload: ReturnType<typeof toPayload>): { subject: s
     ["Organization", payload.organization || "—"],
     ["Phone", payload.phone || "—"],
     ["Email", payload.email || "—"],
-    ["Preferred contact", payload.preferredContact],
+    ["Preferred contact", payload.preferredContactLabel],
     ["Language", payload.language === "es" ? "Spanish" : "English"],
+    ...(payload.childAge ? ([["Child’s age", payload.childAge]] as [string, string][]) : []),
+    ...(payload.hasPrimaryDoctor ? ([["Has a primary care doctor", payload.hasPrimaryDoctor]] as [string, string][]) : []),
+    ...(payload.position ? ([["Position", payload.position]] as [string, string][]) : []),
+    ...(payload.startDate ? ([["Earliest start date", payload.startDate]] as [string, string][]) : []),
     ["Notes", payload.message || "—"],
     ["Received", payload.receivedAt],
   ];

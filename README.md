@@ -1,6 +1,6 @@
 # STARS Academy — 3D scroll website
 
-A redesign of the [STARS Academy](https://star-academy-sample-1.vercel.app/) site: a pediatric developmental
+A redesign of the [STARS Academy](https://www.mystarsacademy.org) site: a pediatric developmental
 day treatment program in Batesville, Arkansas (speech, occupational and physical therapy, licensed nursing and
 developmental classrooms for children from birth to age 6).
 
@@ -15,6 +15,26 @@ The home page tells the STARS story as **one continuous 3D scroll**, built on th
 | `approach` | "Calm adults help children calm." | A slow breathing orb (8 s cycle) with four companions, one per principle |
 | `stars` | "We build it one block at a time." | Lettered blocks land one by one to spell **S·T·A·R·S** |
 | `visit` | "Walk through the door." | The star returns in gold |
+
+## Pages
+
+| Route | Purpose |
+|---|---|
+| `/` | The 7-chapter 3D scroll story |
+| `/services`, `/services/[slug]` | Overview + 5 statically generated discipline pages |
+| `/approach` | The six ideas behind STARS' care, with "what it can look like" examples |
+| `/about-us` | Story, name, vision, values, facilities |
+| `/getting-started` | Fit, eligibility, funding, first-call-to-first-day, enrollment inquiry form |
+| `/referrals` | Criteria, clinical scope, referral call-back form, partner FAQs |
+| `/careers`, `/careers/apply` | Why STARS, open roles, hiring steps, job-interest form + Adobe Sign application |
+| `/families` | Hours, absences, transport, health, kindergarten transition, who to contact |
+| `/faq` | All questions by audience (FAQPage structured data) |
+| `/contact-us`, `/schedule-a-tour` | General contact and tour requests |
+| `/privacy`, `/accessibility`, `/nondiscrimination` | Policy pages |
+
+Secondary pages share one hero: breadcrumbs (with `BreadcrumbList` JSON-LD) and a small interactive 3D STARS
+star. On a service page, that service's point of the star lifts and lights up. The star only renders while it's
+on screen, and in Calm mode it's a static SVG.
 
 ## Key decisions
 
@@ -32,6 +52,12 @@ The home page tells the STARS story as **one continuous 3D scroll**, built on th
   [`docs/CONTENT-CHECKLIST.md`](docs/CONTENT-CHECKLIST.md) instead of appearing as placeholders.
 - **Brand continuity.** Navy, star gold and berry come from the existing STARS mark; calm teal, sky and sand
   support them. Every text color pairing was checked for WCAG AA contrast.
+- **One form pipeline, many contexts.** Enrollment, referral, job-interest and general contact forms are all
+  presets of one `InquiryForm` backed by one zod schema and one hardened API route. Fields appear only when they're
+  relevant: child age band and "has a doctor?" for families, organization for physicians and schools, role and
+  start date for applicants.
+- **No file uploads.** Résumés go through STARS' existing Adobe Sign employment application, so the website never
+  has to receive, scan or store documents.
 - **Old URLs keep working.** `/speech-therapy`, `/nursing` and the other old service URLs 308-redirect to `/services/*`.
 
 ## Stack
@@ -48,28 +74,31 @@ Lenis · zod · Vitest + Testing Library.
 ├── src/
 │   ├── app/
 │   │   ├── api/inquiry/route.ts     # POST endpoint (delegates to lib/inquiry/handler)
-│   │   ├── services/[slug]/page.tsx # 5 statically generated service pages
-│   │   ├── schedule-a-tour/page.tsx # tour / inquiry / referral form
+│   │   ├── services/                # overview + [slug] (5 SSG pages)
+│   │   ├── approach/ about-us/ getting-started/ referrals/ careers/ (+ apply/)
+│   │   ├── families/ faq/ contact-us/ schedule-a-tour/
+│   │   ├── privacy/ accessibility/ nondiscrimination/
 │   │   ├── layout.tsx               # fonts, metadata, JSON-LD, providers, skip link
 │   │   ├── page.tsx                 # the 7-chapter 3D scroll story
 │   │   ├── globals.css              # design tokens (Tailwind @theme) + calm-mode rules
 │   │   └── sitemap.ts · robots.ts · not-found.tsx
 │   ├── components/
-│   │   ├── three/                   # WebGL scene: canvas, camera rig, star, blocks, spheres, sun, orb
+│   │   ├── three/                   # WebGL: home scene + HeroStar for page heroes (shared star geometry)
+│   │   ├── page/                    # PageHero, Breadcrumbs, Section, FaqList, StepList, NextStep, LegalPage
 │   │   ├── sections/                # home page sections, grouped into <Chapter>s
 │   │   ├── providers/               # MotionProvider (calm mode), SmoothScroll, ScrollDirector
 │   │   ├── layout/                  # Header (accessible mobile menu), Footer, CalmToggle
 │   │   ├── forms/InquiryForm.tsx
 │   │   ├── seo/JsonLd.tsx           # schema.org MedicalClinic
 │   │   └── ui/                      # Button, Reveal, CountUp, ScrollRail, StarMark
-│   ├── content/                     # typed site copy: site.ts, services.ts, photos.ts
+│   ├── content/                     # typed copy: site, services, pages, faq, photos
 │   └── lib/
 │       ├── scroll/                  # timeline math, scroll store, hooks
 │       ├── validation/inquiry.ts    # shared zod schema + PHI detection
 │       ├── inquiry/                 # request handler + email/webhook delivery
 │       ├── security/                # rate limiter, origin (CSRF) guard
 │       └── hooks/useMediaQuery.ts
-├── tests/                           # 81 unit/component tests
+├── tests/                           # 104 unit/component tests (incl. sitemap ↔ routes ↔ nav integrity)
 ├── .env.example
 └── next.config.ts                   # security headers (CSP, HSTS…), legacy redirects
 ```
@@ -124,9 +153,10 @@ Built for Vercel (or any Node 20.9+ host). Set `NEXT_PUBLIC_SITE_URL` and at lea
 
 ## Roadmap (next milestones)
 
-1. **Content pages:** Our Approach, About, Getting Started, For Referral Partners, Careers, FAQ, Current Families,
-   and the Privacy, Accessibility and Nondiscrimination pages (the content model is already in `src/content`).
-2. **Spanish-language pages** (`/es`), building on the Spanish speech-therapy service.
-3. **CMS integration** so staff can edit copy and the checklist items without a deploy.
-4. **Shared rate-limit store** (Upstash Redis) and privacy-friendly analytics.
-5. **Playwright E2E + Lighthouse CI** budgets for performance and accessibility.
+- ~~Milestone 1: 3D home page, service pages, inquiry API~~
+- ~~Milestone 2: every remaining page, form presets, legal pages, shared page system~~
+3. **Spanish-language pages** (`/es`), building on the Spanish speech-therapy service.
+4. **CMS integration** so staff can edit copy, announcements and the checklist items without a deploy.
+5. **Shared rate-limit store** (Upstash Redis) and privacy-friendly analytics, if STARS wants them (the privacy
+   notice would need updating).
+6. **Playwright E2E + Lighthouse CI** budgets for performance and accessibility.
