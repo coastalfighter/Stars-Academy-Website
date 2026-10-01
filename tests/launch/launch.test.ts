@@ -61,6 +61,9 @@ describe("indexing", () => {
     expect(isIndexable(env({}))).toBe(true);
     expect(isIndexable(env({ VERCEL_ENV: "preview" }))).toBe(false);
     expect(isIndexable(env({ VERCEL_ENV: "development" }))).toBe(false);
+    // A temporary production deployment can be kept out of search.
+    expect(isIndexable(env({ VERCEL_ENV: "production", SITE_INDEXABLE: "false" }))).toBe(false);
+    expect(isIndexable(env({ SITE_INDEXABLE: "false" }))).toBe(false);
   });
 
   it("keeps preview deployments out of search via robots.txt", async () => {

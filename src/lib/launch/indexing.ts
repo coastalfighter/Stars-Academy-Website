@@ -6,8 +6,12 @@
  * so a preview URL never competes with www.mystarsacademy.org in search.
  * Outside Vercel (self-hosting, local production builds, CI), VERCEL_ENV is
  * unset and the site behaves as production.
+ *
+ * SITE_INDEXABLE=false forces noindex everywhere, e.g. while the site is
+ * hosted temporarily on a *.vercel.app address before the real launch.
  */
 export function isIndexable(env: NodeJS.ProcessEnv = process.env): boolean {
+  if (env.SITE_INDEXABLE === "false") return false;
   return env.VERCEL_ENV === undefined || env.VERCEL_ENV === "production";
 }
 

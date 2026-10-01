@@ -71,6 +71,9 @@ keep their address (`/`, `/about-us`, `/contact-us`, `/schedule-a-tour`).
 - [ ] The Wix premium plan stays active for **at least 30 days after launch** (rollback).
 
 ### Launch day (about 1 hour, plus up to a few hours for DNS)
+0. If the site was hosted temporarily with `SITE_INDEXABLE=false`, **delete that variable** in Vercel and redeploy;
+   otherwise search engines are told not to index the real site. (`npm run launch:check` flags it as "marked
+   noindex".)
 1. **Vercel**: Project → Settings → Domains → add `www.mystarsacademy.org`, then add `mystarsacademy.org` and choose
    *Redirect to www.mystarsacademy.org (308)*. Vercel shows the exact DNS records each domain needs.
 2. **Wix**: Domains → mystarsacademy.org → disconnect it from the Wix site (Wix calls this *Disconnect* or *Assign
