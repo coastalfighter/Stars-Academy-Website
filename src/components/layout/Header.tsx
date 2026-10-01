@@ -94,7 +94,7 @@ export function Header({ locale, announcement = null }: { locale: Locale; announ
 
       <div
         className={`transition-[background-color,box-shadow,backdrop-filter] duration-500 ${
-          scrolled || open ? "bg-cream/85 shadow-[0_1px_0_rgb(23_21_58/0.08)] backdrop-blur-xl" : "bg-transparent"
+          scrolled || open ? "bg-cream/95 shadow-[0_1px_0_rgb(23_21_58/0.08)] backdrop-blur-xl" : "bg-transparent"
         }`}
       >
         <nav aria-label={d.header.primaryNav} className="container-x flex h-18 items-center justify-between gap-4">
@@ -199,7 +199,7 @@ export function Header({ locale, announcement = null }: { locale: Locale; announ
             <ButtonLink href={tourHref} onClick={close} size="lg">
               {d.common.scheduleTour}
             </ButtonLink>
-            <a href={site.phone.href} className="text-center font-semibold text-teal-deep">
+            <a href={site.phone.href} className="text-center font-semibold text-accent-deep">
               {d.common.call} {site.phone.display}
             </a>
             <CalmToggle locale={locale} className="self-center" />

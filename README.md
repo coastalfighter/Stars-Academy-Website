@@ -14,7 +14,7 @@ The home page tells the STARS story as **one continuous 3D scroll**, built on th
 | `services` | "Everything your child needs, under one roof." | The active discipline's star point lifts and turns to the top, synced with the list |
 | `approach` | "Calm adults help children calm." | A slow breathing orb (8 s cycle) with four companions, one per principle |
 | `stars` | "We build it one block at a time." | Lettered blocks land one by one to spell **S·T·A·R·S** |
-| `visit` | "Walk through the door." | The star returns in gold |
+| `visit` | "Walk through the door." | The star returns, glowing pink |
 
 ## Pages
 
@@ -54,8 +54,12 @@ on screen, and in Calm mode it's a static SVG.
   Social Security number or an insurance/member number, on the client and again on the server.
 - **Nothing invented.** All copy comes from the current site. Items the client hasn't confirmed live in
   [`docs/CONTENT-CHECKLIST.md`](docs/CONTENT-CHECKLIST.md) instead of appearing as placeholders.
-- **Brand continuity.** Navy, star gold and berry come from the existing STARS mark; calm teal, sky and sand
-  support them. Every text color pairing was checked for WCAG AA contrast.
+- **Two client colours, one palette.** The page sits on a soft blue wash (`#bbf2ff`); pink (`#ffbafe`) is the
+  single accent for highlighted words, links, labels and controls. The star's five points (one per service)
+  step from pink through lilac and periwinkle to azure and rose, so everything stays in the pink/blue family.
+  Navy ink carries the text. Every text colour meets WCAG AA on every point of the background.
+- **Nothing left blank without 3D.** In calm mode, with reduced motion or without WebGL, flat versions of the
+  star, the care spheres and the S·T·A·R·S blocks fill the space the 3D scene would use.
 - **One form pipeline, many contexts.** Enrollment, referral, job-interest and general contact forms are all
   presets of one `InquiryForm` backed by one zod schema and one hardened API route. Fields appear only when they're
   relevant: child age band and "has a doctor?" for families, organization for physicians and schools, role and
@@ -244,13 +248,15 @@ Three layers, all run by `.github/workflows/ci.yml` on every pull request and on
    limiting (memory, Upstash, failover), the origin guard, logging redaction, alerts, CSP and browser error
    reports, health, the uptime probe, error pages, CMS schemas, webhook signatures and preview, timeline maths, calm mode and
    WebGL detection, translation coverage and route integrity.
-2. **End-to-end** (Playwright, 143 tests across 4 projects; 117 run against previews). The suite builds the site twice: once with bundled
+2. **End-to-end** (Playwright, 145 tests across 4 projects; 117 run against previews). The suite builds the site twice: once with bundled
    content, and once with the CMS on, where Sanity is answered by `e2e/fixtures/mock-sanity.cjs`. A local
    receiver captures delivered inquiries so the HMAC signature can be checked.
    - `smoke`: every sitemap URL loads with the right `lang`, one `h1`, metadata and no console errors. Also
      covers the bilingual 404, legacy redirects, security headers and the sitemap's hreflang.
    - `a11y`: axe-core, failing on any serious or critical WCAG 2.2 A/AA violation (16 pages plus the form's
      error state), on desktop and mobile.
+   - `layout`: every sitemap page at 320, 390, 768, 1024 and 1440 px: no sideways scrolling, no text from two
+     elements drawn over each other, no text cut off by its container, no button label wrapping at desktop.
    - `story`: the 3D scene mounts, and the day clock and services list follow the scroll, in English and Spanish.
    - `calm`: reduced motion starts in calm mode, and the switch removes WebGL and remembers the choice. The
      mobile layout never scrolls sideways.

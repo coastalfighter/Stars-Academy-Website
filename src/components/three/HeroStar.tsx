@@ -27,12 +27,16 @@ export function HeroStar({ highlight = -1, className = "" }: { highlight?: numbe
 
   return (
     <div ref={ref} aria-hidden="true" className={`relative ${className}`}>
-      {rich && visible ? <HeroStarCanvas highlight={highlight} /> : <StaticStar highlight={highlight} />}
+      {rich && visible ? <HeroStarCanvas highlight={highlight} /> : <StarSpikes highlight={highlight} />}
     </div>
   );
 }
 
-function StaticStar({ highlight }: { highlight: number }) {
+/**
+ * The STARS star as flat SVG: one spike per service, in the service colours,
+ * around a pearl centre. Used wherever the 3D star can't run.
+ */
+export function StarSpikes({ highlight = -1, className = "h-full w-full" }: { highlight?: number; className?: string }) {
   // Five triangular points around a pentagon, matching the 3D build.
   const cx = 50;
   const cy = 52;
@@ -41,7 +45,7 @@ function StaticStar({ highlight }: { highlight: number }) {
   const step = (Math.PI * 2) / 5;
   const pt = (r: number, a: number) => `${(cx + Math.cos(a) * r).toFixed(2)},${(cy - Math.sin(a) * r).toFixed(2)}`;
   return (
-    <svg viewBox="0 0 100 100" className="h-full w-full drop-shadow-xl">
+    <svg aria-hidden="true" viewBox="0 0 100 100" className={`${className} drop-shadow-[0_18px_28px_rgb(163_19_122/0.18)]`}>
       {services.map((s, k) => {
         const a = Math.PI / 2 + k * step;
         return (
@@ -50,6 +54,7 @@ function StaticStar({ highlight }: { highlight: number }) {
             points={`${pt(inner, a - step / 2)} ${pt(outer, a)} ${pt(inner, a + step / 2)}`}
             fill={s.color}
             opacity={highlight >= 0 && highlight !== k ? 0.55 : 1}
+            className="transition-opacity duration-700"
           />
         );
       })}

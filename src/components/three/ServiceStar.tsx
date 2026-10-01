@@ -14,7 +14,7 @@ import { centerGeometry, pointGeometry, STAR_STEP as STEP } from "./starGeometry
  * active point lifts, glows and rotates to the top in sync with the list.
  */
 
-const GOLD = new Color(BRAND.gold);
+const GOLD = new Color(BRAND.pink);
 
 export function ServiceStar() {
   const root = useRef<Group>(null);
@@ -90,7 +90,7 @@ export function ServiceStar() {
             }}
           >
             <meshPhysicalMaterial
-              color={services[k]?.color ?? BRAND.gold}
+              color={services[k]?.color ?? BRAND.pink}
               roughness={0.35}
               clearcoat={0.8}
               clearcoatRoughness={0.25}
@@ -98,7 +98,7 @@ export function ServiceStar() {
           </mesh>
         ))}
         <mesh geometry={geos.center}>
-          <meshPhysicalMaterial color="#fff0fb" roughness={0.3} clearcoat={1} emissive={BRAND.gold} emissiveIntensity={0.22} />
+          <meshPhysicalMaterial color="#fff0fb" roughness={0.3} clearcoat={1} emissive={BRAND.pink} emissiveIntensity={0.22} />
         </mesh>
       </group>
     </group>

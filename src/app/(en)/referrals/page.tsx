@@ -30,7 +30,6 @@ export default async function ReferralsPage() {
         eyebrow="For physicians, therapists & schools"
         title="Referring a child to STARS, made simple."
         lede="Everything you need before referring — who we serve, eligibility, clinical scope and how to send a prescription — on one page."
-        accent="#3aa6e0"
         actions={
           <>
             <ButtonLink href="#make-referral" size="lg" arrow>
@@ -106,7 +105,7 @@ export default async function ReferralsPage() {
                     <strong className="text-ink">Approaches and tools used:</strong> {referralSpeechApproaches}
                   </p>
                 ) : null}
-                <Link href={`/services/${s.slug}`} className="mt-5 inline-block text-sm font-bold text-teal-deep underline underline-offset-4">
+                <Link href={`/services/${s.slug}`} className="mt-5 inline-block text-sm font-bold text-accent-deep underline underline-offset-4">
                   {s.name} at STARS
                 </Link>
               </Reveal>
@@ -139,7 +138,7 @@ export default async function ReferralsPage() {
               </a>{" "}
               · {site.hours.display}
             </p>
-            <p className="mt-4 rounded-2xl bg-sky/60 p-4 text-sm leading-relaxed">
+            <p className="mt-4 rounded-2xl bg-ice/60 p-4 text-sm leading-relaxed">
               This form is for contact details only. Do not include patient names, dates of birth, diagnoses or other
               protected health information — we’ll arrange a secure method for those.
             </p>

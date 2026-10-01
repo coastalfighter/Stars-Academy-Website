@@ -12,7 +12,7 @@ import { BRAND, sceneState } from "./sceneState";
  * pace) with four companions — one per principle of the STARS approach —
  * orbiting unhurriedly around it.
  */
-const COMPANIONS = [BRAND.gold, BRAND.coral, BRAND.teal, BRAND.blue] as const;
+const COMPANIONS = [BRAND.pink, BRAND.lilac, BRAND.periwinkle, BRAND.azure] as const;
 const BREATH_SECONDS = 8;
 
 export function CalmOrb() {
@@ -54,11 +54,11 @@ export function CalmOrb() {
     <group ref={root} visible={false}>
       <mesh ref={orb}>
         <icosahedronGeometry args={[1, 6]} />
-        <meshStandardMaterial color={BRAND.sky} emissive={BRAND.teal} roughness={0.25} metalness={0.05} />
+        <meshStandardMaterial color={BRAND.ice} emissive={BRAND.periwinkle} roughness={0.25} metalness={0.05} />
       </mesh>
       <mesh ref={ring}>
         <torusGeometry args={[1, 0.012, 16, 128]} />
-        <meshStandardMaterial color={BRAND.teal} transparent depthWrite={false} />
+        <meshStandardMaterial color={BRAND.periwinkle} transparent depthWrite={false} />
       </mesh>
       {COMPANIONS.map((c, i) => (
         <mesh

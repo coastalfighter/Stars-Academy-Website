@@ -2,8 +2,9 @@ import type { Locale } from "@/i18n/config";
 import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { Reveal } from "@/components/ui/Reveal";
+import { FlatLetterBlocks } from "@/components/three/FlatScene";
 
-const COLORS = ["text-gold-deep", "text-coral-deep", "text-teal-deep", "text-blue-deep", "text-berry-deep"] as const;
+const COLORS = ["text-pink-deep", "text-lilac-deep", "text-accent-deep", "text-azure-deep", "text-rose-deep"] as const;
 
 /** "Our name is our promise" — the 3D blocks stack into S·T·A·R·S above this copy. */
 export function StarsName({ locale }: { locale: Locale }) {
@@ -11,6 +12,7 @@ export function StarsName({ locale }: { locale: Locale }) {
   const { site } = getContent(locale);
   return (
     <section aria-labelledby="name-title" className="relative flex min-h-[150vh] flex-col justify-between py-28 lg:py-32">
+      <FlatLetterBlocks letters={site.acronym.map((word) => word[0] ?? "")} />
       <div className="container-x">
         <Reveal className="over-scene mx-auto max-w-2xl text-center">
           <p className="eyebrow">{t.eyebrow}</p>

@@ -32,7 +32,7 @@ export function CalmToggle({
     >
       <span
         aria-hidden="true"
-        className={`relative inline-block h-5 w-9 rounded-full transition-colors ${calm ? "bg-teal" : "bg-ink/20"}`}
+        className={`relative inline-block h-5 w-9 rounded-full transition-colors ${calm ? "bg-accent-strong" : "bg-ink/20"}`}
       >
         <span
           className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${calm ? "translate-x-[18px]" : "translate-x-0.5"}`}

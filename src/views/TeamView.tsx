@@ -36,7 +36,7 @@ export async function TeamView({ locale }: { locale: Locale }) {
           <SectionIntro id="people-title" title={t.peopleTitle} />
           {groups.map((g) => (
             <section key={g.id} aria-labelledby={`team-${g.id}`} className="mt-12">
-              <h3 id={`team-${g.id}`} className="text-xs font-bold uppercase tracking-[0.18em] text-teal-deep">
+              <h3 id={`team-${g.id}`} className="text-xs font-bold uppercase tracking-[0.18em] text-accent-deep">
                 {t.groups[g.id]}
               </h3>
               <ul className="mt-5 grid gap-5 md:grid-cols-2 lg:grid-cols-3">

@@ -2,7 +2,7 @@ import type { Row } from "@/lib/analytics/report";
 
 /**
  * Dashboard chart primitives. Server-rendered SVG/HTML, no chart library and
- * no client JavaScript. One hue (teal) for magnitude throughout: nothing on
+ * no client JavaScript. One hue (the accent) for magnitude throughout: nothing on
  * this dashboard is categorical, so colour never has to carry identity.
  * Text always uses ink tokens; every chart has a table equivalent.
  */
@@ -73,7 +73,7 @@ export function ColumnChart({ title, data, unit, unitOne }: { title: string; dat
               <title>{`${shortDay(d.day)}: ${formatNumber(d.value)} ${d.value === 1 ? unitOne : unit}`}</title>
               {/* Hit target: the whole slot, taller than the mark. */}
               <rect x={pad.left + i * slot} y={pad.top} width={slot} height={plotH} fill="transparent" />
-              <path d={columnPath(x, y, barW, h)} fill="var(--color-teal)" className="transition-colors group-hover:fill-[var(--color-teal-deep)]" />
+              <path d={columnPath(x, y, barW, h)} fill="var(--color-accent-strong)" className="transition-colors group-hover:fill-[var(--color-accent-deep)]" />
               <text
                 x={x + barW / 2}
                 y={Math.max(12, y - 6)}
@@ -146,7 +146,7 @@ export function BarTable({ title, rows, unit, empty = "Nothing recorded in this 
               <tr key={r.key} className="align-top">
                 <th scope="row" className="py-2 pr-3 text-left font-normal text-ink">
                   <span className="block">{r.label}</span>
-                  <span aria-hidden="true" className="mt-1.5 block h-2 rounded-r-[4px] bg-teal" style={{ width: `${Math.max(2, (r.count / max) * 100)}%` }} />
+                  <span aria-hidden="true" className="mt-1.5 block h-2 rounded-r-[4px] bg-accent-strong" style={{ width: `${Math.max(2, (r.count / max) * 100)}%` }} />
                 </th>
                 <td className="w-16 py-2 text-right font-semibold tabular-nums text-ink">{formatNumber(r.count)}</td>
                 <td className="w-14 py-2 text-right tabular-nums text-muted">{total > 0 ? `${Math.round((r.count / total) * 100)}%` : "–"}</td>
@@ -172,7 +172,7 @@ export function StatTile({ label, value, previous, format = formatNumber, hint }
     <div className="card p-4 sm:p-5">
       <p className="text-sm font-semibold text-ink-soft">{label}</p>
       <p className="mt-1 font-sans text-3xl font-semibold text-ink sm:text-4xl">{format(value)}</p>
-      <p className={`mt-1 flex items-center gap-1 text-sm ${delta.up === null ? "text-muted" : delta.up ? "text-teal-deep" : "text-berry-deep"}`}>
+      <p className={`mt-1 flex items-center gap-1 text-sm ${delta.up === null ? "text-muted" : delta.up ? "text-accent-deep" : "text-rose-deep"}`}>
         {delta.up !== null ? (
           <svg aria-hidden="true" viewBox="0 0 12 12" className={`h-3 w-3 ${delta.up ? "" : "rotate-180"}`}>
             <path d="M6 2 10.5 8h-9Z" fill="currentColor" />

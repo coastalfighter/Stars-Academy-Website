@@ -50,7 +50,7 @@ export function ErrorView({ locale, error, retry }: ErrorViewProps) {
           {site.phone.display}
         </a>
       </p>
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <button type="button" onClick={() => retry()} className={buttonClass("primary", "lg")}>
           {t.retry}
         </button>

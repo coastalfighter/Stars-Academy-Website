@@ -16,8 +16,8 @@ import { createLetterTexture } from "./letterTexture";
  */
 
 const LETTERS = ["S", "T", "A", "R", "S"] as const;
-const LETTER_COLORS = [BRAND.gold, BRAND.coral, BRAND.teal, BRAND.blue, BRAND.berry] as const;
-const FILLER_COLORS = [BRAND.gold, BRAND.sky, BRAND.teal, BRAND.coral, BRAND.cream, BRAND.blue, BRAND.berry, BRAND.sand];
+const LETTER_COLORS = [BRAND.pink, BRAND.lilac, BRAND.periwinkle, BRAND.azure, BRAND.rose] as const;
+const FILLER_COLORS = [BRAND.pink, BRAND.ice, BRAND.periwinkle, BRAND.lilac, BRAND.cream, BRAND.azure, BRAND.rose, BRAND.sand];
 
 /** Deterministic PRNG so the composition is identical on every visit. */
 function mulberry32(seed: number) {

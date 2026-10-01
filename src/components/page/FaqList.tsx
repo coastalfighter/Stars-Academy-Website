@@ -16,7 +16,7 @@ export function FaqList({ items, schema = false }: { items: readonly Faq[]; sche
               {f.question}
               <span
                 aria-hidden="true"
-                className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cream font-sans text-lg leading-none text-teal-deep transition-transform duration-300 group-open:rotate-45"
+                className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cream font-sans text-lg leading-none text-accent-deep transition-transform duration-300 group-open:rotate-45"
               >
                 +
               </span>

@@ -3,7 +3,7 @@ import { getDictionary } from "@/i18n/dictionary";
 import type { Announcement } from "@/cms/repository";
 import { formatDateTime } from "./format";
 
-const ACCENT = { urgent: "border-berry", closure: "border-accent", event: "border-teal", info: "border-ink/30" } as const;
+const ACCENT = { urgent: "border-rose", closure: "border-accent", event: "border-accent-strong", info: "border-ink/30" } as const;
 
 /** Every active announcement (banner or not), e.g. on the current-families page. */
 export function AnnouncementList({ items, locale }: { items: Announcement[]; locale: Locale }) {
@@ -30,7 +30,7 @@ export function AnnouncementList({ items, locale }: { items: Announcement[]; loc
             </p>
           ) : null}
           {a.link ? (
-            <a href={a.link.href} lang={a.link.label.lang} className="mt-3 inline-block font-semibold text-teal-deep underline underline-offset-4">
+            <a href={a.link.href} lang={a.link.label.lang} className="mt-3 inline-block font-semibold text-accent-deep underline underline-offset-4">
               {a.link.label.text}
             </a>
           ) : null}

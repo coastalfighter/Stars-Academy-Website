@@ -17,12 +17,12 @@ export function EventCard({ event, locale, settings, headingLevel = 3 }: { event
   return (
     <article id={eventAnchor(event.slug)} aria-labelledby={`${eventAnchor(event.slug)}-title`} className="card flex scroll-mt-32 gap-5 p-6 sm:gap-7 sm:p-8">
       <div aria-hidden="true" className="flex h-20 w-16 shrink-0 flex-col items-center justify-center rounded-2xl bg-sand text-center sm:h-24 sm:w-20">
-        <span className="text-xs font-bold uppercase tracking-[0.14em] text-berry-deep">{badge.month}</span>
+        <span className="text-xs font-bold uppercase tracking-[0.14em] text-rose-deep">{badge.month}</span>
         <span className="font-display text-3xl leading-none sm:text-4xl">{badge.day}</span>
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap gap-2">
-          <span className={`${chip} bg-teal/10 text-teal-deep`}>{t.audience[event.audience]}</span>
+          <span className={`${chip} bg-accent-strong/10 text-accent-deep`}>{t.audience[event.audience]}</span>
           {event.spanishAvailable ? (
             <span className={`${chip} bg-accent/20 text-ink`} lang={locale === "en" ? "es-US" : undefined}>
               {locale === "en" ? "En español" : t.spanish}

@@ -59,11 +59,11 @@ export function InsightsDashboard({
       </header>
 
       {!enabled ? (
-        <p role="status" className="mt-6 rounded-2xl bg-coral/10 p-4 text-sm">
+        <p role="status" className="mt-6 rounded-2xl bg-lilac/10 p-4 text-sm">
           Analytics is switched off (ANALYTICS_ENABLED=false). No new visits are being counted.
         </p>
       ) : storage === "memory" ? (
-        <p role="status" className="mt-6 rounded-2xl bg-sky/70 p-4 text-sm">
+        <p role="status" className="mt-6 rounded-2xl bg-ice/70 p-4 text-sm">
           Counts are kept in this server’s memory only, so they reset on each deployment and may be partial on serverless hosting. Connect Upstash Redis (see docs/OPERATIONS.md) to keep them.
         </p>
       ) : null}

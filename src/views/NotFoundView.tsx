@@ -18,7 +18,7 @@ export function NotFoundView({ locale }: { locale: Locale }) {
           {site.phone.display}
         </a>
       </p>
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <ButtonLink href={href(locale, "home")} size="lg">
           {t.home}
         </ButtonLink>

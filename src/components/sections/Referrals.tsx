@@ -37,7 +37,7 @@ export function Referrals({ locale }: { locale: Locale }) {
             </ol>
           </Reveal>
 
-          <Reveal className="mt-10 flex flex-col gap-3 sm:flex-row">
+          <Reveal className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <ButtonLink href={href(locale, "referrals", "#make-referral")} hrefLang={locale === "en" ? undefined : "en-US"} size="lg" arrow>
               {t.cta}
             </ButtonLink>

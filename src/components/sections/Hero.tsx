@@ -4,8 +4,9 @@ import { href } from "@/i18n/routes";
 import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { ButtonLink } from "@/components/ui/Button";
+import { FlatStar } from "@/components/three/FlatScene";
 
-const DISCIPLINE_COLORS = ["bg-coral", "bg-teal", "bg-blue", "bg-berry", "bg-accent"] as const;
+const DISCIPLINE_COLORS = ["bg-lilac", "bg-accent-strong", "bg-azure", "bg-rose", "bg-accent"] as const;
 
 export function Hero({ locale }: { locale: Locale }) {
   const t = homeCopy[locale].hero;
@@ -18,12 +19,13 @@ export function Hero({ locale }: { locale: Locale }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 left-0 hidden w-[62%] bg-gradient-to-r from-white/60 via-white/35 to-transparent lg:block"
       />
+      <FlatStar />
       <div className="container-x relative">
         <div className="over-scene copy-col lg:max-w-[640px]">
           <p className="eyebrow">{t.eyebrow}</p>
           <h1 id="hero-title" className="display-xl mt-6">
             {t.titleBefore}{" "}
-            <span className="relative whitespace-nowrap text-teal-deep">
+            <span className="relative whitespace-nowrap text-accent-deep">
               {t.titleEmphasis}
               <svg aria-hidden="true" viewBox="0 0 300 16" preserveAspectRatio="none" className="absolute -bottom-2 left-0 h-3 w-full text-accent">
                 <path d="M2 11C60 3 120 3 150 8s110 6 146-2" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />

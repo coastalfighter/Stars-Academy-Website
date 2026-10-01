@@ -25,7 +25,7 @@ export function TeamCard({ member, spanishLabel, spanishText }: { member: TeamMe
           {...(member.photo.lqip ? { placeholder: "blur" as const, blurDataURL: member.photo.lqip } : {})}
         />
       ) : (
-        <div aria-hidden="true" className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-sky font-display text-3xl text-blue-deep">
+        <div aria-hidden="true" className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-ice font-display text-3xl text-azure-deep">
           {initials(member.name)}
         </div>
       )}
@@ -34,7 +34,7 @@ export function TeamCard({ member, spanishLabel, spanishText }: { member: TeamMe
           {member.name}
           {member.credentials ? <span className="text-base text-muted">, {member.credentials}</span> : null}
         </h4>
-        <p className="mt-1 font-semibold text-teal-deep" lang={member.role.lang}>
+        <p className="mt-1 font-semibold text-accent-deep" lang={member.role.lang}>
           {member.role.text}
         </p>
         {member.speaksSpanish ? (

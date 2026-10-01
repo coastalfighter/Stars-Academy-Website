@@ -2,55 +2,45 @@
 
 /*
  * STARS design tokens.
- * The client chose cyan #bbf2ff and pink #ffbafe. The whole palette is
- * analogous to that pair (cyan, sky, periwinkle, indigo, violet, orchid,
- * rose, pink) so colours support each other instead of competing: no greens,
- * oranges or yellows. Token names are kept from the original palette so the
- * components didn't need renaming; the comments say what each one is now.
- * Supporting tones stay soft on purpose: the audience includes
- * sensory-sensitive children and stressed caregivers.
- * Every "-deep" tone and the neutrals meet WCAG 2.2 AA (4.5:1) as text on
- * both ends of the page gradient, white and the light section tones.
- * The light fills (teal, coral, blue, berry, gold) are for shapes only.
+ * Two client colours drive the whole palette:
+ *   - blue #bbf2ff is the page background (a soft ice-to-sky wash);
+ *   - pink #ffbafe is the one accent: highlighted words, links, labels,
+ *     buttons, focus rings and toggles are all shades of it.
+ * The five service colours (the points of the star) step from pink through
+ * lilac to azure, so they belong to the same pink/blue family.
+ * Text tones meet WCAG 2.2 AA (4.5:1) on every point of the background and on
+ * white. Light fills (pink, lilac, rose, azure, accent) are for shapes only;
+ * accent-strong is for UI shapes such as toggles (3:1 on the background).
  */
 @theme {
-  /* Deep indigo-navy text. */
+  /* Ink: deep indigo-navy text. */
   --color-ink: #17153a;
   --color-ink-soft: #3b3960;
   --color-muted: #4b4a6b;
-  /* Page background: gradient ends cyan to pink; the solid colour is their
-     midpoint (lavender). Not called "base": that would clash with Tailwind's
-     text-base font size and recolour every text-base element. */
-  --color-backdrop: #ddd6fe;
-  --color-backdrop-from: #bbf2ff;
-  --color-backdrop-to: #ffbafe;
-  /* Near-white lavender: light text on dark sections and buttons, fields. */
-  --color-cream: #fbf8ff;
+  /* Page background. The solid colour is the darkest point of the wash, so
+     contrast checks against it hold everywhere. Not called "base": that would
+     clash with Tailwind's text-base font size. */
+  --color-backdrop: #bbf2ff;
+  --color-backdrop-light: #ecfbff;
+  /* Near-white: light text on dark sections and buttons, fields and chips. */
+  --color-cream: #f7fdff;
   --color-paper: #ffffff;
-  /* Light lavender for chips and alternate panels. */
-  --color-sand: #f3eaff;
-  --color-line: #d9d3f0;
-  /* UI accent: highlights, secondary buttons, badges, selection. */
+  --color-sand: #e6f8ff;
+  --color-line: #c9e6f0;
+  /* The accent: soft pink, a stronger pink for UI shapes, deep pink for text. */
   --color-accent: #ffbafe;
-  /* Accent for text on light backgrounds (5.3:1 on pink, AA). */
-  --color-accent-deep: #8a1c86;
-  /* Star pink (was gold) and its text shade, plum. */
-  --color-gold: #f28fe0;
-  --color-gold-deep: #8a1c80;
-  /* Rose (was berry). */
-  --color-berry: #d6418f;
-  --color-berry-deep: #a0154f;
-  /* Periwinkle (was teal) and indigo: the main highlight for text and links. */
-  --color-teal: #6f7df5;
-  --color-teal-deep: #3b35a6;
-  /* Pale cyan. */
-  --color-sky: #e4f7ff;
-  /* Orchid (was coral) and violet. */
-  --color-coral: #b67cf5;
-  --color-coral-deep: #6a2db5;
-  /* Sky blue and deep blue. */
-  --color-blue: #3aa6e0;
-  --color-blue-deep: #1a4f8c;
+  --color-accent-strong: #e0479f;
+  --color-accent-deep: #a3137a;
+  /* Service colours (the star's points) and their text shades. */
+  --color-pink: #ff8fd8;
+  --color-pink-deep: #8f1470;
+  --color-lilac: #c58cff;
+  --color-lilac-deep: #6a2db5;
+  --color-rose: #ff6fae;
+  --color-rose-deep: #a0154f;
+  --color-azure: #3aa6e0;
+  --color-azure-deep: #155a96;
+  --color-ice: #e6f8ff;
 
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
   --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
@@ -77,21 +67,18 @@
     overflow-x: clip;
   }
 
-  /* The page background: a fixed cyan-to-pink wash behind everything.
-     A fixed layer (not background-attachment: fixed) so it stays smooth on
-     phones. The solid --color-backdrop underneath is the gradient's midpoint, so
-     contrast checks against it hold everywhere along the gradient. */
+  /* The page background: a fixed ice-to-sky wash behind everything. A fixed
+     layer (not background-attachment: fixed) so it stays smooth on phones. */
   body::before {
     content: "";
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background: linear-gradient(135deg, var(--color-backdrop-from), var(--color-backdrop-to));
+    background: linear-gradient(180deg, var(--color-backdrop-light), var(--color-backdrop) 60%);
     background:
-      radial-gradient(60% 50% at 85% 10%, color-mix(in oklab, var(--color-backdrop-to) 70%, transparent), transparent 70%),
-      radial-gradient(55% 45% at 10% 90%, color-mix(in oklab, var(--color-backdrop-from) 80%, transparent), transparent 70%),
-      linear-gradient(135deg in oklab, var(--color-backdrop-from), var(--color-backdrop-to));
+      radial-gradient(70% 55% at 85% 0%, color-mix(in oklab, white 55%, transparent), transparent 70%),
+      linear-gradient(180deg in oklab, var(--color-backdrop-light), var(--color-backdrop) 60%);
   }
 
   h1,
@@ -101,6 +88,10 @@
     font-variation-settings: "SOFT" 100, "WONK" 0;
     letter-spacing: -0.02em;
     text-wrap: balance;
+    /* Long single words ("Nondiscrimination", "Comunicación") break instead of
+       running off narrow phones. */
+    overflow-wrap: anywhere;
+    hyphens: auto;
   }
 
   p {
@@ -108,9 +99,14 @@
   }
 
   :focus-visible {
-    outline: 3px solid var(--color-teal-deep);
+    outline: 3px solid var(--color-accent-deep);
     outline-offset: 3px;
     border-radius: 6px;
+  }
+
+  /* A phone number never splits across lines at its hyphens. */
+  a[href^="tel:"] {
+    white-space: nowrap;
   }
 
   ::selection {
@@ -133,7 +129,7 @@
 
 @layer components {
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-teal-deep;
+    @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-accent-deep;
   }
   .eyebrow::before {
     content: "";
@@ -274,7 +270,7 @@ html[data-calm="true"] [data-reveal] {
     list-style: disc;
   }
   .prose-stars a {
-    @apply font-semibold text-teal-deep underline decoration-2 underline-offset-4;
+    @apply font-semibold text-accent-deep underline decoration-2 underline-offset-4;
   }
 }
 

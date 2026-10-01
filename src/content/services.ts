@@ -34,7 +34,7 @@ export const services: Service[] = [
     slug: "developmental-classrooms",
     name: "Developmental Classrooms",
     short: "Learning, play, routines, kindergarten readiness",
-    color: "#f28fe0",
+    color: "#ff8fd8",
     eyebrow: "Developmental classrooms",
     headline: "A preschool day, designed around how children grow.",
     intro:
@@ -91,7 +91,7 @@ export const services: Service[] = [
     slug: "speech-therapy",
     name: "Speech Therapy",
     short: "Talking, understanding, social connection, eating & swallowing",
-    color: "#b67cf5",
+    color: "#c58cff",
     eyebrow: "Speech & language therapy",
     headline: "Helping children be understood — and understand the world around them.",
     intro:
@@ -159,7 +159,7 @@ export const services: Service[] = [
     slug: "occupational-therapy",
     name: "Occupational Therapy",
     short: "Sensory needs, big feelings, self-care, using hands",
-    color: "#6f7df5",
+    color: "#8f9bff",
     eyebrow: "Occupational therapy",
     headline: "Play is the work of childhood. We help children do it well.",
     intro:
@@ -283,7 +283,7 @@ export const services: Service[] = [
     slug: "nursing-care",
     name: "Nursing Care",
     short: "Medications, feedings, respiratory & complex medical needs",
-    color: "#d6418f",
+    color: "#ff6fae",
     eyebrow: "On-site nursing care",
     headline: "Medical needs shouldn’t keep a child from learning and play.",
     intro:

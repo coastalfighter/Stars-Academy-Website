@@ -55,7 +55,7 @@ export function Careers({ locale }: { locale: Locale }) {
             ))}
           </ul>
           <Reveal className="mt-8">
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <ButtonLink href={href(locale, "apply")} hrefLang={toEnglish} variant="secondary" size="lg" arrow>
                 {t.apply}
               </ButtonLink>

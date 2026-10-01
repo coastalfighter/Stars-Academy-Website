@@ -35,12 +35,12 @@ export default async function ApplyPage({ searchParams }: { searchParams: Search
         <div className="grid gap-10 lg:grid-cols-12">
           <ol className="space-y-4 lg:col-span-4">
             <Reveal as="li" className="card p-6">
-              <p className="font-display text-3xl text-teal-deep">1</p>
+              <p className="font-display text-3xl text-accent-deep">1</p>
               <h2 className="mt-2 font-display text-xl">Tell us about you</h2>
               <p className="mt-2 leading-relaxed text-ink-soft">Your contact details and the role you’re interested in.</p>
             </Reveal>
             <Reveal as="li" className="card p-6">
-              <p className="font-display text-3xl text-teal-deep">2</p>
+              <p className="font-display text-3xl text-accent-deep">2</p>
               <h2 className="mt-2 font-display text-xl">Complete the official application</h2>
               <p className="mt-2 leading-relaxed text-ink-soft">
                 Our secure employment application is hosted on Adobe Sign. You can attach your résumé there.
@@ -49,7 +49,7 @@ export default async function ApplyPage({ searchParams }: { searchParams: Search
                 href={site.secureForms.employmentApplication}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-4 inline-block font-semibold text-teal-deep underline decoration-2 underline-offset-4"
+                className="mt-4 inline-block font-semibold text-accent-deep underline decoration-2 underline-offset-4"
               >
                 Open the employment application<span className="sr-only"> (opens Adobe Sign in a new tab)</span>
               </a>
@@ -79,7 +79,7 @@ function ApplyForm({ position }: { position?: (typeof POSITIONS)[number] }) {
             href={site.secureForms.employmentApplication}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-semibold text-teal-deep underline underline-offset-4"
+            className="font-semibold text-accent-deep underline underline-offset-4"
           >
             official employment application<span className="sr-only"> (opens Adobe Sign in a new tab)</span>
           </a>

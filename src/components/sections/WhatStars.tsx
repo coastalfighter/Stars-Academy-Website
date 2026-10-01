@@ -3,20 +3,22 @@ import type { Locale } from "@/i18n/config";
 import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { Reveal } from "@/components/ui/Reveal";
+import { FlatSpheres } from "@/components/three/FlatScene";
 
-const DOTS = ["bg-accent", "bg-teal", "bg-berry"] as const;
+const DOTS = ["bg-accent", "bg-accent-strong", "bg-rose"] as const;
 
 export function WhatStars({ locale }: { locale: Locale }) {
   const t = homeCopy[locale].what;
   const { pillars, photos } = getContent(locale);
   return (
     <section aria-labelledby="what-title" className="relative py-28 lg:min-h-[140vh] lg:py-40">
+      <FlatSpheres />
       <div className="container-x">
         <div className="over-scene copy-col">
           <Reveal>
             <p className="eyebrow">{t.eyebrow}</p>
             <h2 id="what-title" className="display-lg mt-5">
-              {t.titleA} <span className="text-teal-deep">{t.titleB}</span>
+              {t.titleA} <span className="text-accent-deep">{t.titleB}</span>
             </h2>
             <p className="lede mt-6">
               {t.lede}
@@ -43,7 +45,7 @@ export function WhatStars({ locale }: { locale: Locale }) {
               <Image src={photos.storyTime.src} alt={photos.storyTime.alt} fill sizes="128px" className="object-cover" />
             </div>
             <p className="font-display text-2xl leading-snug">
-              {t.quoteA} <span className="text-berry-deep">{t.quoteB}</span>
+              {t.quoteA} <span className="text-rose-deep">{t.quoteB}</span>
             </p>
           </Reveal>
           <p className="sr-only">

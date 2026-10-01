@@ -29,7 +29,7 @@ function ResourceItem({ r, locale }: { r: Resource; locale: Locale }) {
       ) : null}
     </>
   );
-  const linkClass = "font-display text-xl leading-snug text-ink underline decoration-teal/40 decoration-2 underline-offset-4 hover:decoration-teal";
+  const linkClass = "font-display text-xl leading-snug text-ink underline decoration-accent-strong/40 decoration-2 underline-offset-4 hover:decoration-accent-strong";
 
   return (
     <li className="card flex h-full flex-col p-6">

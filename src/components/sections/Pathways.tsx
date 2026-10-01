@@ -33,7 +33,7 @@ export function Pathways({ locale }: { locale: Locale }) {
                   <span className="text-sm font-semibold text-muted">{p.audience}</span>
                   <span className="flex items-end justify-between gap-4 font-display text-xl leading-tight">
                     {p.action}
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink text-cream transition-colors group-hover:bg-teal">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink text-cream transition-colors group-hover:bg-accent-strong">
                       <Arrow />
                     </span>
                   </span>

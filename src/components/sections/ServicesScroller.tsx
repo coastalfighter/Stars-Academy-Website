@@ -9,6 +9,7 @@ import { getContent } from "@/content";
 import { homeCopy, type HomeCopy } from "@/content/copy/home";
 import { useMotion } from "@/components/providers/MotionProvider";
 import { Arrow } from "@/components/ui/Button";
+import { StarSpikes } from "@/components/three/HeroStar";
 import { Reveal } from "@/components/ui/Reveal";
 import { serviceIndexAt } from "@/lib/scroll/timeline";
 import { useScrollDerived } from "@/lib/scroll/useScrollDerived";
@@ -23,7 +24,7 @@ function Intro({ t, compact = false }: { t: HomeCopy["services"]; compact?: bool
     <div>
       <p className="eyebrow">{t.eyebrow}</p>
       <h2 id="services-title" className={compact ? "display-md mt-4" : "display-lg mt-5"}>
-        {t.titleA} <span className="text-teal-deep">{t.titleB}</span>
+        {t.titleA} <span className="text-accent-deep">{t.titleB}</span>
       </h2>
       <p className={compact ? "mt-3 leading-relaxed text-ink-soft" : "lede mt-5"}>
         {t.lede}
@@ -84,7 +85,7 @@ function PinnedServices({ locale, t, services }: Props) {
                             <Link
                               href={serviceHref(locale, s.slug)}
                               tabIndex={on ? 0 : -1}
-                              className="group mt-3 inline-flex items-center gap-2 text-sm font-bold text-teal-deep"
+                              className="group mt-3 inline-flex items-center gap-2 text-sm font-bold text-accent-deep"
                             >
                               {d.common.learnAbout} {locale === "en" ? s.name.toLowerCase() : s.name.charAt(0).toLowerCase() + s.name.slice(1)} <Arrow />
                             </Link>
@@ -107,12 +108,7 @@ function PinnedServices({ locale, t, services }: Props) {
 }
 
 function StaticStar({ active }: { active: number }) {
-  const color = enServices[active]?.color ?? "#f28fe0";
-  return (
-    <svg viewBox="0 0 48 48" className="mx-auto h-80 w-80 animate-float-slow drop-shadow-xl">
-      <path d="M24 4.5 29.3 17.3l13.7 1.1-10.4 9 3.2 13.4L24 33.6l-11.8 7.2 3.2-13.4-10.4-9 13.7-1.1Z" fill={color} className="transition-colors duration-700" />
-    </svg>
-  );
+  return <StarSpikes highlight={active} className="mx-auto h-80 w-80 animate-float-slow" />;
 }
 
 function ListServices({ locale, t, services }: Props) {
@@ -132,7 +128,7 @@ function ListServices({ locale, t, services }: Props) {
               </span>
               <span className="mt-5 font-display text-2xl">{s.name}</span>
               <span className="mt-2 flex-1 leading-relaxed text-ink-soft">{s.short}</span>
-              <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-teal-deep">
+              <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-accent-deep">
                 {d.common.learnMore} <Arrow />
               </span>
             </Link>

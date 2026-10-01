@@ -48,7 +48,7 @@ export async function EnrollView({ locale }: { locale: Locale }) {
                 rel="noopener noreferrer"
                 hrefLang={secure.lang ?? undefined}
                 data-track="secure_form:enrollment"
-                className="mt-4 inline-flex min-h-11 items-center font-semibold text-teal-deep underline decoration-2 underline-offset-4"
+                className="mt-4 inline-flex min-h-11 items-center font-semibold text-accent-deep underline decoration-2 underline-offset-4"
               >
                 {t.startSecure}
                 <span className="sr-only"> {t.startSecureNote}</span>

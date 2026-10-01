@@ -49,7 +49,6 @@ export async function FamiliesView({ locale }: { locale: Locale }) {
         eyebrow={t.eyebrow}
         title={t.title}
         lede={t.lede}
-        accent="#3aa6e0"
         actions={
           <ButtonLink href={site.phone.href} size="lg">
             {d.common.call} {site.phone.display}
@@ -98,12 +97,12 @@ export async function FamiliesView({ locale }: { locale: Locale }) {
                   ))}
                 </div>
                 {topic.id === "absences" ? (
-                  <a href={site.phone.href} className="mt-4 inline-block font-semibold text-teal-deep underline underline-offset-4">
+                  <a href={site.phone.href} className="mt-4 inline-block font-semibold text-accent-deep underline underline-offset-4">
                     {t.callAbsence} {site.phone.display}
                   </a>
                 ) : null}
                 {topic.id === "health" ? (
-                  <Link href={serviceHref(locale, "nursing-care")} className="mt-4 inline-block font-semibold text-teal-deep underline underline-offset-4">
+                  <Link href={serviceHref(locale, "nursing-care")} className="mt-4 inline-block font-semibold text-accent-deep underline underline-offset-4">
                     {t.nursingLink}
                   </Link>
                 ) : null}
@@ -169,7 +168,7 @@ export async function FamiliesView({ locale }: { locale: Locale }) {
                 {w.team}
               </Link>
               <p className="mt-2 text-sm leading-relaxed text-ink-soft">{w.body}</p>
-              <a href={site.phone.href} className="mt-4 inline-block font-semibold text-teal-deep">
+              <a href={site.phone.href} className="mt-4 inline-block font-semibold text-accent-deep">
                 {site.phone.display}
               </a>
             </li>

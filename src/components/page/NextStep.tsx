@@ -26,14 +26,14 @@ export function NextStep({
       <div className="container-x">
         <Reveal className="relative overflow-hidden rounded-[2.25rem] bg-ink px-6 py-14 text-cream sm:px-12 md:py-16">
           <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full bg-accent/25 blur-3xl" />
-          <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 h-72 w-72 rounded-full bg-teal/30 blur-3xl" />
+          <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 h-72 w-72 rounded-full bg-accent-strong/30 blur-3xl" />
           <div className="relative max-w-2xl">
             <p className="eyebrow !text-accent">{getDictionary(locale).common.nextStep}</p>
             <h2 id="next-step-title" className="display-lg mt-4">
               {title}
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-cream/75">{body}</p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">{actions}</div>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">{actions}</div>
           </div>
         </Reveal>
         {related.length > 0 ? (

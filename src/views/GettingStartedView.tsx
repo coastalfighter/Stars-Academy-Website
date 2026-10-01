@@ -36,7 +36,6 @@ export async function GettingStartedView({ locale }: { locale: Locale }) {
         eyebrow={t.eyebrow}
         title={t.title}
         lede={t.lede}
-        accent="#b67cf5"
         actions={
           <>
             <ButtonLink href="#inquiry" size="lg" arrow>
@@ -98,7 +97,7 @@ export async function GettingStartedView({ locale }: { locale: Locale }) {
             <dt className="text-xs font-bold uppercase tracking-[0.18em] text-muted">{t.practical.medical}</dt>
             <dd className="mt-2 leading-relaxed">
               {t.practical.medicalBody}{" "}
-              <Link href={serviceHref(locale, "nursing-care")} className="font-semibold text-teal-deep underline underline-offset-4">
+              <Link href={serviceHref(locale, "nursing-care")} className="font-semibold text-accent-deep underline underline-offset-4">
                 {t.practical.medicalLink}
               </Link>
               .
@@ -126,7 +125,7 @@ export async function GettingStartedView({ locale }: { locale: Locale }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-track="secure_form:enrollment"
-                className="mt-4 inline-block font-semibold text-teal-deep underline decoration-2 underline-offset-4"
+                className="mt-4 inline-block font-semibold text-accent-deep underline decoration-2 underline-offset-4"
               >
                 {t.packetLink}
                 <span className="sr-only">{channels.enrollmentForm.href === site.secureForms.enrollmentPacket ? d.common.opensAdobe : ` ${e.startSecureNote}`}</span>

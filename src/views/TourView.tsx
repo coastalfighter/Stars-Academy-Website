@@ -13,8 +13,8 @@ export function TourView({ locale, audience, reason }: { locale: Locale; audienc
 
   return (
     <div className="relative overflow-hidden pt-36 pb-24 md:pt-44">
-      <div aria-hidden="true" className="pointer-events-none absolute -right-40 -top-32 h-[36rem] w-[36rem] rounded-full bg-accent/20 blur-3xl" />
-      <div aria-hidden="true" className="pointer-events-none absolute -left-40 top-1/2 h-[30rem] w-[30rem] rounded-full bg-teal/10 blur-3xl" />
+      <div aria-hidden="true" className="pointer-events-none absolute -right-40 -top-32 h-[36rem] w-[36rem] rounded-full bg-white/60 blur-3xl" />
+      <div aria-hidden="true" className="pointer-events-none absolute -left-40 top-1/2 h-[30rem] w-[30rem] rounded-full bg-azure/10 blur-3xl" />
 
       <div className="container-x relative grid gap-14 lg:grid-cols-12">
         <div className="lg:col-span-5">

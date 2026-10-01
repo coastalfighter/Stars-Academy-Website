@@ -48,7 +48,7 @@ export async function Trust({ locale }: { locale: Locale }) {
 
         <div className="mt-16">
           <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-cream/60">{t.valuesTitle}</h3>
-          <ul className="mt-6 grid gap-4 md:grid-cols-5">
+          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {values.map((v, i) => (
               <Reveal as="li" key={v.name} delay={i * 60} className="rounded-2xl border border-cream/10 p-5">
                 <p className="font-display text-xl text-cream">{v.name}</p>

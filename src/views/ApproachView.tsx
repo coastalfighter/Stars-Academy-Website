@@ -11,7 +11,7 @@ import { NextStep } from "@/components/page/NextStep";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 
-const ACCENTS = ["#f28fe0", "#b67cf5", "#6f7df5", "#3aa6e0", "#d6418f", "#8a1c80"] as const;
+const ACCENTS = ["#ff8fd8", "#c58cff", "#8f9bff", "#3aa6e0", "#ff6fae", "#8f1470"] as const;
 
 export function ApproachView({ locale }: { locale: Locale }) {
   const t = approachCopy[locale];
@@ -26,13 +26,12 @@ export function ApproachView({ locale }: { locale: Locale }) {
         eyebrow={t.eyebrow}
         title={t.title}
         lede={t.lede}
-        accent="#6f7df5"
       >
         <Reveal className="glass mt-10 max-w-3xl p-6 sm:p-7">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted">{t.inShort}</p>
           <p className="mt-2 font-display text-xl leading-snug sm:text-2xl">
-            {t.shortA} <span className="text-teal-deep">{t.shortConnection}</span>
-            {t.shortB} <span className="text-teal-deep">{t.shortCalm}</span>
+            {t.shortA} <span className="text-accent-deep">{t.shortConnection}</span>
+            {t.shortB} <span className="text-accent-deep">{t.shortCalm}</span>
             {t.shortC}
           </p>
         </Reveal>
@@ -89,7 +88,7 @@ export function ApproachView({ locale }: { locale: Locale }) {
                       href={p.link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-5 inline-block font-semibold text-teal-deep underline decoration-2 underline-offset-4"
+                      className="mt-5 inline-block font-semibold text-accent-deep underline decoration-2 underline-offset-4"
                     >
                       {p.link.label}
                       <span className="sr-only">{d.common.opensNewTab}</span>

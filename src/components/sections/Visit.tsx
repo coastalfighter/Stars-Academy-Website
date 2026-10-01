@@ -6,6 +6,7 @@ import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
+import { FlatStar } from "@/components/three/FlatScene";
 
 export function Visit({ locale }: { locale: Locale }) {
   const t = homeCopy[locale].visit;
@@ -17,12 +18,13 @@ export function Visit({ locale }: { locale: Locale }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 left-0 hidden w-[60%] bg-gradient-to-r from-white/60 via-white/30 to-transparent lg:block"
       />
+      <FlatStar />
       <div className="container-x relative">
         <div className="over-scene copy-col">
           <Reveal>
             <p className="eyebrow">{t.eyebrow}</p>
             <h2 id="visit-title" className="display-lg mt-5">
-              {t.titleA} <span className="text-teal-deep">{t.titleB}</span>
+              {t.titleA} <span className="text-accent-deep">{t.titleB}</span>
             </h2>
             <p className="lede mt-5">
               {t.lede}
@@ -52,7 +54,7 @@ export function Visit({ locale }: { locale: Locale }) {
             </address>
           </Reveal>
 
-          <Reveal className="mt-10 flex flex-col gap-3 sm:flex-row">
+          <Reveal className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <ButtonLink href={href(locale, "tour")} size="lg" arrow>
               {t.cta}
             </ButtonLink>

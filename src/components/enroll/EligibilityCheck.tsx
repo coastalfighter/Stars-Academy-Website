@@ -68,7 +68,7 @@ export function EligibilityCheck({ locale, links }: { locale: Locale; links: Lin
     go(0);
   };
 
-  const radio = "flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl border border-line bg-cream px-4 py-3 has-[:checked]:border-teal has-[:checked]:bg-teal/10 has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-teal";
+  const radio = "flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl border border-line bg-cream px-4 py-3 has-[:checked]:border-accent-strong has-[:checked]:bg-accent-strong/10 has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-accent-strong";
 
   if (done) {
     const r = t.results[outcome.kind];
@@ -87,7 +87,7 @@ export function EligibilityCheck({ locale, links }: { locale: Locale; links: Lin
                 {reason === "none" ? (
                   <>
                     {" "}
-                    <Link href={links.arkidsHref} className="font-semibold text-teal-deep underline underline-offset-4">
+                    <Link href={links.arkidsHref} className="font-semibold text-accent-deep underline underline-offset-4">
                       {t.arkids}
                     </Link>
                   </>
@@ -146,9 +146,9 @@ export function EligibilityCheck({ locale, links }: { locale: Locale; links: Lin
         forward();
       }}
     >
-      <p className="text-sm font-semibold text-teal-deep">{t.progress.replace("{n}", String(step + 1)).replace("{total}", String(STEPS.length))}</p>
+      <p className="text-sm font-semibold text-accent-deep">{t.progress.replace("{n}", String(step + 1)).replace("{total}", String(STEPS.length))}</p>
       <div aria-hidden="true" className="mt-2 h-1.5 rounded-full bg-ink/10">
-        <div className="h-full rounded-full bg-teal transition-[width] duration-500" style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
+        <div className="h-full rounded-full bg-accent-strong transition-[width] duration-500" style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
       </div>
       <fieldset className="mt-6" aria-describedby={showError ? `${name}-error` : current === "needs" ? `${name}-hint` : undefined}>
         <legend>
@@ -173,7 +173,7 @@ export function EligibilityCheck({ locale, links }: { locale: Locale; links: Lin
                     onChange={(e) =>
                       setAnswers((a) => ({ ...a, needs: e.target.checked ? [...a.needs, n] : a.needs.filter((x) => x !== n) }))
                     }
-                    className="h-5 w-5 shrink-0 accent-teal"
+                    className="h-5 w-5 shrink-0 accent-accent-strong"
                   />
                   <span>{t.questions.needs.options[n]}</span>
                 </label>
@@ -189,7 +189,7 @@ export function EligibilityCheck({ locale, links }: { locale: Locale; links: Lin
                       setShowError(false);
                       setAnswers((a) => ({ ...a, [current]: value }));
                     }}
-                    className="h-5 w-5 shrink-0 accent-teal"
+                    className="h-5 w-5 shrink-0 accent-accent-strong"
                   />
                   <span>{(q.options as Record<string, string>)[value]}</span>
                 </label>
@@ -197,7 +197,7 @@ export function EligibilityCheck({ locale, links }: { locale: Locale; links: Lin
         </div>
       </fieldset>
       {showError ? (
-        <p id={`${name}-error`} role="alert" className="mt-4 font-semibold text-berry-deep">
+        <p id={`${name}-error`} role="alert" className="mt-4 font-semibold text-rose-deep">
           {t.chooseOne}
         </p>
       ) : null}

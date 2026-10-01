@@ -6,8 +6,8 @@ export function StarMark({ className = "h-9 w-9", title }: { className?: string;
       <rect width="48" height="48" rx="12" fill="#17153a" />
       <path
         d="M24 7.5 28.6 18.6l12 1-9.1 7.9 2.8 11.7L24 33l-10.3 6.2 2.8-11.7-9.1-7.9 12-1Z"
-        fill="#f28fe0"
-        stroke="#d6418f"
+        fill="#ff8fd8"
+        stroke="#ff6fae"
         strokeWidth="1.4"
         strokeLinejoin="round"
       />

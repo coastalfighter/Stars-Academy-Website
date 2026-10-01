@@ -24,7 +24,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <h1 className="mt-6 font-display text-3xl">Website insights</h1>
         <p className="mt-2 text-ink-soft">Staff sign-in. Visitor numbers are anonymous totals; no personal information is shown here.</p>
         {message ? (
-          <p role="alert" className="mt-6 rounded-2xl bg-berry/5 p-4 text-sm font-semibold text-berry-deep">
+          <p role="alert" className="mt-6 rounded-2xl bg-rose/5 p-4 text-sm font-semibold text-rose-deep">
             {message}
           </p>
         ) : null}
@@ -48,7 +48,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             </button>
           </form>
         ) : (
-          !message && <p className="mt-6 rounded-2xl bg-sky/60 p-4 text-sm">{MESSAGES.config}</p>
+          !message && <p className="mt-6 rounded-2xl bg-ice/60 p-4 text-sm">{MESSAGES.config}</p>
         )}
       </div>
     </div>

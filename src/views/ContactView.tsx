@@ -52,7 +52,7 @@ export async function ContactView({ locale, audience, reason }: { locale: Locale
           <div className="space-y-6 lg:col-span-5">
             <Reveal>
               <h2 className="display-md">{t.direct}</h2>
-              <a href={site.phone.href} className="mt-4 block font-display text-4xl text-teal-deep">
+              <a href={site.phone.href} className="mt-4 block font-display text-4xl text-accent-deep">
                 {site.phone.display}
               </a>
               <p className="mt-2 text-ink-soft">{site.hours.display}</p>

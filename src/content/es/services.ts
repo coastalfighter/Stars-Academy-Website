@@ -10,7 +10,7 @@ export const services: Service[] = [
     slug: "developmental-classrooms",
     name: "Aulas de desarrollo",
     short: "Aprendizaje, juego, rutinas y preparación para el kínder",
-    color: "#f28fe0",
+    color: "#ff8fd8",
     eyebrow: "Aulas de desarrollo",
     headline: "Un día de preescolar pensado según cómo crecen los niños.",
     intro:
@@ -67,7 +67,7 @@ export const services: Service[] = [
     slug: "speech-therapy",
     name: "Terapia del habla y lenguaje",
     short: "Hablar, comprender, conectar con otros, comer y tragar",
-    color: "#b67cf5",
+    color: "#c58cff",
     eyebrow: "Terapia del habla y lenguaje",
     headline: "Ayudamos a los niños a hacerse entender, y a entender el mundo que les rodea.",
     intro:
@@ -135,7 +135,7 @@ export const services: Service[] = [
     slug: "occupational-therapy",
     name: "Terapia ocupacional",
     short: "Necesidades sensoriales, emociones intensas, cuidado personal y uso de las manos",
-    color: "#6f7df5",
+    color: "#8f9bff",
     eyebrow: "Terapia ocupacional",
     headline: "El juego es el trabajo de la infancia. Ayudamos a los niños a hacerlo bien.",
     intro:
@@ -259,7 +259,7 @@ export const services: Service[] = [
     slug: "nursing-care",
     name: "Enfermería",
     short: "Medicamentos, alimentación, necesidades respiratorias y médicas complejas",
-    color: "#d6418f",
+    color: "#ff6fae",
     eyebrow: "Enfermería en el centro",
     headline: "Las necesidades médicas no deberían impedir que un niño aprenda y juegue.",
     intro:

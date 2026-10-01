@@ -7,7 +7,7 @@ import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { Reveal } from "@/components/ui/Reveal";
 
-const ACCENTS = ["bg-accent", "bg-coral", "bg-teal", "bg-blue"] as const;
+const ACCENTS = ["bg-accent", "bg-lilac", "bg-accent-strong", "bg-azure"] as const;
 
 export function Approach({ locale }: { locale: Locale }) {
   const t = homeCopy[locale].approach;
@@ -28,7 +28,7 @@ export function Approach({ locale }: { locale: Locale }) {
                 href={site.consciousDisciplineUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-semibold text-teal-deep underline decoration-2 underline-offset-4"
+                className="font-semibold text-accent-deep underline decoration-2 underline-offset-4"
               >
                 Conscious Discipline<span className="sr-only">{d.common.opensNewTab}</span>
               </a>
@@ -47,7 +47,7 @@ export function Approach({ locale }: { locale: Locale }) {
           </ul>
 
           <Reveal className="mt-8">
-            <Link href={href(locale, "approach")} className="font-semibold text-teal-deep underline decoration-2 underline-offset-4">
+            <Link href={href(locale, "approach")} className="font-semibold text-accent-deep underline decoration-2 underline-offset-4">
               {t.readMore}
             </Link>
           </Reveal>

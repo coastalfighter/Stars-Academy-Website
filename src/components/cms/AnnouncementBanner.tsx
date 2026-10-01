@@ -8,9 +8,9 @@ import type { Announcement, AnnouncementKind } from "@/cms/repository";
 export const DISMISS_PREFIX = "stars:dismissed:";
 
 const STYLES: Record<AnnouncementKind, string> = {
-  urgent: "bg-berry-deep text-white",
+  urgent: "bg-rose-deep text-white",
   closure: "bg-accent text-ink",
-  event: "bg-teal-deep text-white",
+  event: "bg-accent-deep text-white",
   info: "bg-ink-soft text-cream",
 };
 

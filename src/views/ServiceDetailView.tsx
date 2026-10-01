@@ -51,7 +51,6 @@ export async function ServiceDetailView({ locale, slug }: { locale: Locale; slug
         title={service.headline}
         lede={service.intro}
         star={index}
-        accent={service.color}
         actions={
           <>
             <ButtonLink href={href(locale, "gettingStarted")} size="lg" arrow>
@@ -106,7 +105,7 @@ export async function ServiceDetailView({ locale, slug }: { locale: Locale; slug
             <ul className="mt-6 space-y-3">
               {service.provides.map((s) => (
                 <Reveal as="li" key={s} className="flex gap-3 leading-relaxed">
-                  <svg aria-hidden="true" viewBox="0 0 24 24" className="mt-0.5 h-6 w-6 shrink-0 text-teal-deep">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="mt-0.5 h-6 w-6 shrink-0 text-accent-deep">
                     <circle cx="12" cy="12" r="11" fill="currentColor" opacity="0.15" />
                     <path d="m7 12.5 3.2 3L17 8.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -220,7 +219,7 @@ export async function ServiceDetailView({ locale, slug }: { locale: Locale; slug
         <section aria-label={t.nextService} className="py-16">
           <div className="container-x">
             <Link href={serviceHref(locale, next.slug)} className="group card flex items-center justify-between gap-6 p-8 transition-transform hover:-translate-y-1">
-              <span>
+              <span className="min-w-0">
                 <span className="text-sm font-semibold text-muted">{t.nextService}</span>
                 <span className="mt-1 block font-display text-3xl">{next.name}</span>
               </span>

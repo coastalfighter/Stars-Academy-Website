@@ -47,7 +47,7 @@ export function AnalyticsOptOut({ copy }: { copy: OptOutCopy }) {
             >
               <span
                 aria-hidden="true"
-                className={`relative h-6 w-10 rounded-full transition-colors ${state.counting ? "bg-teal-deep" : "bg-ink/25"}`}
+                className={`relative h-6 w-10 rounded-full transition-colors ${state.counting ? "bg-accent-deep" : "bg-ink/25"}`}
               >
                 <span
                   className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${state.counting ? "translate-x-[1.125rem]" : "translate-x-0.5"}`}

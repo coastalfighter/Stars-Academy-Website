@@ -5,7 +5,7 @@ type Variant = "primary" | "secondary" | "ghost" | "light";
 type Size = "md" | "lg";
 
 const base =
-  "group inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-[transform,background-color,box-shadow,color] duration-300 ease-[var(--ease-gentle)] focus-visible:outline-offset-4 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60";
+  "group inline-flex items-center justify-center gap-2 rounded-full text-center sm:whitespace-nowrap font-semibold transition-[transform,background-color,box-shadow,color] duration-300 ease-[var(--ease-gentle)] focus-visible:outline-offset-4 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60";
 
 const variants: Record<Variant, string> = {
   primary: "bg-ink text-cream shadow-[var(--shadow-soft)] hover:-translate-y-0.5 hover:bg-ink-soft hover:shadow-[var(--shadow-lift)]",

@@ -42,7 +42,7 @@ export function ServicesView({ locale }: { locale: Locale }) {
                     {s.name}
                   </h3>
                   <p className="mt-3 leading-relaxed text-ink-soft">{s.what}</p>
-                  <Link href={serviceHref(locale, s.slug)} className="group mt-6 inline-flex items-center gap-2 font-bold text-teal-deep">
+                  <Link href={serviceHref(locale, s.slug)} className="group mt-6 inline-flex items-center gap-2 font-bold text-accent-deep">
                     {d.common.learnMore}
                     <span className="sr-only">
                       {" "}

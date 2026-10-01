@@ -15,7 +15,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CountUp } from "@/components/ui/CountUp";
 import { Reveal } from "@/components/ui/Reveal";
 
-const LETTER_COLORS = ["text-gold-deep", "text-coral-deep", "text-teal-deep", "text-blue-deep", "text-berry-deep"] as const;
+const LETTER_COLORS = ["text-pink-deep", "text-lilac-deep", "text-accent-deep", "text-azure-deep", "text-rose-deep"] as const;
 
 export async function AboutView({ locale }: { locale: Locale }) {
   const t = aboutCopy[locale];
@@ -60,7 +60,7 @@ export async function AboutView({ locale }: { locale: Locale }) {
           {site.stats.map((s) => (
             <div key={s.label} className="bg-paper p-7">
               <dt className="text-sm text-muted">{s.label}</dt>
-              <dd className="mt-2 font-display text-5xl text-teal-deep tabular-nums">
+              <dd className="mt-2 font-display text-5xl text-accent-deep tabular-nums">
                 <CountUp value={s.value} />
               </dd>
             </div>
@@ -97,7 +97,7 @@ export async function AboutView({ locale }: { locale: Locale }) {
         </div>
         <div className="mt-16">
           <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-cream/60">{t.valuesTitle}</h3>
-          <ol className="mt-6 grid gap-4 md:grid-cols-5">
+          <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {values.map((v, i) => (
               <Reveal as="li" key={v.name} delay={i * 60} className="rounded-2xl border border-cream/10 p-5">
                 <p className="font-display text-sm text-accent">{String(i + 1).padStart(2, "0")}</p>
@@ -119,7 +119,7 @@ export async function AboutView({ locale }: { locale: Locale }) {
                   {m.name}
                   {m.credentials ? <span className="text-lg text-muted">, {m.credentials}</span> : null}
                 </p>
-                <p className="mt-1 font-semibold text-teal-deep" lang={m.role.lang}>
+                <p className="mt-1 font-semibold text-accent-deep" lang={m.role.lang}>
                   {m.role.text}
                 </p>
                 {m.bio ? (

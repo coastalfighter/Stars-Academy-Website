@@ -74,7 +74,7 @@ export default async function CareersPage() {
                 </li>
               ))}
             </ul>
-            <Link href="/approach" className="mt-6 inline-block font-semibold text-teal-deep underline underline-offset-4">
+            <Link href="/approach" className="mt-6 inline-block font-semibold text-accent-deep underline underline-offset-4">
               Read about our Adult First approach
             </Link>
           </div>

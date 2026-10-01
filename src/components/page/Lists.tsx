@@ -4,7 +4,7 @@ import type { Step } from "@/content/pages";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionary";
 
-export function CheckIcon({ className = "mt-0.5 h-6 w-6 shrink-0 text-teal-deep" }: { className?: string }) {
+export function CheckIcon({ className = "mt-0.5 h-6 w-6 shrink-0 text-accent-deep" }: { className?: string }) {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className={className}>
       <circle cx="12" cy="12" r="11" fill="currentColor" opacity="0.15" />
@@ -50,7 +50,7 @@ export function StepList({
           delay={i * 70}
           className={dark ? "rounded-[var(--radius-card)] border border-cream/10 p-6" : "card p-6"}
         >
-          <span className={`font-display text-4xl ${dark ? "text-accent" : "text-teal-deep"}`}>{String(i + 1).padStart(2, "0")}</span>
+          <span className={`font-display text-4xl ${dark ? "text-accent" : "text-accent-deep"}`}>{String(i + 1).padStart(2, "0")}</span>
           <h3 className="mt-3 font-display text-xl">
             <span className="sr-only">
               {stepWord} {i + 1}:{" "}
@@ -67,7 +67,7 @@ export function StepList({
 /** Title + body cards in a grid (e.g. "why it works", "why STARS"). */
 export function FeatureGrid({ items, columns = 3 }: { items: readonly Step[]; columns?: 2 | 3 | 4 }) {
   const cols = { 2: "md:grid-cols-2", 3: "md:grid-cols-3", 4: "md:grid-cols-2 xl:grid-cols-4" }[columns];
-  const accents = ["bg-accent", "bg-coral", "bg-teal", "bg-blue", "bg-berry"];
+  const accents = ["bg-accent", "bg-lilac", "bg-accent-strong", "bg-azure", "bg-rose"];
   return (
     <ul className={`grid gap-4 ${cols}`}>
       {items.map((item, i) => (

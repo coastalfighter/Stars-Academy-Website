@@ -12,22 +12,16 @@ type Props = {
   actions?: ReactNode;
   /** Star point to highlight (service index); -1 = all. `null` hides the star. */
   star?: number | null;
-  /** Accent colour for the soft background glow. */
-  accent?: string;
   children?: ReactNode;
 };
 
 /** Standard hero for every secondary page: breadcrumbs, headline, and the STARS star. */
-export function PageHero({ locale = "en", crumbs, eyebrow, title, lede, actions, star = -1, accent = "#ffbafe", children }: Props) {
+export function PageHero({ locale = "en", crumbs, eyebrow, title, lede, actions, star = -1, children }: Props) {
   return (
     <header className="relative overflow-hidden pt-32 pb-16 md:pt-40 md:pb-20">
-      {/* Coloured glow beside the title on wide screens. On narrower screens it would sit behind the text and lower its contrast. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-32 -top-10 hidden h-[34rem] w-[34rem] rounded-full opacity-25 blur-3xl lg:block"
-        style={{ background: accent }}
-      />
-      <div aria-hidden="true" className="pointer-events-none absolute -left-40 top-1/2 h-[26rem] w-[26rem] rounded-full bg-teal/10 blur-3xl" />
+      {/* Soft light beside the title on wide screens; the background stays blue. */}
+      <div aria-hidden="true" className="pointer-events-none absolute -right-32 -top-10 hidden h-[34rem] w-[34rem] rounded-full bg-white/60 blur-3xl lg:block" />
+      <div aria-hidden="true" className="pointer-events-none absolute -left-40 top-1/2 h-[26rem] w-[26rem] rounded-full bg-azure/10 blur-3xl" />
       <div className="container-x relative grid items-center gap-10 lg:grid-cols-12">
         <div className={star === null ? "lg:col-span-12" : "lg:col-span-8"}>
           <Breadcrumbs items={crumbs} locale={locale} />

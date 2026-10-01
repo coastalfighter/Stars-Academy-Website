@@ -12,9 +12,9 @@ import { BRAND, sceneState } from "./sceneState";
  * the glowing core where they meet is the child.
  */
 const RINGS = [
-  { color: BRAND.gold, angle: Math.PI / 2 },
-  { color: BRAND.teal, angle: Math.PI / 2 + (2 * Math.PI) / 3 },
-  { color: BRAND.berry, angle: Math.PI / 2 + (4 * Math.PI) / 3 },
+  { color: BRAND.pink, angle: Math.PI / 2 },
+  { color: BRAND.periwinkle, angle: Math.PI / 2 + (2 * Math.PI) / 3 },
+  { color: BRAND.rose, angle: Math.PI / 2 + (4 * Math.PI) / 3 },
 ] as const;
 
 const CARE_CHAPTER = 1;
@@ -76,7 +76,7 @@ export function CareSpheres() {
       ))}
       <mesh ref={core} position={[0, 0, 0.9]}>
         <icosahedronGeometry args={[1, 4]} />
-        <meshStandardMaterial color="#fff0fb" emissive={BRAND.gold} emissiveIntensity={1.4} toneMapped={false} />
+        <meshStandardMaterial color="#fff0fb" emissive={BRAND.pink} emissiveIntensity={1.4} toneMapped={false} />
       </mesh>
     </group>
   );

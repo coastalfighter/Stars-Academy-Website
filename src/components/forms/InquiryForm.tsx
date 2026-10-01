@@ -192,8 +192,8 @@ export function InquiryForm({
     return (
       <div ref={successRef} tabIndex={-1} role="status" className="card p-8 text-center outline-none sm:p-12">
         <svg aria-hidden="true" viewBox="0 0 48 48" className="mx-auto h-16 w-16">
-          <circle cx="24" cy="24" r="22" fill="#6f7df5" opacity="0.15" />
-          <path d="m15 24.5 6 6 12-13" fill="none" stroke="#3b35a6" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="24" cy="24" r="22" fill="#8f9bff" opacity="0.15" />
+          <path d="m15 24.5 6 6 12-13" fill="none" stroke="#a3137a" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <h2 className="mt-5 font-display text-3xl">{d.successTitle}</h2>
         <p className="lede mx-auto mt-3 max-w-md">{status.message}</p>
@@ -231,8 +231,8 @@ export function InquiryForm({
       aria-describedby={id("phi")}
     >
       {errorKeys.length > 0 ? (
-        <div ref={summaryRef} tabIndex={-1} role="alert" className="rounded-2xl border-2 border-berry/60 bg-berry/5 p-5 outline-none">
-          <h2 className="font-semibold text-berry-deep">{d.fixTitle}</h2>
+        <div ref={summaryRef} tabIndex={-1} role="alert" className="rounded-2xl border-2 border-rose/60 bg-rose/5 p-5 outline-none">
+          <h2 className="font-semibold text-rose-deep">{d.fixTitle}</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
             {errorKeys.map((k) => (
               <li key={k}>
@@ -245,8 +245,8 @@ export function InquiryForm({
         </div>
       ) : null}
 
-      <div id={id("phi")} className="flex gap-3 rounded-2xl bg-sky/60 p-4 text-sm leading-relaxed text-ink">
-        <svg aria-hidden="true" viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0 text-teal-deep">
+      <div id={id("phi")} className="flex gap-3 rounded-2xl bg-ice/60 p-4 text-sm leading-relaxed text-ink">
+        <svg aria-hidden="true" viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0 text-accent-deep">
           <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
           <path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
         </svg>
@@ -364,9 +364,9 @@ export function InquiryForm({
           {CONTACT_METHODS.map((m) => (
             <label
               key={m}
-              className="flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-cream px-4 has-[:checked]:border-teal has-[:checked]:bg-teal/10"
+              className="flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-cream px-4 has-[:checked]:border-accent-strong has-[:checked]:bg-accent-strong/10"
             >
-              <input type="radio" name="preferredContact" value={m} defaultChecked={m === "phone"} className="h-4 w-4 accent-teal" />
+              <input type="radio" name="preferredContact" value={m} defaultChecked={m === "phone"} className="h-4 w-4 accent-accent-strong" />
               <span className="text-sm font-semibold">{d.contact[m]}</span>
             </label>
           ))}
@@ -409,26 +409,26 @@ export function InquiryForm({
             name="consent"
             aria-invalid={Boolean(errors.consent)}
             aria-describedby={errors.consent ? id("consent-error") : undefined}
-            className="mt-1 h-5 w-5 shrink-0 accent-teal"
+            className="mt-1 h-5 w-5 shrink-0 accent-accent-strong"
           />
           <span>
             {d.consentText}
           </span>
         </label>
         {errors.consent ? (
-          <p id={id("consent-error")} className="mt-2 text-sm font-semibold text-berry-deep">
+          <p id={id("consent-error")} className="mt-2 text-sm font-semibold text-rose-deep">
             {errors.consent}
           </p>
         ) : null}
       </div>
 
       {status.kind === "error" ? (
-        <p role="alert" className="rounded-2xl bg-berry/5 p-4 text-sm font-semibold text-berry-deep">
+        <p role="alert" className="rounded-2xl bg-rose/5 p-4 text-sm font-semibold text-rose-deep">
           {status.message}
         </p>
       ) : null}
 
-      <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <button type="submit" disabled={submitting} aria-busy={submitting} className={buttonClass("primary", "lg")}>
           {submitting ? d.sending : (submitLabel ?? d.submit)}
         </button>
@@ -444,8 +444,8 @@ export function InquiryForm({
 }
 
 function inputClass(error?: string): string {
-  return `mt-2 block min-h-12 w-full rounded-2xl border bg-cream px-4 py-3 text-base text-ink shadow-inner shadow-ink/5 transition-colors placeholder:text-muted focus:border-teal focus:bg-paper focus:outline-none focus-visible:outline-3 focus-visible:outline-teal ${
-    error ? "border-berry" : "border-line"
+  return `mt-2 block min-h-12 w-full rounded-2xl border bg-cream px-4 py-3 text-base text-ink shadow-inner shadow-ink/5 transition-colors placeholder:text-muted focus:border-accent-strong focus:bg-paper focus:outline-none focus-visible:outline-3 focus-visible:outline-accent-strong ${
+    error ? "border-rose" : "border-line"
   }`;
 }
 
@@ -473,7 +473,7 @@ function Field({
       <label htmlFor={htmlFor} className="text-sm font-semibold">
         {label}
         {required ? (
-          <span aria-hidden="true" className="text-berry-deep">
+          <span aria-hidden="true" className="text-rose-deep">
             {" "}
             *
           </span>
@@ -486,7 +486,7 @@ function Field({
       ) : null}
       {children}
       {error ? (
-        <p id={errorId} className="mt-2 text-sm font-semibold text-berry-deep">
+        <p id={errorId} className="mt-2 text-sm font-semibold text-rose-deep">
           {error}
         </p>
       ) : null}

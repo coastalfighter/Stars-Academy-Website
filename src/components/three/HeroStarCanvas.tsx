@@ -72,7 +72,7 @@ function Star({ highlight }: Props) {
         </mesh>
       ))}
       <mesh geometry={geos.center}>
-        <meshPhysicalMaterial color="#fff0fb" roughness={0.3} clearcoat={1} emissive={BRAND.gold} emissiveIntensity={0.22} />
+        <meshPhysicalMaterial color="#fff0fb" roughness={0.3} clearcoat={1} emissive={BRAND.pink} emissiveIntensity={0.22} />
       </mesh>
     </group>
   );
@@ -87,7 +87,7 @@ export default function HeroStarCanvas({ highlight }: Props) {
       camera={{ fov: 30, position: [0, 0, 7.2] }}
       gl={{ antialias: true, alpha: true, toneMapping: ACESFilmicToneMapping }}
     >
-      <hemisphereLight args={["#fdf6ff", "#d6ccf5", 1.15]} />
+      <hemisphereLight args={["#fdf6ff", "#c4ecfa", 1.15]} />
       <directionalLight position={[4, 6, 6]} intensity={1.6} color="#fff0fb" />
       <directionalLight position={[-6, -2, 3]} intensity={0.45} color="#bfe9ff" />
       <Star highlight={highlight} />

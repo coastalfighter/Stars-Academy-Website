@@ -18,14 +18,14 @@ export function Eligibility({ locale }: { locale: Locale }) {
           <Reveal>
             <p className="eyebrow">{t.eyebrow}</p>
             <h2 id="eligibility-title" className="display-lg mt-5">
-              {t.titleBefore} <em className="text-teal-deep">{t.titleEmphasis}</em> {t.titleAfter}
+              {t.titleBefore} <em className="text-accent-deep">{t.titleEmphasis}</em> {t.titleAfter}
             </h2>
             <p className="lede mt-5">{t.lede}</p>
           </Reveal>
           <ul className="mt-8 space-y-3">
             {fitSignals.map((s, i) => (
               <Reveal as="li" key={s} delay={i * 70} className="flex gap-4 rounded-2xl bg-cream p-5">
-                <svg aria-hidden="true" viewBox="0 0 24 24" className="mt-0.5 h-6 w-6 shrink-0 text-teal-deep">
+                <svg aria-hidden="true" viewBox="0 0 24 24" className="mt-0.5 h-6 w-6 shrink-0 text-accent-deep">
                   <circle cx="12" cy="12" r="11" fill="currentColor" opacity="0.15" />
                   <path d="m7 12.5 3.2 3L17 8.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -72,7 +72,7 @@ export function Eligibility({ locale }: { locale: Locale }) {
               </Reveal>
             ))}
           </ol>
-          <Reveal className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <Reveal className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <ButtonLink href={href(locale, "gettingStarted", "#inquiry")} size="lg" arrow>
               {t.cta}
             </ButtonLink>
