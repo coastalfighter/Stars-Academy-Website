@@ -7,7 +7,7 @@
  *
  * Thresholds were calibrated on real runs of this build and leave ~20%
  * headroom (measured medians: performance 0.86–0.95, LCP 3.0–3.9 s,
- * TBT 50–175 ms, CLS 0, JS ≤ 307 KB, total ≤ 541 KB). Tighten them as the
+ * TBT 50–175 ms, CLS 0, JS ≤ 323 KB, total ≤ 560 KB). Tighten them as the
  * site gets faster; never loosen them to make a regression pass.
  *
  *   CHROME_PATH=/path/to/chrome npm run lhci

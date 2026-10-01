@@ -10,6 +10,7 @@ import { Footer } from "./Footer";
 import { JsonLd, organizationSchema } from "@/components/seo/JsonLd";
 import { DraftModeBar } from "@/components/cms/DraftModeBar";
 import { getAnnouncements } from "@/cms/repository";
+import { ErrorReporter } from "@/components/observability/ErrorReporter";
 
 /**
  * Runs before paint: marks JS as available (enables reveal animations) and
@@ -48,6 +49,7 @@ export async function SiteShell({ locale, children }: { locale: Locale; children
         >
           {d.common.skipToMain}
         </a>
+        <ErrorReporter locale={locale} />
         <MotionProvider>
           <SmoothScroll />
           <Header locale={locale} announcement={banner} />

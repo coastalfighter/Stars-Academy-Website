@@ -1,3 +1,5 @@
+import { errorCopy } from "../errorCopy";
+
 /** English UI strings (page copy lives in src/content). */
 export const en = {
   common: {
@@ -164,6 +166,7 @@ export const en = {
     leadershipTitle: "The people behind STARS.",
     testimonialsEyebrow: "In families’ words",
   },
+  serverError: errorCopy.en,
   notFound: {
     title: "We couldn’t find that page.",
     body: "It may have moved while we refreshed the site. Try the home page, or call us and we’ll help.",

@@ -48,11 +48,48 @@ test.describe("HTTP behaviour", () => {
     expect(h["x-content-type-options"]).toBe("nosniff");
     expect(h["x-frame-options"]).toBe("DENY");
     expect(h["x-powered-by"]).toBeUndefined();
+    // Violations are reported back to the site.
+    expect(h["content-security-policy"]).toContain("report-to csp");
+    expect(h["reporting-endpoints"]).toBe('csp="/api/csp-report"');
   });
 
   test("sitemap lists hreflang alternates and robots disallows the API", async ({ request }) => {
     const xml = await (await request.get("/sitemap.xml")).text();
     expect(xml).toContain('hreflang="es-US"');
     expect(await (await request.get("/robots.txt")).text()).toContain("Disallow: /api/");
+  });
+});
+
+test.describe("operations endpoints", () => {
+  test.skip(({ isMobile }) => isMobile);
+
+  test("the health check reports readiness without secrets", async ({ request }) => {
+    const res = await request.get("/api/health");
+    expect(res.status()).toBe(200);
+    expect(res.headers()["cache-control"]).toContain("no-store");
+    const body = (await res.json()) as { status: string; checks: Record<string, string> };
+    expect(body.status).toBe("ok");
+    expect(body.checks.inquiryDelivery).toBe("configured");
+    expect(Object.keys(body.checks).sort()).toEqual(["alerts", "content", "inquiryDelivery", "rateLimit"]);
+    expect((await request.head("/api/health")).status()).toBe(200);
+  });
+
+  test("CSP reports are accepted in both browser formats", async ({ request }) => {
+    const legacy = await request.post("/api/csp-report", {
+      headers: { "content-type": "application/csp-report" },
+      data: JSON.stringify({ "csp-report": { "document-uri": "https://x.test/", "blocked-uri": "inline", "violated-directive": "style-src" } }),
+    });
+    expect(legacy.status()).toBe(204);
+    const modern = await request.post("/api/csp-report", {
+      headers: { "content-type": "application/reports+json" },
+      data: JSON.stringify([{ type: "csp-violation", body: { effectiveDirective: "img-src", blockedURL: "https://x.test/a.png" } }]),
+    });
+    expect(modern.status()).toBe(204);
+  });
+
+  test("browser error reports are same-origin only", async ({ request, baseURL }) => {
+    const report = { kind: "unhandled", message: "E2E probe", path: "/", locale: "en" };
+    expect((await request.post("/api/client-error", { headers: { origin: "https://evil.example" }, data: report })).status()).toBe(403);
+    expect((await request.post("/api/client-error", { headers: { origin: new URL(baseURL!).origin }, data: report })).status()).toBe(204);
   });
 });

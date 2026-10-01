@@ -105,6 +105,14 @@ async function sendWebhook(payload: ReturnType<typeof toPayload>, env: Env, fetc
   if (!res.ok) throw new Error(`Webhook responded ${res.status}`);
 }
 
+/** The delivery channels this environment is configured for (no network calls). */
+export function configuredChannels(env: Env = process.env): DeliveryChannel[] {
+  const channels: DeliveryChannel[] = [];
+  if (env.RESEND_API_KEY && env.INQUIRY_TO_EMAIL) channels.push("email");
+  if (env.INQUIRY_WEBHOOK_URL) channels.push("webhook");
+  return channels;
+}
+
 /**
  * Delivers an inquiry through every configured channel. Succeeds if at least
  * one channel accepted it, so a single provider outage doesn't lose a lead.
@@ -115,8 +123,9 @@ export async function deliverInquiry(
 ): Promise<DeliveryResult> {
   const payload = toPayload(inquiry, now);
   const jobs: { channel: DeliveryChannel; run: () => Promise<void> }[] = [];
-  if (env.RESEND_API_KEY && env.INQUIRY_TO_EMAIL) jobs.push({ channel: "email", run: () => sendEmail(payload, env, fetchImpl) });
-  if (env.INQUIRY_WEBHOOK_URL) jobs.push({ channel: "webhook", run: () => sendWebhook(payload, env, fetchImpl) });
+  for (const channel of configuredChannels(env)) {
+    jobs.push({ channel, run: () => (channel === "email" ? sendEmail(payload, env, fetchImpl) : sendWebhook(payload, env, fetchImpl)) });
+  }
 
   if (jobs.length === 0) return { ok: false, reason: "not-configured" };
 

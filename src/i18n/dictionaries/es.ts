@@ -1,5 +1,6 @@
 import type { Widen } from "../config";
 import type { en } from "./en";
+import { errorCopy } from "../errorCopy";
 
 /**
  * Spanish UI strings. Register: formal "usted", neutral U.S. Spanish.
@@ -170,6 +171,7 @@ export const es = {
     leadershipTitle: "Las personas detrás de STARS.",
     testimonialsEyebrow: "En palabras de las familias",
   },
+  serverError: errorCopy.es,
   notFound: {
     title: "No encontramos esa página.",
     body: "Es posible que haya cambiado de lugar cuando actualizamos el sitio. Vaya a la página de inicio o llámenos y le ayudaremos.",

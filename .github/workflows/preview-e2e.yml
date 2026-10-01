@@ -1,0 +1,66 @@
+name: Preview E2E
+
+# Runs the end-to-end suite against every successful Vercel preview
+# deployment, so problems that only appear on the real platform (headers,
+# routing, proxies, environment variables) are caught before production.
+#
+# Setup (once):
+#   - Vercel: Project → Settings → Deployment Protection → "Protection Bypass
+#     for Automation" → copy the secret.
+#   - GitHub: Settings → Secrets → Actions → VERCEL_AUTOMATION_BYPASS_SECRET.
+# Without the secret the suite still runs against unprotected previews.
+
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-e2e-${{ github.event.deployment.sha }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: E2E on ${{ github.event.deployment.environment }}
+    # Vercel names its environments "Preview" / "Production" (optionally with
+    # the project name); production is covered by the uptime probe instead.
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      !contains(github.event.deployment.environment, 'Production')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      E2E_BASE_URL: ${{ github.event.deployment_status.environment_url || github.event.deployment_status.target_url }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.deployment.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Wait for the deployment to answer
+        run: |
+          for i in $(seq 1 30); do
+            status=$(curl -s -o /dev/null -w '%{http_code}' -H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}" "${E2E_BASE_URL}/api/health" || true)
+            if [ "$status" = "200" ]; then echo "Ready: ${E2E_BASE_URL}"; exit 0; fi
+            echo "Attempt $i: HTTP $status"; sleep 10
+          done
+          echo "::error::${E2E_BASE_URL}/api/health never returned 200"; exit 1
+      - name: Run Playwright against the preview
+        run: npm run e2e
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+          if-no-files-found: ignore

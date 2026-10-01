@@ -148,16 +148,22 @@ Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse 
 ```
 .
 ├── .github/workflows/ci.yml         # quality → E2E + Lighthouse; Studio checks
+├── .github/workflows/preview-e2e.yml  # E2E against every Vercel preview
+├── .github/workflows/uptime.yml     # production probe every 30 min
+├── docs/OPERATIONS.md               # monitoring setup + incident runbook
 ├── docs/CONTENT-CHECKLIST.md        # facts awaiting client confirmation
 ├── docs/EDITOR-GUIDE.md             # plain-language guide for clinic staff
 ├── studio/                          # Sanity Studio (separate package) + seed/content.ndjson
 ├── scripts/export-cms-seed.ts       # bundled content → CMS seed
 ├── scripts/e2e-build.mjs            # builds the site and its CMS-enabled twin for E2E
+├── scripts/uptime-check.mts         # dependency-free production probe
 ├── e2e/                             # Playwright specs, fixtures (mock Sanity, webhook receiver)
 ├── public/                          # favicon + client photography
 ├── src/
 │   ├── app/
 │   │   ├── api/inquiry/route.ts     # POST endpoint (delegates to lib/inquiry/handler)
+│   │   ├── api/{health,csp-report,client-error}/  # monitoring endpoints
+│   │   ├── global-error.tsx         # bilingual last-resort error page
 │   │   ├── (en)/                    # English root layout + thin route files
 │   │   ├── (es)/es/                 # Spanish root layout + thin route files
 │   │   ├── global-not-found.tsx     # bilingual 404 for unmatched URLs
@@ -174,16 +180,18 @@ Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse 
 │   │   ├── seo/JsonLd.tsx           # schema.org MedicalClinic
 │   │   └── ui/                      # Button, Reveal, CountUp, ScrollRail, StarMark
 │   ├── cms/                         # Sanity client, schemas, repositories, webhook, preview
-│   ├── views/                       # one locale-aware component per page
+│   ├── views/                       # one locale-aware component per page (+ ErrorView)
+│   ├── instrumentation.ts           # server error capture
 │   ├── i18n/                        # locales, route map, UI dictionaries, messages, metadata
 │   ├── content/                     # English facts & lists; es/ mirrors; copy/ = page copy (en + es)
 │   └── lib/
 │       ├── scroll/                  # timeline math, scroll store, hooks
 │       ├── validation/inquiry.ts    # shared zod schema + PHI detection
 │       ├── inquiry/                 # request handler + email/webhook delivery
-│       ├── security/                # rate limiter, origin (CSRF) guard
+│       ├── security/                # CSP, rate limiter (memory + Upstash), origin (CSRF) guard, body limits
+│       ├── observability/           # JSON logger, PII redaction, alerts, health, browser error reports
 │       └── hooks/useMediaQuery.ts
-├── tests/                           # 234 unit/component tests (incl. CMS, translation coverage, route integrity)
+├── tests/                           # 277 unit/component tests (incl. CMS, translation coverage, route integrity)
 ├── .env.example
 ├── playwright.config.ts             # projects: desktop, mobile, reduced-motion, cms
 ├── lighthouserc.cjs                 # Lighthouse scores + resource budgets
@@ -213,10 +221,11 @@ npm run dev                  # http://localhost:3000
 
 Three layers, all run by `.github/workflows/ci.yml` on every pull request and on `main`:
 
-1. **Unit and component tests** (Vitest, 234 tests): validation and the PHI guard, delivery signing, rate
-   limiting, the origin guard, CMS schemas, webhook signatures and preview, timeline maths, calm mode and
+1. **Unit and component tests** (Vitest, 277 tests): validation and the PHI guard, delivery signing, rate
+   limiting (memory, Upstash, failover), the origin guard, logging redaction, alerts, CSP and browser error
+   reports, health, the uptime probe, error pages, CMS schemas, webhook signatures and preview, timeline maths, calm mode and
    WebGL detection, translation coverage and route integrity.
-2. **End-to-end** (Playwright, 73 tests across 4 projects). The suite builds the site twice: once with bundled
+2. **End-to-end** (Playwright, 96 tests across 4 projects; 85 run against previews). The suite builds the site twice: once with bundled
    content, and once with the CMS on, where Sanity is answered by `e2e/fixtures/mock-sanity.cjs`. A local
    receiver captures delivered inquiries so the HMAC signature can be checked.
    - `smoke`: every sitemap URL loads with the right `lang`, one `h1`, metadata and no console errors. Also
@@ -230,6 +239,11 @@ Three layers, all run by `.github/workflows/ci.yml` on every pull request and on
      applications pre-select the role, and cross-site or malformed posts are rejected.
    - `i18n` and `keyboard`: the language switcher, hreflang, the skip link, the FAQ disclosure and the
      mobile-menu focus trap.
+   - `smoke › operations endpoints`: the health check, both CSP report formats, and that browser error reports
+     are accepted from this site only.
+   - **Against a deployment**: `E2E_BASE_URL=https://… npm run e2e`, which `preview-e2e.yml` runs for every Vercel
+     preview. It sends Vercel's protection-bypass header, and skips the mocked-CMS project and tests tagged
+     `@local` (real inquiry delivery).
    - `cms`: closures appear as a banner, scheduled and unsafe announcements are hidden, untranslated content is
      marked, only testimonials with consent are shown, and signed revalidation and preview links work.
 3. **Lighthouse CI** (`lighthouserc.cjs`): 7 representative URLs, 3 runs each, mobile profile, median asserted.
@@ -262,12 +276,34 @@ are configured. If at least one channel accepts the inquiry, the request succeed
 production, the API returns 503 with the phone number, so inquiries are never silently lost.** In development
 it logs a PHI-free summary and accepts the request.
 
-The rate limiter is in-memory: exact on a single Node server, best-effort on serverless. The `RateLimitStore`
-interface lets you swap in Redis/Upstash without changing the handler.
+Rate limiting is shared across all serverless instances when Upstash Redis is configured
+(`UPSTASH_REDIS_REST_URL` / `_TOKEN`, or Vercel KV's names). It runs as an atomic sliding window over Upstash's
+REST API, with no SDK, and IPs are HMAC-hashed before they leave the server. If Upstash is slow or down, each
+instance falls back to its own in-memory window, so the form stays available. Without Upstash, the in-memory
+store is exact on a single Node server and best-effort on serverless.
+
+## Monitoring & operations
+
+See **[docs/OPERATIONS.md](docs/OPERATIONS.md)** for setup and the incident runbook.
+
+- **Structured logs**: every server log is one JSON line with an `event` field, and contact details and health
+  information are redacted (`src/lib/observability`).
+- **Alerts** go to any chat incoming webhook (`ALERT_WEBHOOK_URL`). They are de-duplicated and optionally signed.
+  They cover server errors (`src/instrumentation.ts`), failed or refused inquiry deliveries, and pages that fail
+  to render in a browser.
+- **Error pages**: friendly English and Spanish error pages (`error.tsx` per language, plus `global-error.tsx`)
+  keep the phone number visible and report the failure. `ErrorReporter` reports uncaught errors from the site's
+  own scripts only, not from browser extensions.
+- **`GET /api/health`** returns `200 ok` or `503 degraded` (production with no delivery channel), for uptime
+  monitors. It makes no outbound calls and exposes no secrets.
+- **CSP reports**: `report-to` and `report-uri` send violations to `/api/csp-report`. The endpoint handles both
+  browser formats, strips query strings and drops browser-extension noise.
+- **Uptime workflow**: probes production every 30 minutes and alerts on failure.
 
 ## Security headers
 
-Set in `next.config.ts`: Content-Security-Policy (self-hosted fonts, no third-party scripts), HSTS,
+Set in `next.config.ts` (policy in `src/lib/security/csp.ts`): Content-Security-Policy with violation reporting
+(self-hosted fonts, no third-party scripts, no `eval`; Zod runs in its jitless mode for this reason), HSTS,
 `X-Frame-Options: DENY`, `nosniff`, a strict Referrer-Policy, a locked-down Permissions-Policy and COOP.
 API responses are `no-store`.
 
@@ -281,7 +317,9 @@ and `prefers-reduced-motion` support.
 ## Deployment
 
 Built for Vercel (or any Node 20.9+ host). Set `NEXT_PUBLIC_SITE_URL` and at least one delivery channel
-(`RESEND_API_KEY` + `INQUIRY_TO_EMAIL`, or `INQUIRY_WEBHOOK_URL`). Add preview URLs to `ALLOWED_ORIGINS`.
+(`RESEND_API_KEY` + `INQUIRY_TO_EMAIL`, or `INQUIRY_WEBHOOK_URL`). Preview deployments need no origin
+configuration: the CSRF guard compares the `Origin` with the host the browser requested. Then follow the setup
+checklist in [docs/OPERATIONS.md](docs/OPERATIONS.md) (alerts, Upstash, uptime, preview checks).
 
 ## Roadmap (next milestones)
 
@@ -290,6 +328,8 @@ Built for Vercel (or any Node 20.9+ host). Set `NEXT_PUBLIC_SITE_URL` and at lea
 - ~~Milestone 3: Spanish site, bilingual forms/API, hreflang, bilingual 404~~
 - ~~Milestone 4: Sanity CMS for announcements, FAQs, roles, leadership, testimonials, contact details~~
 - ~~Milestone 5: Playwright E2E (axe, forms, CMS), Lighthouse CI budgets, GitHub Actions pipeline~~
-6. **Launch hardening**: a shared rate-limit store (Upstash Redis), CSP violation reporting, uptime and
-   error monitoring, and preview deployments that run E2E against the Vercel URL.
-7. **Privacy-friendly analytics** and a consent-aware privacy-notice update, if STARS wants measurement.
+- ~~Milestone 6: shared rate limiting, CSP reporting, error and uptime monitoring, preview E2E~~
+7. **Privacy-friendly analytics** (cookieless, first-party, no IP storage) with an updated privacy notice, plus a
+   small "how did you hear about us" field so STARS can see which referral sources bring families.
+8. **Content expansion**: staff bios and a photo gallery managed in the CMS, an events calendar, and a
+   resources library for families (handouts in English and Spanish).

@@ -1,6 +1,8 @@
 import { deliverInquiry } from "@/lib/inquiry/deliver";
 import { isAllowedOrigin } from "@/lib/security/origin";
-import { checkRateLimit, clientIp, MemoryRateLimitStore, type RateLimitStore } from "@/lib/security/rateLimit";
+import { checkRateLimit, clientIp, createRateLimitStore, type RateLimitStore } from "@/lib/security/rateLimit";
+import { logger as defaultLogger } from "@/lib/observability/logger";
+import { sendAlert as defaultSendAlert, type AlertSender } from "@/lib/observability/alert";
 import { inquirySchema, MIN_FILL_MS, toFieldErrors } from "@/lib/validation/inquiry";
 import { site } from "@/content/site";
 import { isLocale, type Locale } from "@/i18n/config";
@@ -15,7 +17,8 @@ type Deps = {
   store?: RateLimitStore;
   deliver?: typeof deliverInquiry;
   now?: () => number;
-  logger?: Pick<Console, "info" | "warn" | "error">;
+  logger?: { info: (message: string, fields?: unknown) => void; warn: (message: string, fields?: unknown) => void; error: (message: string, fields?: unknown) => void };
+  alert?: AlertSender;
 };
 
 const MAX_BODY_BYTES = 16 * 1024;
@@ -33,10 +36,11 @@ const json = (body: InquiryResponse, status: number, headers: Record<string, str
  */
 export function createInquiryHandler(deps: Deps = {}) {
   const env = deps.env ?? process.env;
-  const store = deps.store ?? new MemoryRateLimitStore();
+  const logger = deps.logger ?? defaultLogger;
+  const store = deps.store ?? createRateLimitStore(env, { logger });
   const deliver = deps.deliver ?? deliverInquiry;
   const now = deps.now ?? Date.now;
-  const logger = deps.logger ?? console;
+  const alert = deps.alert ?? defaultSendAlert;
   const max = Number(env.RATE_LIMIT_MAX) > 0 ? Number(env.RATE_LIMIT_MAX) : 5;
   const windowMs = Number(env.RATE_LIMIT_WINDOW_MS) > 0 ? Number(env.RATE_LIMIT_WINDOW_MS) : 10 * 60 * 1000;
 
@@ -84,7 +88,7 @@ export function createInquiryHandler(deps: Deps = {}) {
     const tooFast = Number.isFinite(startedAt) && startedAt > 0 && now() - startedAt < MIN_FILL_MS;
     if (honeypot || tooFast) {
       // Pretend success so automated submitters get no signal to adapt to.
-      logger.warn("[inquiry] dropped likely bot submission", { honeypot, tooFast });
+      logger.warn("[inquiry] dropped likely bot submission", { event: "inquiry.bot", honeypot, tooFast });
       return json({ ok: true, message: t("received") }, 200);
     }
 
@@ -95,7 +99,7 @@ export function createInquiryHandler(deps: Deps = {}) {
 
     const result = await deliver(parsed.data, { env });
     if (result.ok) {
-      logger.info("[inquiry] delivered", { channels: result.channels, reason: parsed.data.reason });
+      logger.info("[inquiry] delivered", { event: "inquiry.delivered", channels: result.channels, reason: parsed.data.reason });
       return json({ ok: true, message: t("thanks") }, 200);
     }
 
@@ -103,16 +107,29 @@ export function createInquiryHandler(deps: Deps = {}) {
       if (env.NODE_ENV !== "production") {
         // Development convenience: log a PHI-free summary instead of sending.
         logger.info("[inquiry] (dev) delivery not configured; accepted", {
+          event: "inquiry.dev-accepted",
           reason: parsed.data.reason,
           audience: parsed.data.audience,
         });
         return json({ ok: true, message: t("thanks") }, 200);
       }
-      logger.error("[inquiry] no delivery channel configured");
+      logger.error("[inquiry] no delivery channel configured", { event: "inquiry.unconfigured" });
+      await alert({
+        fingerprint: "inquiry:not-configured",
+        severity: "critical",
+        title: "Website inquiries are being refused: no delivery channel is configured",
+        details: { action: "Set RESEND_API_KEY + INQUIRY_TO_EMAIL or INQUIRY_WEBHOOK_URL, then redeploy." },
+      });
       return json({ ok: false, error: t("unavailable") }, 503);
     }
 
-    logger.error("[inquiry] delivery failed", { detail: result.detail });
+    logger.error("[inquiry] delivery failed", { event: "inquiry.failed", detail: result.detail });
+    await alert({
+      fingerprint: "inquiry:delivery-failed",
+      severity: "critical",
+      title: "A website inquiry could not be delivered (the visitor was asked to call)",
+      details: { reason: parsed.data.reason, providerError: result.detail },
+    });
     return json({ ok: false, error: t("failed") }, 502);
   };
 }

@@ -36,7 +36,8 @@ test("messages that look like health information are blocked", async ({ page }) 
   await expect(page.getByRole("alert").first()).toContainText("fecha de nacimiento");
 });
 
-test("a Spanish inquiry is delivered, signed, in the family's language", async ({ page, request }, testInfo) => {
+// @local: needs the webhook receiver, and must never send a real inquiry from a preview run.
+test("a Spanish inquiry is delivered, signed, in the family's language", { tag: "@local" }, async ({ page, request }, testInfo) => {
   const name = `Ana E2E ${testInfo.project.name} ${Date.now()}`;
   await page.goto("/es/programar-visita");
   await page.getByLabel("Su nombre").fill(name);

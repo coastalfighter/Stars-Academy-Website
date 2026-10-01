@@ -1,0 +1,42 @@
+name: Uptime
+
+# Probes production every 30 minutes: /api/health (inquiry delivery is
+# configured), and both home pages. A failing run notifies the repository's
+# watchers by email; with the ALERT_WEBHOOK_URL secret it also posts to chat.
+#
+# Setup: Settings → Variables → Actions → PRODUCTION_URL
+# (e.g. https://www.mystarsacademy.org). Without it, runs are skipped.
+#
+# This is a free safety net, not a replacement for a dedicated monitor:
+# GitHub may delay scheduled runs, and pauses them after 60 days without
+# repository activity. See docs/OPERATIONS.md for the recommended setup.
+
+on:
+  schedule:
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/uptime-check.mts
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Probe production
+        env:
+          PRODUCTION_URL: ${{ vars.PRODUCTION_URL }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+        run: node scripts/uptime-check.mts
