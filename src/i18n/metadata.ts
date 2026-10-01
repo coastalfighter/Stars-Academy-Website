@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { isIndexable, verificationTags } from "@/lib/launch/indexing";
 import { site as enSite } from "@/content/site";
 import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
@@ -56,6 +57,8 @@ export function layoutMetadata(locale: Locale): Metadata {
     },
     twitter: { card: "summary_large_image" },
     formatDetection: { telephone: true, address: true },
+    ...(isIndexable() ? {} : { robots: { index: false, follow: false } }),
+    ...(verificationTags() ? { verification: verificationTags() } : {}),
   };
 }
 

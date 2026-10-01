@@ -10,6 +10,7 @@ const config = [
     ignores: [
       ".next/**",
       ".next-cms/**",
+      ".next-launch/**",
       ".lighthouseci/**",
       "playwright-report/**",
       "test-results/**",

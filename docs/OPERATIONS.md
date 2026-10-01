@@ -16,6 +16,8 @@ section.
 | **Shared rate limiter unavailable** | Upstash failover | Log `ratelimit.failover` (at most once a minute per instance) |
 | **Site down or degraded** | `.github/workflows/uptime.yml` every 30 min | Failed workflow email + 🔴 chat message |
 | **A preview deployment is broken** | `.github/workflows/preview-e2e.yml` | Failed check on the pull request |
+| **A production deployment is broken** (redirects, pages, headers, health) | `.github/workflows/launch-verify.yml` | Failed workflow email |
+| **A resource link went dead** | `.github/workflows/content-links.yml` (weekly) | Failed workflow email |
 
 Alerts are de-duplicated: the same problem alerts once per 15 minutes per server instance, and at most 20 alerts per
 hour, so an outage produces a handful of messages, not a flood.

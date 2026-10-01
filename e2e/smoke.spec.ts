@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { isSpanish, sitemapPaths, watchForErrors } from "./helpers";
+import { LEGACY_REDIRECTS } from "../src/lib/launch/legacyRedirects";
 
 test.describe("every page", () => {
   test.skip(({ isMobile }) => isMobile, "Covered once on desktop; layout checks run per viewport elsewhere.");
@@ -35,10 +36,16 @@ test.describe("HTTP behaviour", () => {
     await expect(page.getByRole("heading", { name: "No encontramos esa página." })).toBeVisible();
   });
 
-  test("old site URLs redirect permanently", async ({ request }) => {
-    const res = await request.get("/nursing", { maxRedirects: 0 });
-    expect(res.status()).toBe(308);
-    expect(res.headers().location).toBe("/services/nursing-care");
+  test("every old-site URL redirects permanently to a live page", async ({ request }) => {
+    for (const r of LEGACY_REDIRECTS) {
+      const res = await request.get(r.from, { maxRedirects: 0 });
+      expect(res.status(), r.from).toBe(308);
+      expect(new URL(res.headers().location!, "http://x").pathname, r.from).toBe(r.to);
+      expect((await request.get(r.from)).status(), r.to).toBe(200);
+    }
+    // Query strings (campaign tags on old printed links) survive the redirect.
+    const tagged = await request.get("/enroll-now?utm_source=flyer", { maxRedirects: 0 });
+    expect(tagged.headers().location).toBe("/getting-started?utm_source=flyer");
   });
 
   test("security headers are set", async ({ request }) => {
@@ -53,10 +60,19 @@ test.describe("HTTP behaviour", () => {
     expect(h["reporting-endpoints"]).toBe('csp="/api/csp-report"');
   });
 
-  test("sitemap lists hreflang alternates and robots disallows the API", async ({ request }) => {
+  test("sitemap lists hreflang alternates; robots keeps private paths and previews out of search", async ({ request }) => {
     const xml = await (await request.get("/sitemap.xml")).text();
     expect(xml).toContain('hreflang="es-US"');
-    expect(await (await request.get("/robots.txt")).text()).toContain("Disallow: /api/");
+    const robots = await request.get("/robots.txt");
+    const body = await robots.text();
+    if ((await request.get("/")).headers()["x-robots-tag"]?.includes("noindex")) {
+      // A preview deployment: nothing may be indexed.
+      expect(body).toContain("Disallow: /");
+      expect(body).not.toContain("Sitemap:");
+    } else {
+      expect(body).toContain("Disallow: /api/");
+      expect(body).toContain("Disallow: /admin");
+    }
   });
 });
 

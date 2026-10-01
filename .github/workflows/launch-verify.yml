@@ -1,0 +1,50 @@
+name: Production verification
+
+# Runs scripts/launch-check.mts against the live site after every successful
+# production deployment, and on demand (e.g. right after the DNS switch).
+# Checks old-site redirects, hosts, every sitemap page, headers and health.
+#
+# Setup: Settings → Variables → Actions → PRODUCTION_URL
+# (https://www.mystarsacademy.org). Without it, deployment runs are skipped.
+
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Site to verify (defaults to PRODUCTION_URL)"
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' && contains(github.event.deployment.environment, 'Production'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TARGET: ${{ github.event.inputs.url || vars.PRODUCTION_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/launch-check.mts
+            src/lib/launch
+            package.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Wait for the new deployment to be live
+        if: env.TARGET != ''
+        # Production aliases switch a few seconds after "success".
+        run: sleep 30
+      - name: Verify
+        if: env.TARGET != ''
+        run: npm run launch:check -- "$TARGET"
+      - name: Skipped
+        if: env.TARGET == ''
+        run: echo "::notice::Set the PRODUCTION_URL repository variable to verify production deployments."

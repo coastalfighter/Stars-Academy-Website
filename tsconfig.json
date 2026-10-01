@@ -41,7 +41,9 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     ".next-cms/types/**/*.ts",
-    ".next-cms/dev/types/**/*.ts"
+    ".next-cms/dev/types/**/*.ts",
+    ".next-launch/types/**/*.ts",
+    ".next-launch/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

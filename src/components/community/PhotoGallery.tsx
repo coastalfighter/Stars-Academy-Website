@@ -96,7 +96,8 @@ export function PhotoGallery({ groups, copy }: { groups: GalleryGroup[]; copy: C
                       width={p.width}
                       height={p.height}
                       sizes="(min-width: 1024px) 380px, 50vw"
-                      className="aspect-[4/3] h-auto w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      data-hover-zoom=""
+                      className="aspect-[4/3] h-auto w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                       {...(p.blurDataURL ? { placeholder: "blur" as const, blurDataURL: p.blurDataURL } : {})}
                     />
                     <span className="sr-only">{copy.open}</span>

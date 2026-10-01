@@ -155,8 +155,11 @@ Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse 
 ├── .github/workflows/preview-e2e.yml  # E2E against every Vercel preview
 ├── .github/workflows/uptime.yml     # production probe every 30 min
 ├── .github/workflows/content-links.yml  # weekly resource link check
+├── .github/workflows/launch-verify.yml  # launch check after every production deployment
 ├── docs/OPERATIONS.md               # monitoring setup + incident runbook
 ├── docs/ANALYTICS.md                # website insights: staff guide, QR/UTM tagging, privacy model
+├── docs/LAUNCH.md                   # Wix → Vercel launch runbook (DNS, email, rollback, decommission)
+├── docs/ACCESSIBILITY-AUDIT.md      # protocol for sessions with assistive-technology users
 ├── docs/CONTENT-CHECKLIST.md        # facts awaiting client confirmation
 ├── docs/EDITOR-GUIDE.md             # plain-language guide for clinic staff
 ├── studio/                          # Sanity Studio (separate package) + seed/content.ndjson
@@ -200,7 +203,7 @@ Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse 
 │       ├── observability/           # JSON logger, PII redaction, alerts, health, browser error reports
 │       ├── analytics/               # beacon protocol, normalisation, stores, collector, reports, staff auth
 │       └── hooks/useMediaQuery.ts
-├── tests/                           # 359 unit/component tests (incl. CMS, translation coverage, route integrity)
+├── tests/                           # 375 unit/component tests (incl. CMS, translation coverage, route integrity)
 ├── .env.example
 ├── playwright.config.ts             # projects: desktop, mobile, reduced-motion, cms
 ├── lighthouserc.cjs                 # Lighthouse scores + resource budgets
@@ -224,6 +227,7 @@ npm run dev                  # http://localhost:3000
 | `npm run lint` | ESLint (Next core-web-vitals + TypeScript) |
 | `npm run e2e:build` | Builds `.next` and the CMS-enabled `.next-cms` for E2E |
 | `npm run e2e` / `npm run e2e:ui` | Playwright suite (headless / interactive) |
+| `npm run launch:check -- <url>` | Verifies a live deployment (redirects, hosts, every page, headers, health) |
 | `npm run check:links` | Checks the resource library's external links (also weekly in `content-links.yml`) |
 | `npm run lhci` | Lighthouse CI against the production build (run `npm run build` first) |
 
@@ -231,13 +235,14 @@ npm run dev                  # http://localhost:3000
 
 Three layers, all run by `.github/workflows/ci.yml` on every pull request and on `main`:
 
-1. **Unit and component tests** (Vitest, 359 tests): community content (event, resource and gallery validation,
+1. **Unit and component tests** (Vitest, 375 tests): launch readiness (old-URL coverage, redirect targets, preview
+   noindex, placeholder guard, the launch checker against a faulty fake site), community content (event, resource and gallery validation,
    consent, language fallback, clinic-time formatting, RFC 5545 calendar files, the photo viewer, link checks), analytics (normalisation, stores, collector, consent,
    reports, staff sessions), validation and the PHI guard, delivery signing, rate
    limiting (memory, Upstash, failover), the origin guard, logging redaction, alerts, CSP and browser error
    reports, health, the uptime probe, error pages, CMS schemas, webhook signatures and preview, timeline maths, calm mode and
    WebGL detection, translation coverage and route integrity.
-2. **End-to-end** (Playwright, 128 tests across 4 projects; 105 run against previews). The suite builds the site twice: once with bundled
+2. **End-to-end** (Playwright, 130 tests across 4 projects; 107 run against previews). The suite builds the site twice: once with bundled
    content, and once with the CMS on, where Sanity is answered by `e2e/fixtures/mock-sanity.cjs`. A local
    receiver captures delivered inquiries so the HMAC signature can be checked.
    - `smoke`: every sitemap URL loads with the right `lang`, one `h1`, metadata and no console errors. Also
@@ -356,6 +361,28 @@ in text · visible focus rings · focus-trapped mobile menu with Escape · form 
 with `aria-invalid` and `aria-describedby` on fields · minimum 44 px touch targets · AA contrast · calm mode
 and `prefers-reduced-motion` support.
 
+## Launch
+
+**[docs/LAUNCH.md](docs/LAUNCH.md)** is the step-by-step move from Wix: the content sprint, services, DNS changes
+in Wix, email (the domain has no mail service today), rollback, Search Console and retiring Wix.
+**[docs/ACCESSIBILITY-AUDIT.md](docs/ACCESSIBILITY-AUDIT.md)** is the protocol for pre-launch sessions with
+assistive-technology users.
+
+- **Old URLs**: every page of the Wix site, taken from its own sitemap, is covered
+  (`src/lib/launch/legacyRedirects.ts`). Unit tests prove each target is a real page, in one hop, and E2E checks
+  every redirect.
+- **Previews stay out of search**: deployments other than production send `noindex`, through robots.txt, an
+  `X-Robots-Tag` header and a robots meta tag.
+- **`npm run launch:check -- <url>`** checks a live deployment:
+  - www, apex and http hosts;
+  - all old URLs;
+  - every sitemap page (status, canonical, `lang`, no `noindex`, no placeholder text);
+  - robots.txt, security headers, a real 404, and health.
+
+  It runs after every production deployment (`launch-verify.yml`).
+- **Placeholder guard**: a unit test fails if shipped content contains `[Client to confirm]`, TODO, lorem ipsum,
+  example domains or 555 numbers.
+
 ## Deployment
 
 Built for Vercel (or any Node 20.9+ host). Set `NEXT_PUBLIC_SITE_URL` and at least one delivery channel
@@ -373,5 +400,9 @@ checklist in [docs/OPERATIONS.md](docs/OPERATIONS.md) (alerts, Upstash, uptime, 
 - ~~Milestone 6: shared rate limiting, CSP reporting, error and uptime monitoring, preview E2E~~
 - ~~Milestone 7: privacy-friendly analytics, "how did you hear" field, staff insights dashboard~~
 - ~~Milestone 8: events calendar, family resource library, Our Team, photo gallery (all CMS-managed)~~
-9. **Launch**: point the domain at Vercel and set up redirects from every old URL. Run a content-entry sprint with
-   staff, do a final accessibility audit with assistive-technology users, and then decommission the old site.
+- ~~Milestone 9: launch readiness: old-URL redirects, preview noindex, launch checker, runbook, accessibility
+  audit protocol~~
+10. **After launch (optional)**:
+    - online enrollment intake that replaces the Adobe Sign packet with a HIPAA-eligible form service and a BAA;
+    - a referral-partner portal for secure prescription upload;
+    - an SMS closure-alert sign-up for families.

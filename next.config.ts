@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 import { REPORTING_ENDPOINTS, buildCsp } from "./src/lib/security/csp";
+import { nextRedirects } from "./src/lib/launch/legacyRedirects";
+import { isIndexable } from "./src/lib/launch/indexing";
 
 const isDev = process.env.NODE_ENV !== "production";
 
@@ -35,7 +37,14 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
-      { source: "/:path*", headers: securityHeaders },
+      {
+        source: "/:path*",
+        headers: [
+          ...securityHeaders,
+          // Belt and braces with robots.txt: previews say noindex on every response.
+          ...(isIndexable() ? [] : [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]),
+        ],
+      },
       {
         source: "/api/:path*",
         headers: [{ key: "Cache-Control", value: "no-store" }],
@@ -51,15 +60,8 @@ const nextConfig: NextConfig = {
     ];
   },
   async redirects() {
-    // Preserve the URLs of the previous site so existing links and search
-    // results keep working after launch.
-    return [
-      { source: "/speech-therapy", destination: "/services/speech-therapy", permanent: true },
-      { source: "/occupational-therapy", destination: "/services/occupational-therapy", permanent: true },
-      { source: "/physical-therapy", destination: "/services/physical-therapy", permanent: true },
-      { source: "/nursing", destination: "/services/nursing-care", permanent: true },
-      { source: "/classrooms", destination: "/services/developmental-classrooms", permanent: true },
-    ];
+    // Every page of the previous (Wix) site keeps working. See src/lib/launch/legacyRedirects.ts.
+    return nextRedirects();
   },
 };
 

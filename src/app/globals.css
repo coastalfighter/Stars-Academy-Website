@@ -155,6 +155,9 @@ html[data-calm="true"] *::after {
   transition-duration: 0.001ms !important;
   scroll-behavior: auto !important;
 }
+html[data-calm="true"] [data-hover-zoom] {
+  transform: none !important;
+}
 html[data-calm="true"] [data-reveal] {
   opacity: 1 !important;
   transform: none !important;
