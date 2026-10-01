@@ -2,7 +2,9 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionary";
 import { hasLocale, href, serviceHref } from "@/i18n/routes";
-import { faqsIn, getContent } from "@/content";
+import { getContent } from "@/content";
+import { faqsInGroup, getAnnouncements, getFaqs } from "@/cms/repository";
+import { AnnouncementList } from "@/components/cms/AnnouncementList";
 import { familiesCopy } from "@/content/copy/families";
 import { PageHero } from "@/components/page/PageHero";
 import { Section, SectionIntro } from "@/components/page/Section";
@@ -11,17 +13,18 @@ import { NextStep } from "@/components/page/NextStep";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 
-export function FamiliesView({ locale }: { locale: Locale }) {
+export async function FamiliesView({ locale }: { locale: Locale }) {
   const t = familiesCopy[locale];
   const d = getDictionary(locale);
-  const c = getContent(locale);
-  const { site, pages } = c;
+  const { site, pages } = getContent(locale);
+  const [announcements, faqs] = await Promise.all([getAnnouncements(locale), getFaqs(locale)]);
   const resources = [
     { ...t.resources[0]!, href: site.consciousDisciplineUrl, external: true },
     { ...t.resources[1]!, href: href(locale, "approach"), external: false },
     { ...t.resources[2]!, href: site.social.facebook, external: true },
   ];
   const toc = [
+    ...(announcements.length ? [{ id: "announcements", title: d.cms.announcementsEyebrow }] : []),
     ...pages.familyTopics.map((topic) => ({ id: topic.id, title: topic.title })),
     { id: "resources", title: t.resourcesNav },
     { id: "contact", title: t.contactNav },
@@ -46,7 +49,7 @@ export function FamiliesView({ locale }: { locale: Locale }) {
       <Section tone="paper" labelledBy="topics-title">
         <div className="grid gap-12 lg:grid-cols-12">
           <nav aria-labelledby="topics-title" className="lg:col-span-4">
-            <div className="lg:sticky lg:top-32">
+            <div className="lg:sticky lg:top-[calc(8rem+var(--announce-h,0px))]">
               <h2 id="topics-title" className="eyebrow">
                 {d.common.onThisPage}
               </h2>
@@ -62,6 +65,17 @@ export function FamiliesView({ locale }: { locale: Locale }) {
             </div>
           </nav>
           <div className="space-y-5 lg:col-span-8">
+            {announcements.length ? (
+              <section aria-labelledby="announcements" className="mb-10">
+                <p className="eyebrow">{d.cms.announcementsEyebrow}</p>
+                <h3 id="announcements" className="mt-3 scroll-mt-28 font-display text-3xl">
+                  {d.cms.announcementsTitle}
+                </h3>
+                <div className="mt-6">
+                  <AnnouncementList items={announcements} locale={locale} />
+                </div>
+              </section>
+            ) : null}
             {pages.familyTopics.map((topic) => (
               <Reveal as="section" key={topic.id} className="card p-7 sm:p-9">
                 <h3 id={topic.id} className="scroll-mt-28 font-display text-2xl">
@@ -137,7 +151,7 @@ export function FamiliesView({ locale }: { locale: Locale }) {
             <SectionIntro id="quick-title" eyebrow={t.quickEyebrow} title={t.quickTitle} />
           </div>
           <div className="lg:col-span-8">
-            <FaqList items={faqsIn(c, "current")} />
+            <FaqList items={faqsInGroup(faqs, "current")} />
           </div>
         </div>
       </Section>

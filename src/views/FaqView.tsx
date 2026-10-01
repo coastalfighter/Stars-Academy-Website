@@ -1,6 +1,7 @@
 import type { Locale } from "@/i18n/config";
 import { href } from "@/i18n/routes";
-import { faqsIn, getContent } from "@/content";
+import { getContent } from "@/content";
+import { faqsInGroup, getFaqs } from "@/cms/repository";
 import { faqSchema } from "@/content/faq";
 import { faqCopy } from "@/content/copy/faq";
 import { PageHero } from "@/components/page/PageHero";
@@ -10,10 +11,11 @@ import { NextStep } from "@/components/page/NextStep";
 import { ButtonLink } from "@/components/ui/Button";
 import { JsonLd } from "@/components/seo/JsonLd";
 
-export function FaqView({ locale }: { locale: Locale }) {
+export async function FaqView({ locale }: { locale: Locale }) {
   const t = faqCopy[locale];
-  const c = getContent(locale);
-  const { site, faqGroups, faqs } = c;
+  const { site, faqGroups } = getContent(locale);
+  const faqs = await getFaqs(locale);
+  const groups = faqGroups.filter((g) => faqsInGroup(faqs, g.id).length > 0);
 
   return (
     <>
@@ -36,7 +38,7 @@ export function FaqView({ locale }: { locale: Locale }) {
       >
         <nav aria-label={t.topics} className="mt-8">
           <ul className="flex flex-wrap gap-2">
-            {faqGroups.map((g) => (
+            {groups.map((g) => (
               <li key={g.id}>
                 <a
                   href={`#${g.id}`}
@@ -50,14 +52,14 @@ export function FaqView({ locale }: { locale: Locale }) {
         </nav>
       </PageHero>
 
-      {faqGroups.map((g, i) => (
+      {groups.map((g, i) => (
         <Section key={g.id} id={g.id} tone={i % 2 === 0 ? "paper" : "cream"} labelledBy={`${g.id}-title`} className="!py-16">
           <div className="grid gap-8 lg:grid-cols-12">
             <h2 id={`${g.id}-title`} className="display-md lg:col-span-4">
               {g.label}
             </h2>
             <div className="lg:col-span-8">
-              <FaqList items={faqsIn(c, g.id)} />
+              <FaqList items={faqsInGroup(faqs, g.id)} />
             </div>
           </div>
         </Section>

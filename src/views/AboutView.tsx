@@ -8,16 +8,19 @@ import { PageHero } from "@/components/page/PageHero";
 import { Section, SectionIntro } from "@/components/page/Section";
 import { NextStep } from "@/components/page/NextStep";
 import { ContactCard } from "@/components/page/ContactCard";
+import { SouthCampusCard } from "@/components/cms/SouthCampusCard";
+import { getSiteSettings, getTeam } from "@/cms/repository";
 import { ButtonLink } from "@/components/ui/Button";
 import { CountUp } from "@/components/ui/CountUp";
 import { Reveal } from "@/components/ui/Reveal";
 
 const LETTER_COLORS = ["text-gold-deep", "text-coral-deep", "text-teal-deep", "text-blue-deep", "text-berry"] as const;
 
-export function AboutView({ locale }: { locale: Locale }) {
+export async function AboutView({ locale }: { locale: Locale }) {
   const t = aboutCopy[locale];
   const d = getDictionary(locale);
   const { site, values, pages, photos } = getContent(locale);
+  const [team, settings] = await Promise.all([getTeam(locale), getSiteSettings(locale)]);
   const socialClass =
     "inline-flex min-h-11 items-center rounded-full border border-ink/15 bg-white/70 px-5 text-sm font-semibold hover:border-ink/40";
 
@@ -104,11 +107,36 @@ export function AboutView({ locale }: { locale: Locale }) {
         </div>
       </Section>
 
+      {team.length > 0 ? (
+        <Section tone="paper" labelledBy="leadership-title">
+          <SectionIntro id="leadership-title" eyebrow={d.cms.leadershipEyebrow} title={d.cms.leadershipTitle} />
+          <ul className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {team.map((m) => (
+              <Reveal as="li" key={m.id} className="card p-7">
+                <p className="font-display text-2xl">
+                  {m.name}
+                  {m.credentials ? <span className="text-lg text-muted">, {m.credentials}</span> : null}
+                </p>
+                <p className="mt-1 font-semibold text-teal-deep" lang={m.role.lang}>
+                  {m.role.text}
+                </p>
+                {m.bio ? (
+                  <p className="mt-4 whitespace-pre-line leading-relaxed text-ink-soft" lang={m.bio.lang}>
+                    {m.bio.text}
+                  </p>
+                ) : null}
+              </Reveal>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
+
       <Section labelledBy="facilities-title">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <SectionIntro id="facilities-title" eyebrow={t.facilitiesEyebrow} title={t.facilitiesTitle} lede={t.facilitiesLede} />
           <div className="space-y-4">
             <ContactCard locale={locale} />
+            {settings.southCampus ? <SouthCampusCard campus={settings.southCampus} locale={locale} /> : null}
             <div className="flex flex-wrap gap-3">
               <a href={site.social.facebook} target="_blank" rel="noopener noreferrer" className={socialClass}>
                 {t.facebook}

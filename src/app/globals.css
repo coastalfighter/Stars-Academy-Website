@@ -232,3 +232,10 @@ html[data-calm="true"] [data-reveal] {
     @apply font-semibold text-teal-deep underline decoration-2 underline-offset-4;
   }
 }
+
+/* Pinned scroll sections sit just below an active announcement banner. */
+.sticky-below-banner {
+  position: sticky;
+  top: var(--announce-h, 0px);
+  height: calc(100vh - var(--announce-h, 0px));
+}

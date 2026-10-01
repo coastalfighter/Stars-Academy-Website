@@ -86,6 +86,58 @@ The Spanish site covers everything a family needs. Referral-partner and careers 
 > **Before launch:** the Spanish text must be reviewed by a qualified health-care translator, and the official
 > Spanish USDA nondiscrimination statement must replace the provisional translation. See the content checklist.
 
+## Content management (Sanity)
+
+Staff edit the content that changes most often in a hosted Sanity Studio
+(`studio/`, deployed free at `stars-academy.sanity.studio`). See the
+[staff guide](docs/EDITOR-GUIDE.md).
+
+| In the CMS (bilingual) | Where it appears |
+|---|---|
+| Announcements & closures | Banner on every page (most important first, dismissible), Current Families page |
+| FAQs | FAQ page, Getting Started, Current Families, Referrals, Careers, Nursing |
+| Job openings (English) | Careers |
+| Leadership | About |
+| Family testimonials (consent required) | Home ("In families' words") |
+| Contact details: fax, email, STARS Academy South | Contact, About |
+
+Long-form page copy stays in code, where it is reviewed and translation-checked.
+
+**How it works**
+
+- **No SDK in the site bundle.** `src/cms/client.ts` sends GROQ queries over Sanity's HTTP API and validates
+  every response with zod (`src/cms/schemas.ts`). CMS data is treated as untrusted: text is length-bounded, enums
+  are checked, links are limited to http(s)/tel/mailto/site paths, and invalid items are dropped one at a time.
+- **The bundled content is always the fallback.** If the CMS isn't configured, returns an error, or times out
+  (5 s), the repositories in `src/cms/repository.ts` return the content in `src/content`. A CMS outage can't take
+  the site down.
+- **Pages stay static.** Reads use `force-cache` with a cache tag per document type. Publishing triggers a
+  signed webhook to `POST /api/revalidate` (HMAC-SHA256, replay window 5 min), which refreshes only that tag.
+  Announcements use `{ expire: 0 }`, so a closure shows on the very next request; everything else refreshes in
+  the background. Safety nets: announcements revalidate every 5 min (start/end times), everything else hourly.
+- **Preview without shared secrets.** The Studio's "Preview on website" action writes a one-hour random secret
+  under a private document path (only signed-in editors can, and public reads can't see it). The site checks the
+  secret server-side with `SANITY_READ_TOKEN`, then enables Next.js draft mode. Redirects are limited to site paths.
+- **Healthcare guardrails in the editor.** Testimonials can't be published without consent on file. Text that
+  looks like PHI triggers a warning. A missing Spanish translation triggers a warning, and the site falls back to
+  English with `lang="en-US"`.
+
+**Setup (one time)**
+
+1. Create a free project at sanity.io/manage. In `studio/`, copy `.env.example` to `.env`, then run
+   `npm install` and `npm run deploy`.
+2. Import today's content: from the repo root, run `npm run cms:seed`; then in `studio/`, run
+   `npx sanity dataset import seed/content.ndjson production`.
+3. In Sanity → API: add a **viewer** token (`SANITY_READ_TOKEN`), a CORS origin for the Studio, and a webhook
+   (POST `https://<site>/api/revalidate`, projection `{_type, _id}`, secret = `SANITY_WEBHOOK_SECRET`; trigger on
+   create, update and delete).
+4. Set `SANITY_PROJECT_ID`, `SANITY_DATASET`, `SANITY_READ_TOKEN` and `SANITY_WEBHOOK_SECRET` on the host, then
+   redeploy once.
+
+The Studio's `npm audit` lists advisories in Sanity's CLI build tooling (zip, YAML and TOML parsers). These run
+only on a developer machine during `sanity build/deploy` and aren't part of the deployed Studio or the website
+(which audits clean).
+
 ## Stack
 
 Next.js 16 (App Router, TypeScript strict) · React 19 · Tailwind CSS v4 · three.js + React Three Fiber + drei ·
@@ -96,6 +148,9 @@ Lenis · zod · Vitest + Testing Library.
 ```
 .
 ├── docs/CONTENT-CHECKLIST.md        # facts awaiting client confirmation
+├── docs/EDITOR-GUIDE.md             # plain-language guide for clinic staff
+├── studio/                          # Sanity Studio (separate package) + seed/content.ndjson
+├── scripts/export-cms-seed.ts       # bundled content → CMS seed
 ├── public/                          # favicon + client photography
 ├── src/
 │   ├── app/
@@ -115,6 +170,7 @@ Lenis · zod · Vitest + Testing Library.
 │   │   ├── forms/InquiryForm.tsx
 │   │   ├── seo/JsonLd.tsx           # schema.org MedicalClinic
 │   │   └── ui/                      # Button, Reveal, CountUp, ScrollRail, StarMark
+│   ├── cms/                         # Sanity client, schemas, repositories, webhook, preview
 │   ├── views/                       # one locale-aware component per page
 │   ├── i18n/                        # locales, route map, UI dictionaries, messages, metadata
 │   ├── content/                     # English facts & lists; es/ mirrors; copy/ = page copy (en + es)
@@ -124,7 +180,7 @@ Lenis · zod · Vitest + Testing Library.
 │       ├── inquiry/                 # request handler + email/webhook delivery
 │       ├── security/                # rate limiter, origin (CSRF) guard
 │       └── hooks/useMediaQuery.ts
-├── tests/                           # 156 unit/component tests (incl. translation coverage, route integrity)
+├── tests/                           # 219 unit/component tests (incl. CMS, translation coverage, route integrity)
 ├── .env.example
 └── next.config.ts                   # security headers (CSP, HSTS…), legacy redirects
 ```
@@ -182,7 +238,7 @@ Built for Vercel (or any Node 20.9+ host). Set `NEXT_PUBLIC_SITE_URL` and at lea
 - ~~Milestone 1: 3D home page, service pages, inquiry API~~
 - ~~Milestone 2: every remaining page, form presets, legal pages, shared page system~~
 - ~~Milestone 3: Spanish site, bilingual forms/API, hreflang, bilingual 404~~
-4. **CMS integration** so staff can edit copy, announcements and the checklist items without a deploy.
+- ~~Milestone 4: Sanity CMS for announcements, FAQs, roles, leadership, testimonials, contact details~~
 5. **Shared rate-limit store** (Upstash Redis) and privacy-friendly analytics, if STARS wants them (the privacy
    notice would need updating).
 6. **Playwright E2E + Lighthouse CI** budgets for performance and accessibility.

@@ -14,6 +14,8 @@ export type Faq = {
   question: string;
   /** Plain-text paragraphs. Kept as text so it can also feed FAQPage JSON-LD. */
   answer: string[];
+  /** Set when shown in a different language than the page (untranslated CMS entry). */
+  lang?: string;
 };
 
 export const faqGroups: { id: FaqGroupId; label: string }[] = [

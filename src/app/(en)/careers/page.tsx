@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { hiringSteps, openRoles, whyStars } from "@/content/pages";
+import { hiringSteps, whyStars } from "@/content/pages";
 import { values } from "@/content/site";
-import { faqsByGroup } from "@/content/faq";
+import { faqsInGroup, getFaqs, getJobOpenings } from "@/cms/repository";
 import { photos } from "@/content/photos";
 import { PageHero } from "@/components/page/PageHero";
 import { Section, SectionIntro } from "@/components/page/Section";
@@ -20,7 +20,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/careers" },
 };
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const [faqs, openings] = await Promise.all([getFaqs("en"), getJobOpenings()]);
   return (
     <>
       <PageHero
@@ -89,7 +90,7 @@ export default function CareersPage() {
           lede="We hire for these roles on an ongoing basis. Don’t see your role? Apply anyway — we’d like to hear from you."
         />
         <ul className="mt-10 grid gap-4 lg:grid-cols-2">
-          {openRoles.map((r) => (
+          {openings.map((r) => (
             <Reveal as="li" key={r.id} className="flex flex-col rounded-[var(--radius-card)] border border-cream/10 bg-cream/[0.03] p-7">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-gold">{r.team}</p>
               <h3 className="mt-2 font-display text-2xl">{r.title}</h3>
@@ -105,7 +106,7 @@ export default function CareersPage() {
                   ))}
                 </ul>
               </div>
-              <ButtonLink href={`/careers/apply?position=${r.id}`} variant="secondary" className="mt-6 self-start" arrow>
+              <ButtonLink href={r.position ? `/careers/apply?position=${r.position}` : "/careers/apply"} variant="secondary" className="mt-6 self-start" arrow>
                 Apply<span className="sr-only"> for {r.title}</span>
               </ButtonLink>
             </Reveal>
@@ -126,7 +127,7 @@ export default function CareersPage() {
             <SectionIntro id="jobs-faq-title" eyebrow="Questions" title="Careers FAQ" />
           </div>
           <div className="lg:col-span-8">
-            <FaqList items={faqsByGroup("jobs")} />
+            <FaqList items={faqsInGroup(faqs, "jobs")} />
           </div>
         </div>
       </Section>

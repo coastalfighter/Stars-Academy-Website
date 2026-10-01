@@ -11,8 +11,10 @@ import { ButtonLink } from "@/components/ui/Button";
 import { StarMark } from "@/components/ui/StarMark";
 import { CalmToggle } from "./CalmToggle";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { AnnouncementBanner } from "@/components/cms/AnnouncementBanner";
+import type { Announcement } from "@/cms/repository";
 
-export function Header({ locale }: { locale: Locale }) {
+export function Header({ locale, announcement = null }: { locale: Locale; announcement?: Announcement | null }) {
   const d = getDictionary(locale);
   const { site, services } = getContent(locale);
   const primaryNav = d.nav.primary.map((n) => ({ label: n.label, href: href(locale, n.key) }));
@@ -72,6 +74,7 @@ export function Header({ locale }: { locale: Locale }) {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
+      {announcement ? <AnnouncementBanner announcement={announcement} locale={locale} /> : null}
       <div className="hidden bg-ink text-cream/90 md:block">
         <div className="container-x flex h-9 items-center justify-between text-xs">
           <p className="hidden truncate xl:block">{d.header.topbar}</p>

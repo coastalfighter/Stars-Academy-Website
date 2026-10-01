@@ -3,7 +3,8 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionary";
 import { href, serviceHref } from "@/i18n/routes";
-import { faqsIn, getContent } from "@/content";
+import { getContent } from "@/content";
+import { faqsInGroup, getFaqs } from "@/cms/repository";
 import { gettingStartedCopy } from "@/content/copy/gettingStarted";
 import { PageHero } from "@/components/page/PageHero";
 import { Section, SectionIntro } from "@/components/page/Section";
@@ -14,11 +15,11 @@ import { InquiryForm } from "@/components/forms/InquiryForm";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 
-export function GettingStartedView({ locale }: { locale: Locale }) {
+export async function GettingStartedView({ locale }: { locale: Locale }) {
   const t = gettingStartedCopy[locale];
   const d = getDictionary(locale);
-  const c = getContent(locale);
-  const { site, pages, photos } = c;
+  const { site, pages, photos } = getContent(locale);
+  const faqs = await getFaqs(locale);
   const practical = [
     { title: t.practical.hours, body: site.hours.display },
     { title: t.practical.transportation, body: t.practical.transportationBody },
@@ -144,7 +145,7 @@ export function GettingStartedView({ locale }: { locale: Locale }) {
             </ButtonLink>
           </div>
           <div className="lg:col-span-8">
-            <FaqList items={faqsIn(c, "families")} />
+            <FaqList items={faqsInGroup(faqs, "families")} />
           </div>
         </div>
       </Section>

@@ -1,0 +1,28 @@
+{
+  "name": "stars-academy-studio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Sanity Studio for editing STARS Academy website content.",
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "typecheck": "tsc --noEmit",
+    "import-seed": "sanity dataset import seed/content.ndjson production --missing"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "dependencies": {
+    "@sanity/vision": "^6.17.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "sanity": "^6.17.0",
+    "styled-components": "^6.5.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "typescript": "^7.0.2"
+  }
+}

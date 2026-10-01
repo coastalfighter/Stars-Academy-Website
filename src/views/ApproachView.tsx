@@ -41,7 +41,7 @@ export function ApproachView({ locale }: { locale: Locale }) {
       <Section tone="paper" labelledBy="pillars-title">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <div className="lg:sticky lg:top-32">
+            <div className="lg:sticky lg:top-[calc(8rem+var(--announce-h,0px))]">
               <SectionIntro id="pillars-title" eyebrow={t.pillarsEyebrow} title={t.pillarsTitle} />
               <nav aria-label={t.topicsLabel} className="mt-8">
                 <ol className="space-y-1">

@@ -1,5 +1,10 @@
 # Content checklist — items for STARS to confirm
 
+> **Since Milestone 4, staff can enter many of these directly in the CMS** (see `docs/EDITOR-GUIDE.md`):
+> closures and weather notices, holiday closures and announcements, leadership profiles, family testimonials
+> (with consent), the fax number, the general email, the STARS Academy South address, job openings, and new
+> FAQs (for example the weather-closure question). Items marked 🛠 still need a developer.
+
 The redesign only publishes facts that appear on the current STARS website.
 Anything that site marked **[Client to confirm]** is listed here instead of being shown to visitors.
 Once STARS confirms an item, add it to `src/content/*.ts`.
@@ -55,6 +60,11 @@ Once STARS confirms an item, add it to `src/content/*.ts`.
 
 ## Careers (Milestone 2)
 - [ ] Résumé collection: the new site sends applicants to the Adobe Sign application (which accepts attachments) rather than accepting file uploads on the website — confirm this is acceptable
+
+## CMS setup (Milestone 4)
+- [ ] 🛠 Create the Sanity project, deploy the Studio, import the seed, add the webhook and token (README → Content management)
+- [ ] Invite staff editors to the Sanity project (Editor role); keep tokens with the web team only
+- [ ] Decide who may publish testimonials and how written consent forms are filed
 
 ## Spanish site (Milestone 3)
 - [ ] **Professional health-care translation review** of all Spanish copy: `src/content/es/*`, the `es` blocks in `src/content/copy/*`, `src/i18n/dictionaries/es.ts` and `src/i18n/messages.ts`. Register is formal *usted* and neutral U.S. Spanish.

@@ -38,7 +38,7 @@ function PinnedDay({ locale, t, c }: Props) {
 
   return (
     <div className="relative h-[420vh]">
-      <div className="sticky top-0 flex h-screen flex-col justify-between pt-36 pb-12">
+      <div className="sticky-below-banner flex flex-col justify-between pt-36 pb-12">
         <div className="container-x flex items-start justify-between gap-10">
           <Intro t={t} />
           <div className="glass hidden shrink-0 px-7 py-5 text-right xl:block" aria-hidden="true">

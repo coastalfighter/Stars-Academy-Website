@@ -3,7 +3,7 @@ import Link from "next/link";
 import { referralCriteria, referralFacts, site } from "@/content/site";
 import { referralSpeechApproaches, referralSteps, schoolTransition } from "@/content/pages";
 import { services } from "@/content/services";
-import { faqsByGroup } from "@/content/faq";
+import { faqsInGroup, getFaqs } from "@/cms/repository";
 import { PageHero } from "@/components/page/PageHero";
 import { Section, SectionIntro } from "@/components/page/Section";
 import { StepList } from "@/components/page/Lists";
@@ -20,7 +20,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/referrals" },
 };
 
-export default function ReferralsPage() {
+export default async function ReferralsPage() {
+  const faqs = await getFaqs("en");
   return (
     <>
       <PageHero
@@ -162,7 +163,7 @@ export default function ReferralsPage() {
             <SectionIntro id="ref-faq-title" eyebrow="Questions" title="Referral FAQs" />
           </div>
           <div className="lg:col-span-8">
-            <FaqList items={faqsByGroup("partners")} />
+            <FaqList items={faqsInGroup(faqs, "partners")} />
           </div>
         </div>
       </Section>

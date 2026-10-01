@@ -35,7 +35,7 @@ const COPIES = {
 } as const;
 
 /** Strings that are legitimately identical in both languages. */
-const SAME_IN_BOTH = /^(STARS.*|Conscious Discipline|English|Español|No|Email|FAQ|Facebook|Instagram|20\d\d|\d.*| ?\([^)]*\)|)$/;
+const SAME_IN_BOTH = /^(STARS.*|Conscious Discipline|English|Español|No|Email|Fax|FAQ|Facebook|Instagram|20\d\d|\d.*| ?\([^)]*\)|)$/;
 
 describe("Spanish translation coverage", () => {
   it.each(Object.entries(COPIES))("%s has the same shape in both languages", (_, copy) => {

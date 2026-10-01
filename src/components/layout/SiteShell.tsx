@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { draftMode } from "next/headers";
 import { fraunces, figtree } from "@/app/fonts";
 import { HTML_LANG, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionary";
@@ -7,6 +8,8 @@ import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { JsonLd, organizationSchema } from "@/components/seo/JsonLd";
+import { DraftModeBar } from "@/components/cms/DraftModeBar";
+import { getAnnouncements } from "@/cms/repository";
 
 /**
  * Runs before paint: marks JS as available (enables reveal animations) and
@@ -19,10 +22,20 @@ const bootScript = `(function(){try{var d=document.documentElement;d.classList.a
  * layout (route groups), so <html lang> is correct in the server-rendered
  * HTML — required for WCAG 3.1.1 and for screen-reader pronunciation.
  */
-export function SiteShell({ locale, children }: { locale: Locale; children: ReactNode }) {
+export async function SiteShell({ locale, children }: { locale: Locale; children: ReactNode }) {
   const d = getDictionary(locale);
+  const [announcements, draft] = await Promise.all([getAnnouncements(locale), draftMode()]);
+  const banner = announcements.find((a) => a.banner) ?? null;
+  // Server-side estimate of the banner height (its 44px close button + padding) so content doesn't jump
+  // before the banner measures itself in the browser.
+  const htmlStyle = banner ? ({ "--announce-h": "4rem" } as CSSProperties) : undefined;
   return (
-    <html lang={HTML_LANG[locale]} className={`${fraunces.variable} ${figtree.variable}`} suppressHydrationWarning>
+    <html
+      lang={HTML_LANG[locale]}
+      className={`${fraunces.variable} ${figtree.variable}`}
+      style={htmlStyle}
+      suppressHydrationWarning
+    >
       {/* App Router root layouts render <head> directly; the rule targets the Pages Router. */}
       {/* eslint-disable-next-line @next/next/no-head-element */}
       <head>
@@ -37,11 +50,12 @@ export function SiteShell({ locale, children }: { locale: Locale; children: Reac
         </a>
         <MotionProvider>
           <SmoothScroll />
-          <Header locale={locale} />
-          <main id="main" tabIndex={-1} className="outline-none">
+          <Header locale={locale} announcement={banner} />
+          <main id="main" tabIndex={-1} className="outline-none" style={{ paddingTop: "var(--announce-h, 0px)" }}>
             {children}
           </main>
           <Footer locale={locale} />
+          {draft.isEnabled ? <DraftModeBar locale={locale} /> : null}
         </MotionProvider>
         <JsonLd data={organizationSchema()} />
       </body>

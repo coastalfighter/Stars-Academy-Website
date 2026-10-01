@@ -1,12 +1,16 @@
 import type { Locale } from "@/i18n/config";
 import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
+import { getDictionary } from "@/i18n/dictionary";
+import { getTestimonials } from "@/cms/repository";
 import { Reveal } from "@/components/ui/Reveal";
 import { CountUp } from "@/components/ui/CountUp";
 
-export function Trust({ locale }: { locale: Locale }) {
+export async function Trust({ locale }: { locale: Locale }) {
   const t = homeCopy[locale].trust;
   const { site, values } = getContent(locale);
+  const [testimonial] = await getTestimonials(locale);
+  const d = getDictionary(locale);
   return (
     <section aria-labelledby="trust-title" className="relative z-10 bg-ink py-28 text-cream lg:py-36">
       <div className="container-x">
@@ -27,6 +31,20 @@ export function Trust({ locale }: { locale: Locale }) {
             </Reveal>
           ))}
         </dl>
+
+        {testimonial ? (
+          <Reveal as="section" className="mt-16 max-w-4xl">
+            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-cream/60">{d.cms.testimonialsEyebrow}</h3>
+            <figure className="mt-5">
+              <blockquote className="font-display text-3xl leading-snug text-cream" lang={testimonial.quote.lang}>
+                “{testimonial.quote.text}”
+              </blockquote>
+              <figcaption className="mt-4 text-gold" lang={testimonial.attribution.lang}>
+                — {testimonial.attribution.text}
+              </figcaption>
+            </figure>
+          </Reveal>
+        ) : null}
 
         <div className="mt-16">
           <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-cream/60">{t.valuesTitle}</h3>

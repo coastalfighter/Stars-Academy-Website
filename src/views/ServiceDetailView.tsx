@@ -2,7 +2,8 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionary";
 import { hasLocale, href, serviceHref } from "@/i18n/routes";
-import { getContent, faqsWithIds, findService } from "@/content";
+import { getContent, findService } from "@/content";
+import { faqsByKeys, getFaqs } from "@/cms/repository";
 import type { ServiceSlug } from "@/content/services";
 import { considerHeading, servicesCopy, whatIsHeading } from "@/content/copy/services";
 import { site as enSite } from "@/content/site";
@@ -13,12 +14,13 @@ import { PageHero } from "@/components/page/PageHero";
 import { FaqList } from "@/components/page/FaqList";
 
 /** One discipline's page. Rendered for every service in every language. */
-export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: ServiceSlug }) {
+export async function ServiceDetailView({ locale, slug }: { locale: Locale; slug: ServiceSlug }) {
   const c = getContent(locale);
   const t = servicesCopy[locale].detail;
   const d = getDictionary(locale);
   const service = findService(c, slug);
   if (!service) return null;
+  const nursingFaqs = service.slug === "nursing-care" ? faqsByKeys(await getFaqs(locale), ["medically-complex"]) : [];
 
   const index = c.services.findIndex((s) => s.slug === service.slug);
   const next = c.services[(index + 1) % c.services.length];
@@ -201,14 +203,14 @@ export function ServiceDetailView({ locale, slug }: { locale: Locale; slug: Serv
         </section>
       ) : null}
 
-      {service.slug === "nursing-care" ? (
+      {nursingFaqs.length > 0 ? (
         <section aria-labelledby="svc-faq-title" className="py-20">
           <div className="container-x grid gap-10 lg:grid-cols-12">
             <h2 id="svc-faq-title" className="display-md lg:col-span-4">
               {t.nursingFaqTitle}
             </h2>
             <div className="lg:col-span-8">
-              <FaqList items={faqsWithIds(c, ["medically-complex"])} />
+              <FaqList items={nursingFaqs} />
             </div>
           </div>
         </section>

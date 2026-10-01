@@ -11,7 +11,7 @@ export function FaqList({ items, schema = false }: { items: readonly Faq[]; sche
     <>
       <div className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper shadow-[var(--shadow-soft)]">
         {items.map((f) => (
-          <details key={f.id} id={`faq-${f.id}`} className="group scroll-mt-28">
+          <details key={f.id} id={`faq-${f.id}`} lang={f.lang} className="group scroll-mt-28">
             <summary className="flex cursor-pointer list-none items-start justify-between gap-6 px-6 py-5 font-display text-lg leading-snug transition-colors hover:bg-cream sm:px-8 [&::-webkit-details-marker]:hidden">
               {f.question}
               <span

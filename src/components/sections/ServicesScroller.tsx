@@ -39,7 +39,7 @@ function PinnedServices({ locale, t, services }: Props) {
 
   return (
     <div className="relative h-[460vh]">
-      <div className="sticky top-0 flex h-screen items-center pt-28 pb-6">
+      <div className="sticky-below-banner flex items-center pt-28 pb-6">
         <div className="container-x grid grid-cols-12 items-center gap-10">
           <div className="col-span-6 xl:col-span-5">
             <Intro t={t} compact />

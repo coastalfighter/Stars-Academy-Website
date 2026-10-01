@@ -2,7 +2,7 @@
   "name": "stars-academy-website",
   "version": "1.0.0",
   "private": true,
-  "description": "STARS Academy — pediatric developmental day treatment, Batesville AR. 3D scroll-driven marketing site.",
+  "description": "STARS Academy \u2014 pediatric developmental day treatment, Batesville AR. 3D scroll-driven marketing site.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "cms:seed": "tsx --tsconfig tsconfig.json scripts/export-cms-seed.ts"
   },
   "engines": {
     "node": ">=20.9.0"
@@ -40,6 +41,7 @@
     "jsdom": "^29.1.1",
     "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "vitest": "^5.0.3"
   }

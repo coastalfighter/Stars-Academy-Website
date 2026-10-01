@@ -6,6 +6,9 @@ import { contactCopy } from "@/content/copy/contact";
 import { PageHero } from "@/components/page/PageHero";
 import { Section } from "@/components/page/Section";
 import { ContactCard } from "@/components/page/ContactCard";
+import { SouthCampusCard } from "@/components/cms/SouthCampusCard";
+import { getSiteSettings } from "@/cms/repository";
+import { getDictionary } from "@/i18n/dictionary";
 import { InquiryForm } from "@/components/forms/InquiryForm";
 import { Arrow } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
@@ -13,9 +16,11 @@ import type { Audience, Reason } from "@/lib/validation/inquiry";
 
 const QUICK_KEYS: RouteKey[] = ["gettingStarted", "tour", "referrals", "careers"];
 
-export function ContactView({ locale, audience, reason }: { locale: Locale; audience?: Audience; reason?: Reason }) {
+export async function ContactView({ locale, audience, reason }: { locale: Locale; audience?: Audience; reason?: Reason }) {
   const t = contactCopy[locale].contact;
   const { site, pages } = getContent(locale);
+  const d = getDictionary(locale);
+  const settings = await getSiteSettings(locale);
   const englishOnly = (key: RouteKey) => (hasLocale(key, locale) ? undefined : "en-US");
 
   return (
@@ -51,8 +56,29 @@ export function ContactView({ locale, audience, reason }: { locale: Locale; audi
                 {site.phone.display}
               </a>
               <p className="mt-2 text-ink-soft">{site.hours.display}</p>
+              {settings.fax || settings.email ? (
+                <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-ink-soft">
+                  {settings.fax ? (
+                    <>
+                      <dt className="font-semibold text-ink">{d.cms.fax}</dt>
+                      <dd>{settings.fax}</dd>
+                    </>
+                  ) : null}
+                  {settings.email ? (
+                    <>
+                      <dt className="font-semibold text-ink">{d.cms.email}</dt>
+                      <dd>
+                        <a href={`mailto:${settings.email}`} className="underline underline-offset-4">
+                          {settings.email}
+                        </a>
+                      </dd>
+                    </>
+                  ) : null}
+                </dl>
+              ) : null}
             </Reveal>
             <ContactCard locale={locale} />
+            {settings.southCampus ? <SouthCampusCard campus={settings.southCampus} locale={locale} /> : null}
             <Reveal className="card p-6">
               <h3 className="font-display text-xl">{t.who}</h3>
               <ul className="mt-4 space-y-4">
