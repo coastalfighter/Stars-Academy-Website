@@ -39,7 +39,7 @@ export function TeamCard({ member, spanishLabel, spanishText }: { member: TeamMe
         </p>
         {member.speaksSpanish ? (
           <p className="mt-2">
-            <span className="inline-flex items-center rounded-full bg-gold/20 px-3 py-1 text-xs font-bold text-ink" lang="es-US" aria-label={spanishLabel}>
+            <span className="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-bold text-ink" lang="es-US" aria-label={spanishLabel}>
               {spanishText}
             </span>
           </p>

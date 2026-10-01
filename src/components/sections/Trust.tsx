@@ -15,7 +15,7 @@ export async function Trust({ locale }: { locale: Locale }) {
     <section aria-labelledby="trust-title" className="relative z-10 bg-ink py-28 text-cream lg:py-36">
       <div className="container-x">
         <Reveal className="max-w-3xl">
-          <p className="eyebrow !text-gold">{t.eyebrow}</p>
+          <p className="eyebrow !text-accent">{t.eyebrow}</p>
           <h2 id="trust-title" className="display-lg mt-5">
             {t.title}
           </h2>
@@ -25,7 +25,7 @@ export async function Trust({ locale }: { locale: Locale }) {
           {site.stats.map((s, i) => (
             <Reveal key={s.label} delay={i * 90} className="bg-ink p-8">
               <dt className="text-sm leading-snug text-cream/70">{s.label}</dt>
-              <dd className="mt-3 font-display text-6xl text-gold tabular-nums">
+              <dd className="mt-3 font-display text-6xl text-accent tabular-nums">
                 <CountUp value={s.value} />
               </dd>
             </Reveal>
@@ -39,7 +39,7 @@ export async function Trust({ locale }: { locale: Locale }) {
               <blockquote className="font-display text-3xl leading-snug text-cream" lang={testimonial.quote.lang}>
                 “{testimonial.quote.text}”
               </blockquote>
-              <figcaption className="mt-4 text-gold" lang={testimonial.attribution.lang}>
+              <figcaption className="mt-4 text-accent" lang={testimonial.attribution.lang}>
                 — {testimonial.attribution.text}
               </figcaption>
             </figure>

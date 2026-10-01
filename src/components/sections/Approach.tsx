@@ -7,7 +7,7 @@ import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { Reveal } from "@/components/ui/Reveal";
 
-const ACCENTS = ["bg-gold", "bg-coral", "bg-teal", "bg-blue"] as const;
+const ACCENTS = ["bg-accent", "bg-coral", "bg-teal", "bg-blue"] as const;
 
 export function Approach({ locale }: { locale: Locale }) {
   const t = homeCopy[locale].approach;

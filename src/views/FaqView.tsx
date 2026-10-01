@@ -27,7 +27,7 @@ export async function FaqView({ locale }: { locale: Locale }) {
         lede={
           <>
             {t.ledeBefore}{" "}
-            <a href={site.phone.href} className="font-semibold text-ink underline decoration-gold decoration-2 underline-offset-4">
+            <a href={site.phone.href} className="font-semibold text-ink underline decoration-accent decoration-2 underline-offset-4">
               {site.phone.display}
             </a>
             {locale === "en" ? " " : ""}

@@ -60,7 +60,7 @@ export async function EnrollView({ locale }: { locale: Locale }) {
               <ol className="mt-4 space-y-4">
                 {t.steps.map((s, i) => (
                   <li key={s.title} className="flex gap-3">
-                    <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gold/30 text-sm font-bold">
+                    <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/30 text-sm font-bold">
                       {i + 1}
                     </span>
                     <span>

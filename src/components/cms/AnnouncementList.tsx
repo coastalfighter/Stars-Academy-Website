@@ -3,7 +3,7 @@ import { getDictionary } from "@/i18n/dictionary";
 import type { Announcement } from "@/cms/repository";
 import { formatDateTime } from "./format";
 
-const ACCENT = { urgent: "border-berry", closure: "border-gold", event: "border-teal", info: "border-ink/30" } as const;
+const ACCENT = { urgent: "border-berry", closure: "border-accent", event: "border-teal", info: "border-ink/30" } as const;
 
 /** Every active announcement (banner or not), e.g. on the current-families page. */
 export function AnnouncementList({ items, locale }: { items: Announcement[]; locale: Locale }) {

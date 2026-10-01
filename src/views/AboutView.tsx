@@ -100,7 +100,7 @@ export async function AboutView({ locale }: { locale: Locale }) {
           <ol className="mt-6 grid gap-4 md:grid-cols-5">
             {values.map((v, i) => (
               <Reveal as="li" key={v.name} delay={i * 60} className="rounded-2xl border border-cream/10 p-5">
-                <p className="font-display text-sm text-gold">{String(i + 1).padStart(2, "0")}</p>
+                <p className="font-display text-sm text-accent">{String(i + 1).padStart(2, "0")}</p>
                 <p className="mt-2 font-display text-xl text-cream">{v.name}</p>
                 <p className="mt-2 text-sm leading-relaxed text-cream/70">{v.body}</p>
               </Reveal>

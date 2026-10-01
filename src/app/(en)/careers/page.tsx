@@ -92,7 +92,7 @@ export default async function CareersPage() {
         <ul className="mt-10 grid gap-4 lg:grid-cols-2">
           {openings.map((r) => (
             <Reveal as="li" key={r.id} className="flex flex-col rounded-[var(--radius-card)] border border-cream/10 bg-cream/[0.03] p-7">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-gold">{r.team}</p>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">{r.team}</p>
               <h3 className="mt-2 font-display text-2xl">{r.title}</h3>
               <p className="mt-3 flex-1 leading-relaxed text-cream/75">{r.body}</p>
               <div className="mt-5 rounded-2xl bg-cream/5 p-4">
@@ -100,7 +100,7 @@ export default async function CareersPage() {
                 <ul className="mt-2 space-y-1 text-sm text-cream/75">
                   {r.requirements.map((q) => (
                     <li key={q} className="flex gap-2">
-                      <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
+                      <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                       {q}
                     </li>
                   ))}

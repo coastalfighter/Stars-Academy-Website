@@ -64,7 +64,7 @@ export default async function ReferralsPage() {
             <ol className="mt-5 space-y-4">
               {referralCriteria.map((c, i) => (
                 <Reveal as="li" key={c} delay={i * 60} className="flex gap-4 leading-relaxed">
-                  <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-ink text-sm font-bold text-gold">
+                  <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-ink text-sm font-bold text-accent">
                     {i + 1}
                   </span>
                   {c}

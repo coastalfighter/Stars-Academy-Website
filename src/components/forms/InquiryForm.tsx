@@ -473,7 +473,7 @@ function Field({
       <label htmlFor={htmlFor} className="text-sm font-semibold">
         {label}
         {required ? (
-          <span aria-hidden="true" className="text-berry">
+          <span aria-hidden="true" className="text-berry-deep">
             {" "}
             *
           </span>

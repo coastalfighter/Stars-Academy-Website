@@ -25,10 +25,10 @@ export function NextStep({
     <section aria-labelledby="next-step-title" className="relative py-20 md:py-28">
       <div className="container-x">
         <Reveal className="relative overflow-hidden rounded-[2.25rem] bg-ink px-6 py-14 text-cream sm:px-12 md:py-16">
-          <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full bg-gold/25 blur-3xl" />
+          <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full bg-accent/25 blur-3xl" />
           <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 h-72 w-72 rounded-full bg-teal/30 blur-3xl" />
           <div className="relative max-w-2xl">
-            <p className="eyebrow !text-gold">{getDictionary(locale).common.nextStep}</p>
+            <p className="eyebrow !text-accent">{getDictionary(locale).common.nextStep}</p>
             <h2 id="next-step-title" className="display-lg mt-4">
               {title}
             </h2>
@@ -45,7 +45,7 @@ export function NextStep({
                     <span className="block font-display text-xl">{r.title}</span>
                     <span className="mt-1 block text-ink-soft">{r.body}</span>
                   </span>
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cream text-ink transition-colors group-hover:bg-gold">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cream text-ink transition-colors group-hover:bg-accent">
                     <Arrow />
                   </span>
                 </Link>

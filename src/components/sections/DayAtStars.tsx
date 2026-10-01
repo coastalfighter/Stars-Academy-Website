@@ -50,7 +50,7 @@ function PinnedDay({ locale, t, c }: Props) {
         <div className="container-x">
           <div className="relative mb-6 h-1 rounded-full bg-ink/10" aria-hidden="true">
             <div
-              className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-coral via-gold to-gold transition-[width] duration-700 ease-[var(--ease-gentle)]"
+              className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-coral via-accent to-accent transition-[width] duration-700 ease-[var(--ease-gentle)]"
               style={{ width: `${((active + 1) / count) * 100}%` }}
             />
           </div>
@@ -62,10 +62,10 @@ function PinnedDay({ locale, t, c }: Props) {
                   key={m.title}
                   aria-current={on ? "step" : undefined}
                   className={`glass p-5 transition-[opacity,transform,box-shadow] duration-700 ease-[var(--ease-gentle)] ${
-                    on ? "-translate-y-3 shadow-[var(--shadow-lift)] ring-2 ring-gold/70" : "shadow-none"
+                    on ? "-translate-y-3 shadow-[var(--shadow-lift)] ring-2 ring-accent/70" : "shadow-none"
                   }`}
                 >
-                  <p className={`text-xs font-bold uppercase tracking-[0.16em] ${on ? "text-berry" : "text-muted"}`}>{m.time}</p>
+                  <p className={`text-xs font-bold uppercase tracking-[0.16em] ${on ? "text-berry-deep" : "text-muted"}`}>{m.time}</p>
                   <h3 className="mt-2 font-display text-xl leading-tight">{m.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-ink-soft">{m.body}</p>
                 </li>
@@ -91,8 +91,8 @@ function ListDay({ t, c }: Props) {
       <ol className="relative mt-12 space-y-5 border-l-2 border-dashed border-ink/15 pl-6 sm:pl-8">
         {c.dayTimeline.map((m, i) => (
           <Reveal as="li" key={m.title} delay={i * 60} className="card relative p-6">
-            <span aria-hidden="true" className="absolute top-7 -left-[calc(1.5rem+7px)] h-3 w-3 rounded-full border-2 border-cream bg-gold sm:-left-[calc(2rem+7px)]" />
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-berry">{m.time}</p>
+            <span aria-hidden="true" className="absolute top-7 -left-[calc(1.5rem+7px)] h-3 w-3 rounded-full border-2 border-cream bg-accent sm:-left-[calc(2rem+7px)]" />
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-berry-deep">{m.time}</p>
             <h3 className="mt-2 font-display text-xl">{m.title}</h3>
             <p className="mt-2 leading-relaxed text-ink-soft">{m.body}</p>
           </Reveal>

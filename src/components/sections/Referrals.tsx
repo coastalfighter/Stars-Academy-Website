@@ -28,7 +28,7 @@ export function Referrals({ locale }: { locale: Locale }) {
             <ol className="mt-4 space-y-3">
               {referralCriteria.map((c, i) => (
                 <li key={c} className="flex gap-3 leading-relaxed">
-                  <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-ink text-sm font-bold text-gold">
+                  <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-ink text-sm font-bold text-accent">
                     {i + 1}
                   </span>
                   {c}

@@ -24,7 +24,7 @@ export function EventCard({ event, locale, settings, headingLevel = 3 }: { event
         <div className="flex flex-wrap gap-2">
           <span className={`${chip} bg-teal/10 text-teal-deep`}>{t.audience[event.audience]}</span>
           {event.spanishAvailable ? (
-            <span className={`${chip} bg-gold/20 text-ink`} lang={locale === "en" ? "es-US" : undefined}>
+            <span className={`${chip} bg-accent/20 text-ink`} lang={locale === "en" ? "es-US" : undefined}>
               {locale === "en" ? "En español" : t.spanish}
             </span>
           ) : null}

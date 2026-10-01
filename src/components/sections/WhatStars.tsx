@@ -4,7 +4,7 @@ import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { Reveal } from "@/components/ui/Reveal";
 
-const DOTS = ["bg-gold", "bg-teal", "bg-berry"] as const;
+const DOTS = ["bg-accent", "bg-teal", "bg-berry"] as const;
 
 export function WhatStars({ locale }: { locale: Locale }) {
   const t = homeCopy[locale].what;

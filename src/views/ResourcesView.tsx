@@ -49,7 +49,7 @@ function ResourceItem({ r, locale }: { r: Resource; locale: Locale }) {
       </p>
       <p className="mt-4 flex flex-wrap items-center gap-2 text-xs font-bold">
         <span className="rounded-full bg-sand px-3 py-1 text-ink">{t.kind[r.kind]}</span>
-        {materialLabel ? <span className="rounded-full bg-gold/20 px-3 py-1 text-ink">{materialLabel}</span> : null}
+        {materialLabel ? <span className="rounded-full bg-accent/20 px-3 py-1 text-ink">{materialLabel}</span> : null}
         {r.publisher ? (
           <span className="font-semibold text-muted">
             {t.from} {r.publisher}

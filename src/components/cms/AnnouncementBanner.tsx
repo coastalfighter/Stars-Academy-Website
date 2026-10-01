@@ -9,7 +9,7 @@ export const DISMISS_PREFIX = "stars:dismissed:";
 
 const STYLES: Record<AnnouncementKind, string> = {
   urgent: "bg-berry text-white",
-  closure: "bg-gold text-ink",
+  closure: "bg-accent text-ink",
   event: "bg-teal-deep text-white",
   info: "bg-ink-soft text-cream",
 };

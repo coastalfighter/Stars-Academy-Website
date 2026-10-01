@@ -85,7 +85,7 @@ export function Header({ locale, announcement = null }: { locale: Locale; announ
               </Link>
             ))}
             <span aria-hidden="true" className="text-cream/30">|</span>
-            <a className="font-semibold text-gold underline-offset-4 hover:underline" href={site.phone.href}>
+            <a className="font-semibold text-accent underline-offset-4 hover:underline" href={site.phone.href}>
               {site.phone.display}
             </a>
           </p>

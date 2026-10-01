@@ -63,7 +63,7 @@ export function layoutMetadata(locale: Locale): Metadata {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#fbf7ef",
+  themeColor: "#bbf2ff",
   width: "device-width",
   initialScale: 1,
 };

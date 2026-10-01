@@ -33,7 +33,7 @@ export function Eligibility({ locale }: { locale: Locale }) {
               </Reveal>
             ))}
           </ul>
-          <Reveal className="mt-8 rounded-2xl border border-gold/60 bg-gold/10 p-5 leading-relaxed">
+          <Reveal className="mt-8 rounded-2xl border border-accent/60 bg-accent/10 p-5 leading-relaxed">
             <strong className="font-semibold">{t.payingLabel}</strong> {t.payingPrefix} {site.funding}. {t.payingBody}
           </Reveal>
         </div>
@@ -58,7 +58,7 @@ export function Eligibility({ locale }: { locale: Locale }) {
               <Reveal as="li" key={step.title} delay={i * 80} className="card relative p-6">
                 <span
                   aria-hidden="true"
-                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-ink font-display text-lg text-gold"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-ink font-display text-lg text-accent"
                 >
                   {i + 1}
                 </span>

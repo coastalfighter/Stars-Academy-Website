@@ -23,7 +23,7 @@ export function Footer({ locale }: { locale: Locale }) {
           <p className="mt-6 flex flex-wrap gap-x-1 font-display text-lg text-cream">
             {site.acronym.map((word) => (
               <span key={word}>
-                <span className="text-gold">{word[0]}</span>
+                <span className="text-accent">{word[0]}</span>
                 {word.slice(1)}
               </span>
             ))}
@@ -32,7 +32,7 @@ export function Footer({ locale }: { locale: Locale }) {
         </div>
 
         <div className="md:col-span-3">
-          <h2 className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-gold">{d.footer.visitOrCall}</h2>
+          <h2 className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-accent">{d.footer.visitOrCall}</h2>
           <address className="mt-4 not-italic leading-relaxed">
             <span className="font-semibold text-cream">STARS Academy</span>
             <br />
@@ -50,7 +50,7 @@ export function Footer({ locale }: { locale: Locale }) {
         </div>
 
         <nav aria-label={d.footer.services} className="md:col-span-2">
-          <h2 className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-gold">{d.footer.services}</h2>
+          <h2 className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-accent">{d.footer.services}</h2>
           <ul className="mt-4 space-y-2">
             {services.map((s) => (
               <li key={s.slug}>
@@ -63,7 +63,7 @@ export function Footer({ locale }: { locale: Locale }) {
         </nav>
 
         <nav aria-label={d.footer.forYou} className="md:col-span-3">
-          <h2 className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-gold">{d.footer.forYou}</h2>
+          <h2 className="font-sans text-xs font-bold uppercase tracking-[0.2em] text-accent">{d.footer.forYou}</h2>
           <ul className="mt-4 space-y-2">
             {d.footer.forYouLinks.map((l) => (
               <li key={l.key}>

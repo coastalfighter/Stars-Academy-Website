@@ -73,7 +73,7 @@ export async function GettingStartedView({ locale }: { locale: Locale }) {
         <div className="mt-10">
           <StepList steps={pages.eligibilityFactors} columns={3} locale={locale} />
         </div>
-        <Reveal className="mt-8 rounded-2xl border border-gold/60 bg-gold/10 p-6 leading-relaxed">
+        <Reveal className="mt-8 rounded-2xl border border-accent/60 bg-accent/10 p-6 leading-relaxed">
           <strong className="font-semibold">{t.payingLabel}</strong> {t.payingPrefix} {site.funding}. {t.payingBody}
         </Reveal>
       </Section>

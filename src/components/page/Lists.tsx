@@ -50,7 +50,7 @@ export function StepList({
           delay={i * 70}
           className={dark ? "rounded-[var(--radius-card)] border border-cream/10 p-6" : "card p-6"}
         >
-          <span className={`font-display text-4xl ${dark ? "text-gold" : "text-teal-deep"}`}>{String(i + 1).padStart(2, "0")}</span>
+          <span className={`font-display text-4xl ${dark ? "text-accent" : "text-teal-deep"}`}>{String(i + 1).padStart(2, "0")}</span>
           <h3 className="mt-3 font-display text-xl">
             <span className="sr-only">
               {stepWord} {i + 1}:{" "}
@@ -67,7 +67,7 @@ export function StepList({
 /** Title + body cards in a grid (e.g. "why it works", "why STARS"). */
 export function FeatureGrid({ items, columns = 3 }: { items: readonly Step[]; columns?: 2 | 3 | 4 }) {
   const cols = { 2: "md:grid-cols-2", 3: "md:grid-cols-3", 4: "md:grid-cols-2 xl:grid-cols-4" }[columns];
-  const accents = ["bg-gold", "bg-coral", "bg-teal", "bg-blue", "bg-berry"];
+  const accents = ["bg-accent", "bg-coral", "bg-teal", "bg-blue", "bg-berry"];
   return (
     <ul className={`grid gap-4 ${cols}`}>
       {items.map((item, i) => (

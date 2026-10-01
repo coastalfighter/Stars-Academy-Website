@@ -40,7 +40,7 @@ export function SectionIntro({ id, eyebrow, title, lede, tone = "cream", align =
   const dark = tone === "ink";
   return (
     <Reveal className={`max-w-3xl ${align === "center" ? "mx-auto text-center" : ""}`}>
-      {eyebrow ? <p className={`eyebrow ${dark ? "!text-gold" : ""}`}>{eyebrow}</p> : null}
+      {eyebrow ? <p className={`eyebrow ${dark ? "!text-accent" : ""}`}>{eyebrow}</p> : null}
       <h2 id={id} className="display-lg mt-4">
         {title}
       </h2>

@@ -10,7 +10,7 @@ export function DraftModeBar({ locale }: { locale: Locale }) {
   const pathname = usePathname() ?? "/";
   return (
     <div role="status" className="fixed bottom-4 left-4 z-[70] flex items-center gap-3 rounded-full bg-ink px-4 py-2 text-sm text-cream shadow-[var(--shadow-lift)]">
-      <span aria-hidden="true" className="h-2 w-2 animate-pulse rounded-full bg-gold" />
+      <span aria-hidden="true" className="h-2 w-2 animate-pulse rounded-full bg-accent" />
       {t.previewActive}
       <a
         href={`/api/draft-mode/disable?redirect=${encodeURIComponent(pathname)}`}

@@ -2,6 +2,9 @@
 
 /*
  * STARS design tokens.
+ * Base (page background) #bbf2ff and accent #ffbafe were chosen by the client.
+ * Brand colours (the gold star, coral, teal, blue and berry of the five
+ * services) stay as they are: they identify the services and the logo.
  * Brand anchors come from the existing STARS mark (navy, star gold, berry).
  * Supporting tones are calm and low-saturation on purpose: the audience
  * includes sensory-sensitive children and stressed caregivers.
@@ -11,10 +14,18 @@
   --color-ink: #17153a;
   --color-ink-soft: #3b3960;
   --color-muted: #5b5a78;
-  --color-cream: #fbf7ef;
+  /* Page background. */
+  --color-base: #bbf2ff;
+  /* Near-white: light text on dark sections and buttons, light chips and fields. */
+  --color-cream: #f4fdff;
   --color-paper: #ffffff;
-  --color-sand: #f3ecdf;
-  --color-line: #e4dccd;
+  /* Alternate section background, between base and paper. */
+  --color-sand: #e3f9ff;
+  --color-line: #c3e3ec;
+  /* UI accent: highlights, secondary buttons, badges, selection. */
+  --color-accent: #ffbafe;
+  /* Accent for text on light backgrounds (5.6:1 on base, AA). */
+  --color-accent-deep: #9c1f97;
   --color-gold: #f2c230;
   --color-gold-deep: #9a6f00;
   --color-berry: #c4323a;
@@ -45,7 +56,7 @@
   }
 
   body {
-    background: var(--color-cream);
+    background: var(--color-base);
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -72,7 +83,7 @@
   }
 
   ::selection {
-    background: var(--color-gold);
+    background: var(--color-accent);
     color: var(--color-ink);
   }
 
@@ -95,7 +106,7 @@
   }
   .eyebrow::before {
     content: "";
-    @apply inline-block h-2 w-2 rotate-45 rounded-[2px] bg-gold;
+    @apply inline-block h-2 w-2 rotate-45 rounded-[2px] bg-accent;
   }
 
   .display-xl {
@@ -113,7 +124,7 @@
 
   /* Frosted panel that keeps copy legible over the 3D scene. */
   .glass {
-    background: color-mix(in oklab, var(--color-cream) 78%, transparent);
+    background: color-mix(in oklab, var(--color-base) 78%, transparent);
     backdrop-filter: blur(14px) saturate(1.1);
     -webkit-backdrop-filter: blur(14px) saturate(1.1);
     @apply rounded-[var(--radius-card)] border border-white/60 shadow-[var(--shadow-soft)];
@@ -203,7 +214,7 @@ html[data-calm="true"] [data-reveal] {
 @layer components {
   .over-scene {
     @apply rounded-[var(--radius-card)] p-6 sm:p-8 lg:rounded-none lg:p-0;
-    background: color-mix(in oklab, var(--color-cream) 82%, transparent);
+    background: color-mix(in oklab, var(--color-base) 82%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
   }

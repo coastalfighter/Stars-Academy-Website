@@ -5,7 +5,7 @@ import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { ButtonLink } from "@/components/ui/Button";
 
-const DISCIPLINE_COLORS = ["bg-coral", "bg-teal", "bg-blue", "bg-berry", "bg-gold"] as const;
+const DISCIPLINE_COLORS = ["bg-coral", "bg-teal", "bg-blue", "bg-berry", "bg-accent"] as const;
 
 export function Hero({ locale }: { locale: Locale }) {
   const t = homeCopy[locale].hero;
@@ -16,7 +16,7 @@ export function Hero({ locale }: { locale: Locale }) {
       {/* Soft wash on the copy side keeps text crisp over the 3D scene. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-0 hidden w-[62%] bg-gradient-to-r from-cream via-cream/80 to-transparent lg:block"
+        className="pointer-events-none absolute inset-y-0 left-0 hidden w-[62%] bg-gradient-to-r from-base via-base/80 to-transparent lg:block"
       />
       <div className="container-x relative">
         <div className="over-scene copy-col lg:max-w-[640px]">
@@ -25,7 +25,7 @@ export function Hero({ locale }: { locale: Locale }) {
             {t.titleBefore}{" "}
             <span className="relative whitespace-nowrap text-teal-deep">
               {t.titleEmphasis}
-              <svg aria-hidden="true" viewBox="0 0 300 16" preserveAspectRatio="none" className="absolute -bottom-2 left-0 h-3 w-full text-gold">
+              <svg aria-hidden="true" viewBox="0 0 300 16" preserveAspectRatio="none" className="absolute -bottom-2 left-0 h-3 w-full text-accent">
                 <path d="M2 11C60 3 120 3 150 8s110 6 146-2" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
               </svg>
             </span>{" "}
@@ -45,7 +45,7 @@ export function Hero({ locale }: { locale: Locale }) {
           </div>
           <p className="mt-5 text-sm text-muted">
             {t.preferTalk}{" "}
-            <a href={site.phone.href} className="font-semibold text-ink underline decoration-gold decoration-2 underline-offset-4">
+            <a href={site.phone.href} className="font-semibold text-ink underline decoration-accent decoration-2 underline-offset-4">
               {site.phone.display}
             </a>{" "}
             — {locale === "en" ? site.hours.short.toLowerCase() : site.hours.short}

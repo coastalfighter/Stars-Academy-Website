@@ -121,7 +121,7 @@ export async function ServiceDetailView({ locale, slug }: { locale: Locale; slug
       <section aria-labelledby="how-heading" className="bg-ink py-20 text-cream">
         <div className="container-x">
           <Reveal>
-            <p className="eyebrow !text-gold">{t.howEyebrow}</p>
+            <p className="eyebrow !text-accent">{t.howEyebrow}</p>
             <h2 id="how-heading" className="display-md mt-4">
               {t.howTitle}
             </h2>
@@ -129,7 +129,7 @@ export async function ServiceDetailView({ locale, slug }: { locale: Locale; slug
           <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {service.steps.map((step, i) => (
               <Reveal as="li" key={step.title} delay={i * 80} className="rounded-[var(--radius-card)] border border-cream/10 p-6">
-                <span className="font-display text-4xl text-gold">{String(i + 1).padStart(2, "0")}</span>
+                <span className="font-display text-4xl text-accent">{String(i + 1).padStart(2, "0")}</span>
                 <h3 className="mt-3 font-display text-xl">
                   <span className="sr-only">
                     {d.common.step} {i + 1}:{" "}

@@ -15,7 +15,7 @@ export function Visit({ locale }: { locale: Locale }) {
     <section aria-labelledby="visit-title" className="relative flex min-h-[110vh] items-center py-28">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-0 hidden w-[60%] bg-gradient-to-r from-cream via-cream/75 to-transparent lg:block"
+        className="pointer-events-none absolute inset-y-0 left-0 hidden w-[60%] bg-gradient-to-r from-base via-base/75 to-transparent lg:block"
       />
       <div className="container-x relative">
         <div className="over-scene copy-col">
@@ -38,7 +38,7 @@ export function Visit({ locale }: { locale: Locale }) {
                 href={site.address.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-semibold text-ink underline decoration-gold decoration-2 underline-offset-4"
+                className="font-semibold text-ink underline decoration-accent decoration-2 underline-offset-4"
               >
                 {site.address.street}, {site.address.city}, {site.address.region} {site.address.postalCode}
                 <span className="sr-only">{d.common.opensMaps}</span>

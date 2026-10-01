@@ -15,9 +15,9 @@ export function Careers({ locale }: { locale: Locale }) {
       <div className="container-x grid gap-14 lg:grid-cols-12">
         <div className="lg:col-span-6">
           <Reveal>
-            <p className="eyebrow !text-gold">{t.eyebrow}</p>
+            <p className="eyebrow !text-accent">{t.eyebrow}</p>
             <h2 id="careers-title" className="display-lg mt-5">
-              {t.titleA} <span className="text-gold">{t.titleB}</span>
+              {t.titleA} <span className="text-accent">{t.titleB}</span>
             </h2>
             <p className="mt-5 text-lg leading-relaxed text-cream/75">
               {t.lede}
@@ -25,7 +25,7 @@ export function Careers({ locale }: { locale: Locale }) {
           </Reveal>
           <ul className="mt-10 space-y-5">
             {t.why.map((w, i) => (
-              <Reveal as="li" key={w.title} delay={i * 80} className="border-l-2 border-gold/60 pl-5">
+              <Reveal as="li" key={w.title} delay={i * 80} className="border-l-2 border-accent/60 pl-5">
                 <h3 className="font-display text-xl">{w.title}</h3>
                 <p className="mt-1.5 leading-relaxed text-cream/70">{w.body}</p>
               </Reveal>
@@ -48,7 +48,7 @@ export function Careers({ locale }: { locale: Locale }) {
           <ul className="mt-4 divide-y divide-cream/10 rounded-[var(--radius-card)] border border-cream/10">
             {careerRoles.map((r) => (
               <li key={r.title} className="flex flex-col gap-1 p-5">
-                <span className="text-xs font-bold uppercase tracking-[0.16em] text-gold">{r.team}</span>
+                <span className="text-xs font-bold uppercase tracking-[0.16em] text-accent">{r.team}</span>
                 <span className="font-display text-lg">{r.title}</span>
                 <span className="text-sm text-cream/65">{r.requirement}</span>
               </li>
