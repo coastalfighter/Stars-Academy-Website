@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Component, type ReactNode } from "react";
+import { Component, useEffect, useState, type ReactNode } from "react";
 import { useRichMotion } from "@/components/providers/MotionProvider";
 
 const SceneCanvas = dynamic(() => import("./SceneCanvas"), { ssr: false, loading: () => null });
@@ -21,16 +21,36 @@ class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean
 }
 
 /**
+ * True once the browser has finished the critical work of loading the page.
+ * The scene is purely decorative, so it waits for an idle moment rather than
+ * competing with hydration and the first paint of the copy.
+ */
+function useIdle(timeout = 2500): boolean {
+  const [idle, setIdle] = useState(false);
+  useEffect(() => {
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(() => setIdle(true), { timeout });
+      return () => window.cancelIdleCallback(id);
+    }
+    const id = window.setTimeout(() => setIdle(true), 200);
+    return () => window.clearTimeout(id);
+  }, [timeout]);
+  return idle;
+}
+
+/**
  * Fixed background layer for the home page. Rich devices get the 3D scene;
- * calm mode, reduced motion or no-WebGL devices get a soft static backdrop.
+ * calm mode, reduced motion, no-WebGL and software-rendering devices get a
+ * soft static backdrop.
  */
 export function Experience() {
   const rich = useRichMotion();
+  const idle = useIdle();
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0">
       <StaticBackdrop />
-      {rich ? (
+      {rich && idle ? (
         <div className="absolute inset-0">
           <SceneBoundary>
             <SceneCanvas />

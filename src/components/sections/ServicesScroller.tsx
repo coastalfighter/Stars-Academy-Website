@@ -61,7 +61,7 @@ function PinnedServices({ locale, t, services }: Props) {
                           className={`h-3 w-3 rotate-45 rounded-[3px] transition-transform duration-500 ${on ? "scale-125" : "scale-90 opacity-60"}`}
                           style={{ background: s.color }}
                         />
-                        <span className={`font-display text-xl transition-colors xl:text-2xl ${on ? "text-ink" : "text-ink/45 group-hover:text-ink/80"}`}>
+                        <span className={`font-display text-xl transition-colors xl:text-2xl ${on ? "text-ink" : "text-muted group-hover:text-ink"}`}>
                           {s.name}
                         </span>
                       </Link>

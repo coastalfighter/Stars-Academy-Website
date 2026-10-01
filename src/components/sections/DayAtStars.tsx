@@ -43,7 +43,7 @@ function PinnedDay({ locale, t, c }: Props) {
           <Intro t={t} />
           <div className="glass hidden shrink-0 px-7 py-5 text-right xl:block" aria-hidden="true">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted">{t.now}</p>
-            <p className="mt-1 font-display text-5xl tabular-nums">{clock}</p>
+            <p data-testid="day-clock" className="mt-1 font-display text-5xl tabular-nums">{clock}</p>
           </div>
         </div>
 
@@ -62,7 +62,7 @@ function PinnedDay({ locale, t, c }: Props) {
                   key={m.title}
                   aria-current={on ? "step" : undefined}
                   className={`glass p-5 transition-[opacity,transform,box-shadow] duration-700 ease-[var(--ease-gentle)] ${
-                    on ? "-translate-y-3 opacity-100 shadow-[var(--shadow-lift)]" : "opacity-60"
+                    on ? "-translate-y-3 shadow-[var(--shadow-lift)] ring-2 ring-gold/70" : "shadow-none"
                   }`}
                 >
                   <p className={`text-xs font-bold uppercase tracking-[0.16em] ${on ? "text-berry" : "text-muted"}`}>{m.time}</p>

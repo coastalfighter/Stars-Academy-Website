@@ -52,4 +52,20 @@ describe("origin guard", () => {
   it("rejects foreign origins", () => {
     expect(isAllowedOrigin(req("https://evil.example"), env)).toBe(false);
   });
+
+  const withHost = (origin: string, headers: Record<string, string>) =>
+    new Request("http://localhost:3000/api/inquiry", { method: "POST", headers: { origin, ...headers } });
+
+  it("matches the host the visitor requested, even when the server sees another URL", () => {
+    expect(isAllowedOrigin(withHost("http://127.0.0.1:3200", { host: "127.0.0.1:3200" }), env)).toBe(true);
+    expect(isAllowedOrigin(withHost("https://www.stars.test", { host: "internal:3000", "x-forwarded-host": "www.stars.test" }), env)).toBe(true);
+  });
+
+  it("still rejects cross-site posts when Host is the real site", () => {
+    expect(isAllowedOrigin(withHost("https://evil.example", { host: "www.stars.test" }), env)).toBe(false);
+  });
+
+  it("rejects opaque (null) origins", () => {
+    expect(isAllowedOrigin(withHost("null", { host: "www.stars.test" }), env)).toBe(false);
+  });
 });

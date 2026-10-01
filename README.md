@@ -141,16 +141,19 @@ only on a developer machine during `sanity build/deploy` and aren't part of the 
 ## Stack
 
 Next.js 16 (App Router, TypeScript strict) · React 19 · Tailwind CSS v4 · three.js + React Three Fiber + drei ·
-Lenis · zod · Vitest + Testing Library.
+Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse CI · GitHub Actions.
 
 ## Project structure
 
 ```
 .
+├── .github/workflows/ci.yml         # quality → E2E + Lighthouse; Studio checks
 ├── docs/CONTENT-CHECKLIST.md        # facts awaiting client confirmation
 ├── docs/EDITOR-GUIDE.md             # plain-language guide for clinic staff
 ├── studio/                          # Sanity Studio (separate package) + seed/content.ndjson
 ├── scripts/export-cms-seed.ts       # bundled content → CMS seed
+├── scripts/e2e-build.mjs            # builds the site and its CMS-enabled twin for E2E
+├── e2e/                             # Playwright specs, fixtures (mock Sanity, webhook receiver)
 ├── public/                          # favicon + client photography
 ├── src/
 │   ├── app/
@@ -180,8 +183,10 @@ Lenis · zod · Vitest + Testing Library.
 │       ├── inquiry/                 # request handler + email/webhook delivery
 │       ├── security/                # rate limiter, origin (CSRF) guard
 │       └── hooks/useMediaQuery.ts
-├── tests/                           # 219 unit/component tests (incl. CMS, translation coverage, route integrity)
+├── tests/                           # 234 unit/component tests (incl. CMS, translation coverage, route integrity)
 ├── .env.example
+├── playwright.config.ts             # projects: desktop, mobile, reduced-motion, cms
+├── lighthouserc.cjs                 # Lighthouse scores + resource budgets
 └── next.config.ts                   # security headers (CSP, HSTS…), legacy redirects
 ```
 
@@ -200,6 +205,51 @@ npm run dev                  # http://localhost:3000
 | `npm test` | Vitest suite |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint (Next core-web-vitals + TypeScript) |
+| `npm run e2e:build` | Builds `.next` and the CMS-enabled `.next-cms` for E2E |
+| `npm run e2e` / `npm run e2e:ui` | Playwright suite (headless / interactive) |
+| `npm run lhci` | Lighthouse CI against the production build (run `npm run build` first) |
+
+## Testing & CI
+
+Three layers, all run by `.github/workflows/ci.yml` on every pull request and on `main`:
+
+1. **Unit and component tests** (Vitest, 234 tests): validation and the PHI guard, delivery signing, rate
+   limiting, the origin guard, CMS schemas, webhook signatures and preview, timeline maths, calm mode and
+   WebGL detection, translation coverage and route integrity.
+2. **End-to-end** (Playwright, 73 tests across 4 projects). The suite builds the site twice: once with bundled
+   content, and once with the CMS on, where Sanity is answered by `e2e/fixtures/mock-sanity.cjs`. A local
+   receiver captures delivered inquiries so the HMAC signature can be checked.
+   - `smoke`: every sitemap URL loads with the right `lang`, one `h1`, metadata and no console errors. Also
+     covers the bilingual 404, legacy redirects, security headers and the sitemap's hreflang.
+   - `a11y`: axe-core, failing on any serious or critical WCAG 2.2 A/AA violation (16 pages plus the form's
+     error state), on desktop and mobile.
+   - `story`: the 3D scene mounts, and the day clock and services list follow the scroll, in English and Spanish.
+   - `calm`: reduced motion starts in calm mode, and the switch removes WebGL and remembers the choice. The
+     mobile layout never scrolls sideways.
+   - `forms`: errors are announced, PHI is blocked, a Spanish inquiry is delivered and signed, job
+     applications pre-select the role, and cross-site or malformed posts are rejected.
+   - `i18n` and `keyboard`: the language switcher, hreflang, the skip link, the FAQ disclosure and the
+     mobile-menu focus trap.
+   - `cms`: closures appear as a banner, scheduled and unsafe announcements are hidden, untranslated content is
+     marked, only testimonials with consent are shown, and signed revalidation and preview links work.
+3. **Lighthouse CI** (`lighthouserc.cjs`): 7 representative URLs, 3 runs each, mobile profile, median asserted.
+   - Scores: accessibility, SEO and best practices must be 100; performance must be at least 80.
+   - Metrics: LCP ≤ 4.5 s, TBT ≤ 300 ms, CLS ≤ 0.05.
+   - Budgets: JS ≤ 380 KB, CSS ≤ 25 KB, fonts ≤ 170 KB, images ≤ 250 KB, total ≤ 700 KB, and zero
+     third-party requests.
+   - Measured on this build: performance 0.86–0.95, TBT 50–175 ms, CLS 0.
+
+Run locally:
+
+```bash
+npm run e2e:build && npm run e2e                 # PLAYWRIGHT_CHROMIUM_EXECUTABLE=… to use a preinstalled Chromium
+npm run build && npm run lhci                    # CHROME_PATH=… if Chrome isn't on the PATH
+```
+
+**Software rendering.** Browsers without a usable GPU (blocklisted drivers, VMs, CI) render WebGL on the CPU,
+and every frame then blocks the main thread. The site detects SwiftShader, llvmpipe and similar renderers and
+shows the static backdrop instead. On such a machine, set `localStorage["stars:force-3d"] = "true"` to see the
+scene anyway; the E2E specs for the 3D story do this.
 
 ## Inquiry form & API
 
@@ -239,6 +289,7 @@ Built for Vercel (or any Node 20.9+ host). Set `NEXT_PUBLIC_SITE_URL` and at lea
 - ~~Milestone 2: every remaining page, form presets, legal pages, shared page system~~
 - ~~Milestone 3: Spanish site, bilingual forms/API, hreflang, bilingual 404~~
 - ~~Milestone 4: Sanity CMS for announcements, FAQs, roles, leadership, testimonials, contact details~~
-5. **Shared rate-limit store** (Upstash Redis) and privacy-friendly analytics, if STARS wants them (the privacy
-   notice would need updating).
-6. **Playwright E2E + Lighthouse CI** budgets for performance and accessibility.
+- ~~Milestone 5: Playwright E2E (axe, forms, CMS), Lighthouse CI budgets, GitHub Actions pipeline~~
+6. **Launch hardening**: a shared rate-limit store (Upstash Redis), CSP violation reporting, uptime and
+   error monitoring, and preview deployments that run E2E against the Vercel URL.
+7. **Privacy-friendly analytics** and a consent-aware privacy-notice update, if STARS wants measurement.

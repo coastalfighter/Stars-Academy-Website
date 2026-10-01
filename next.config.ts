@@ -40,6 +40,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Lets the E2E suite build a second, CMS-enabled copy alongside the default one.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   experimental: {
     // One root layout per language (route groups) needs a routing-level 404.
     globalNotFound: true,

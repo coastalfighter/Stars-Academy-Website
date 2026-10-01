@@ -5,7 +5,7 @@ import { useMotion } from "@/components/providers/MotionProvider";
 
 /**
  * Counts up to `value` once when scrolled into view. Renders the final value
- * on the server, in calm mode and for assistive tech (aria-label).
+ * on the server, in calm mode and to assistive tech (visually hidden text).
  */
 export function CountUp({ value, duration = 1600 }: { value: number; duration?: number }) {
   const { calm, ready } = useMotion();
@@ -41,7 +41,9 @@ export function CountUp({ value, duration = 1600 }: { value: number; duration?: 
   }, [value, duration, calm, ready]);
 
   return (
-    <span ref={ref} aria-label={String(value)}>
+    <span ref={ref}>
+      {/* Screen readers get the final number, not the animation. */}
+      <span className="sr-only">{value}</span>
       <span aria-hidden="true">{display}</span>
     </span>
   );

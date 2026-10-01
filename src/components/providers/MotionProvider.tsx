@@ -28,10 +28,43 @@ type MotionContextValue = {
 
 const MotionContext = createContext<MotionContextValue | null>(null);
 
+/**
+ * QA override: set this localStorage key to "true" to render the 3D scene even
+ * on a software renderer (used by the E2E suite, which runs without a GPU).
+ */
+export const FORCE_3D_STORAGE_KEY = "stars:force-3d";
+
+/**
+ * Renderers that rasterise WebGL on the CPU. Browsers fall back to these when
+ * the GPU is blocklisted or absent; every 3D frame then blocks the main thread
+ * (tens of seconds of jank on a mid-range laptop), so the static backdrop is
+ * the better experience.
+ */
+const SOFTWARE_RENDERER = /swiftshader|llvmpipe|softpipe|lavapipe|software rasterizer|microsoft basic render/i;
+
+export function isSoftwareRenderer(renderer: string): boolean {
+  return SOFTWARE_RENDERER.test(renderer);
+}
+
+function readFlag(key: string): boolean {
+  try {
+    return window.localStorage.getItem(key) === "true";
+  } catch {
+    return false;
+  }
+}
+
+/** True when the device can render the 3D scene on real graphics hardware. */
 export function detectWebGL(): boolean {
   try {
     const canvas = document.createElement("canvas");
-    return Boolean(canvas.getContext("webgl2") ?? canvas.getContext("webgl"));
+    const gl = canvas.getContext("webgl2") ?? canvas.getContext("webgl");
+    if (!gl) return false;
+    const info = gl.getExtension("WEBGL_debug_renderer_info");
+    const renderer = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER) ?? "");
+    // Release the probe context right away; browsers cap live contexts.
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return !isSoftwareRenderer(renderer) || readFlag(FORCE_3D_STORAGE_KEY);
   } catch {
     return false;
   }

@@ -1,0 +1,69 @@
+import { defineConfig, devices } from "@playwright/test";
+import { resolve } from "node:path";
+import { CMS_PROJECT_ID, PORTS, RECEIVER_URL, SANITY_WEBHOOK_SECRET, WEBHOOK_SECRET } from "./e2e/env";
+
+/**
+ * End-to-end suite. Run `npm run e2e:build` once, then `npm run e2e`.
+ * Three servers start automatically: the site, a CMS-enabled copy (Sanity
+ * mocked), and a webhook receiver that captures delivered inquiries.
+ */
+const CI = Boolean(process.env.CI);
+const next = resolve("node_modules/next/dist/bin/next");
+
+// WebGL in headless Chromium (needed for the 3D scene). A preinstalled browser
+// can be used via PLAYWRIGHT_CHROMIUM_EXECUTABLE (e.g. in sandboxed dev envs).
+const launchOptions = {
+  args: ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"],
+  ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE } : {}),
+};
+
+const siteEnv = {
+  NODE_ENV: "production",
+  INQUIRY_WEBHOOK_URL: `${RECEIVER_URL}/hook`,
+  INQUIRY_WEBHOOK_SECRET: WEBHOOK_SECRET,
+  RATE_LIMIT_MAX: "1000",
+};
+
+const site = `http://127.0.0.1:${PORTS.site}`;
+const cms = `http://127.0.0.1:${PORTS.cms}`;
+const general = /(smoke|a11y|story|calm|i18n|forms|keyboard)\.spec\.ts/;
+
+export default defineConfig({
+  testDir: "e2e",
+  fullyParallel: true,
+  forbidOnly: CI,
+  retries: CI ? 1 : 0,
+  workers: CI ? 2 : undefined,
+  timeout: 45_000,
+  expect: { timeout: 10_000 },
+  reporter: CI ? [["github"], ["html", { open: "never" }]] : [["list"], ["html", { open: "never" }]],
+  use: { trace: "retain-on-failure", screenshot: "only-on-failure", launchOptions },
+  projects: [
+    { name: "desktop", testMatch: general, use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 }, baseURL: site } },
+    { name: "mobile", testMatch: general, use: { ...devices["Pixel 7"], baseURL: site } },
+    { name: "reduced-motion", testMatch: /calm\.spec\.ts/, use: { ...devices["Desktop Chrome"], reducedMotion: "reduce", baseURL: site } },
+    { name: "cms", testMatch: /cms\.spec\.ts/, use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 }, baseURL: cms } },
+  ],
+  webServer: [
+    {
+      command: `node e2e/fixtures/webhook-receiver.mjs`,
+      url: `${RECEIVER_URL}/health`,
+      reuseExistingServer: !CI,
+      timeout: 20_000,
+    },
+    {
+      command: `node ${next} start -p ${PORTS.site} -H 127.0.0.1`,
+      url: site,
+      env: siteEnv,
+      reuseExistingServer: !CI,
+      timeout: 60_000,
+    },
+    {
+      command: `node --require ./e2e/fixtures/mock-sanity.cjs ${next} start -p ${PORTS.cms} -H 127.0.0.1`,
+      url: cms,
+      env: { ...siteEnv, NEXT_DIST_DIR: ".next-cms", SANITY_PROJECT_ID: CMS_PROJECT_ID, SANITY_WEBHOOK_SECRET },
+      reuseExistingServer: !CI,
+      timeout: 60_000,
+    },
+  ],
+});

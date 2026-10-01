@@ -9,3 +9,7 @@ next-env.d.ts
 .env.*.local
 .DS_Store
 .vercel
+.next-cms/
+playwright-report/
+test-results/
+.lighthouseci/

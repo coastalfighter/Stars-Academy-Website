@@ -23,7 +23,8 @@ export function StarsName({ locale }: { locale: Locale }) {
       <div className="container-x">
         <Reveal className="over-scene mx-auto max-w-4xl text-center">
           {/* The acronym is the organization's English name, so it is marked as English for screen readers. */}
-          <p lang="en-US" className="font-display text-[clamp(1.9rem,4.4vw,3.6rem)] leading-tight" aria-label={site.acronym.join(" ")}>
+          <p lang="en-US" className="font-display text-[clamp(1.9rem,4.4vw,3.6rem)] leading-tight">
+            <span className="sr-only">{site.acronym.join(" ")}</span>
             {site.acronym.map((word, i) => (
               <span key={word} aria-hidden="true" className="mr-[0.25em] inline-block">
                 <span className={COLORS[i]}>{word[0]}</span>

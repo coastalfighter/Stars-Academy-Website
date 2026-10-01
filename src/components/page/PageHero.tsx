@@ -23,7 +23,7 @@ export function PageHero({ locale = "en", crumbs, eyebrow, title, lede, actions,
     <header className="relative overflow-hidden pt-32 pb-16 md:pt-40 md:pb-20">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-32 -top-10 h-[34rem] w-[34rem] rounded-full opacity-25 blur-3xl"
+        className="pointer-events-none absolute -right-32 -top-10 h-[34rem] w-[34rem] rounded-full opacity-10 blur-3xl lg:opacity-25"
         style={{ background: accent }}
       />
       <div aria-hidden="true" className="pointer-events-none absolute -left-40 top-1/2 h-[26rem] w-[26rem] rounded-full bg-teal/10 blur-3xl" />
