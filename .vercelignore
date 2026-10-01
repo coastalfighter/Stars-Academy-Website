@@ -1,0 +1,10 @@
+# The Sanity Studio is a separate app, hosted by Sanity (`npm run deploy` in
+# studio/), not part of the website deployment.
+studio/
+
+# Local build and test output.
+.next-cms/
+.next-launch/
+playwright-report/
+test-results/
+.lighthouseci/
