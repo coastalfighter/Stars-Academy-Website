@@ -16,7 +16,7 @@ export function Hero({ locale }: { locale: Locale }) {
       {/* Soft wash on the copy side keeps text crisp over the 3D scene. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-0 hidden w-[62%] bg-gradient-to-r from-base via-base/80 to-transparent lg:block"
+        className="pointer-events-none absolute inset-y-0 left-0 hidden w-[62%] bg-gradient-to-r from-white/60 via-white/35 to-transparent lg:block"
       />
       <div className="container-x relative">
         <div className="over-scene copy-col lg:max-w-[640px]">

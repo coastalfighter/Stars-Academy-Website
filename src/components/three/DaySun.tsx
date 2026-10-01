@@ -12,9 +12,9 @@ import { sceneState } from "./sceneState";
  * timeline. Its colour warms from dawn to afternoon.
  */
 const DAY_CHAPTER = 2;
-const DAWN = new Color("#ffb489");
-const NOON = new Color("#ffe07a");
-const AFTERNOON = new Color("#ffbf52");
+const DAWN = new Color("#ffa8d8");
+const NOON = new Color("#ffe3fa");
+const AFTERNOON = new Color("#d9b8ff");
 
 
 export function DaySun() {

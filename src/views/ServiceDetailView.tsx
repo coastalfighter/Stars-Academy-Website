@@ -106,7 +106,7 @@ export async function ServiceDetailView({ locale, slug }: { locale: Locale; slug
             <ul className="mt-6 space-y-3">
               {service.provides.map((s) => (
                 <Reveal as="li" key={s} className="flex gap-3 leading-relaxed">
-                  <svg aria-hidden="true" viewBox="0 0 24 24" className="mt-0.5 h-6 w-6 shrink-0 text-teal">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="mt-0.5 h-6 w-6 shrink-0 text-teal-deep">
                     <circle cx="12" cy="12" r="11" fill="currentColor" opacity="0.15" />
                     <path d="m7 12.5 3.2 3L17 8.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>

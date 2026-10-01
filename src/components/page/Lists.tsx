@@ -4,7 +4,7 @@ import type { Step } from "@/content/pages";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionary";
 
-export function CheckIcon({ className = "mt-0.5 h-6 w-6 shrink-0 text-teal" }: { className?: string }) {
+export function CheckIcon({ className = "mt-0.5 h-6 w-6 shrink-0 text-teal-deep" }: { className?: string }) {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className={className}>
       <circle cx="12" cy="12" r="11" fill="currentColor" opacity="0.15" />

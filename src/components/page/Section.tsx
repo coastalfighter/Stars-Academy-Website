@@ -3,8 +3,8 @@ import { Reveal } from "@/components/ui/Reveal";
 
 const TONES = {
   cream: "",
-  paper: "bg-paper",
-  sand: "bg-sand",
+  paper: "bg-white/55",
+  sand: "bg-white/30",
   ink: "bg-ink text-cream",
 } as const;
 

@@ -3,7 +3,7 @@ import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { Reveal } from "@/components/ui/Reveal";
 
-const COLORS = ["text-gold-deep", "text-coral-deep", "text-teal-deep", "text-blue-deep", "text-berry"] as const;
+const COLORS = ["text-gold-deep", "text-coral-deep", "text-teal-deep", "text-blue-deep", "text-berry-deep"] as const;
 
 /** "Our name is our promise" — the 3D blocks stack into S·T·A·R·S above this copy. */
 export function StarsName({ locale }: { locale: Locale }) {

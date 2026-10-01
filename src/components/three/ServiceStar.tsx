@@ -98,7 +98,7 @@ export function ServiceStar() {
           </mesh>
         ))}
         <mesh geometry={geos.center}>
-          <meshPhysicalMaterial color="#fff4d6" roughness={0.3} clearcoat={1} emissive={BRAND.gold} emissiveIntensity={0.22} />
+          <meshPhysicalMaterial color="#fff0fb" roughness={0.3} clearcoat={1} emissive={BRAND.gold} emissiveIntensity={0.22} />
         </mesh>
       </group>
     </group>

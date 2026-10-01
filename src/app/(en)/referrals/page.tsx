@@ -30,7 +30,7 @@ export default async function ReferralsPage() {
         eyebrow="For physicians, therapists & schools"
         title="Referring a child to STARS, made simple."
         lede="Everything you need before referring — who we serve, eligibility, clinical scope and how to send a prescription — on one page."
-        accent="#4f86c6"
+        accent="#3aa6e0"
         actions={
           <>
             <ButtonLink href="#make-referral" size="lg" arrow>

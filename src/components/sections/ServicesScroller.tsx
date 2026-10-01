@@ -107,7 +107,7 @@ function PinnedServices({ locale, t, services }: Props) {
 }
 
 function StaticStar({ active }: { active: number }) {
-  const color = enServices[active]?.color ?? "#f2c230";
+  const color = enServices[active]?.color ?? "#f28fe0";
   return (
     <svg viewBox="0 0 48 48" className="mx-auto h-80 w-80 animate-float-slow drop-shadow-xl">
       <path d="M24 4.5 29.3 17.3l13.7 1.1-10.4 9 3.2 13.4L24 33.6l-11.8 7.2 3.2-13.4-10.4-9 13.7-1.1Z" fill={color} className="transition-colors duration-700" />

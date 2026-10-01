@@ -76,7 +76,7 @@ export function CareSpheres() {
       ))}
       <mesh ref={core} position={[0, 0, 0.9]}>
         <icosahedronGeometry args={[1, 4]} />
-        <meshStandardMaterial color="#fff6d6" emissive={BRAND.gold} emissiveIntensity={1.4} toneMapped={false} />
+        <meshStandardMaterial color="#fff0fb" emissive={BRAND.gold} emissiveIntensity={1.4} toneMapped={false} />
       </mesh>
     </group>
   );

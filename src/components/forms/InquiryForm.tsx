@@ -192,8 +192,8 @@ export function InquiryForm({
     return (
       <div ref={successRef} tabIndex={-1} role="status" className="card p-8 text-center outline-none sm:p-12">
         <svg aria-hidden="true" viewBox="0 0 48 48" className="mx-auto h-16 w-16">
-          <circle cx="24" cy="24" r="22" fill="#2f8f8a" opacity="0.15" />
-          <path d="m15 24.5 6 6 12-13" fill="none" stroke="#1f6b67" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="24" cy="24" r="22" fill="#6f7df5" opacity="0.15" />
+          <path d="m15 24.5 6 6 12-13" fill="none" stroke="#3b35a6" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <h2 className="mt-5 font-display text-3xl">{d.successTitle}</h2>
         <p className="lede mx-auto mt-3 max-w-md">{status.message}</p>

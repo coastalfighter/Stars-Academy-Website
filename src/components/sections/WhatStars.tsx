@@ -43,7 +43,7 @@ export function WhatStars({ locale }: { locale: Locale }) {
               <Image src={photos.storyTime.src} alt={photos.storyTime.alt} fill sizes="128px" className="object-cover" />
             </div>
             <p className="font-display text-2xl leading-snug">
-              {t.quoteA} <span className="text-berry">{t.quoteB}</span>
+              {t.quoteA} <span className="text-berry-deep">{t.quoteB}</span>
             </p>
           </Reveal>
           <p className="sr-only">

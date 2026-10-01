@@ -15,7 +15,7 @@ export function Visit({ locale }: { locale: Locale }) {
     <section aria-labelledby="visit-title" className="relative flex min-h-[110vh] items-center py-28">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-0 hidden w-[60%] bg-gradient-to-r from-base via-base/75 to-transparent lg:block"
+        className="pointer-events-none absolute inset-y-0 left-0 hidden w-[60%] bg-gradient-to-r from-white/60 via-white/30 to-transparent lg:block"
       />
       <div className="container-x relative">
         <div className="over-scene copy-col">

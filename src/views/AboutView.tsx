@@ -15,7 +15,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CountUp } from "@/components/ui/CountUp";
 import { Reveal } from "@/components/ui/Reveal";
 
-const LETTER_COLORS = ["text-gold-deep", "text-coral-deep", "text-teal-deep", "text-blue-deep", "text-berry"] as const;
+const LETTER_COLORS = ["text-gold-deep", "text-coral-deep", "text-teal-deep", "text-blue-deep", "text-berry-deep"] as const;
 
 export async function AboutView({ locale }: { locale: Locale }) {
   const t = aboutCopy[locale];

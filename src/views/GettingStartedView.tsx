@@ -36,7 +36,7 @@ export async function GettingStartedView({ locale }: { locale: Locale }) {
         eyebrow={t.eyebrow}
         title={t.title}
         lede={t.lede}
-        accent="#e8735a"
+        accent="#b67cf5"
         actions={
           <>
             <ButtonLink href="#inquiry" size="lg" arrow>

@@ -11,12 +11,12 @@ export const sceneState = {
 /** Service colors in star-point order (matches content/services.ts). */
 export const BRAND = {
   ink: "#17153a",
-  gold: "#f2c230",
-  berry: "#c4323a",
-  teal: "#2f8f8a",
-  coral: "#e8735a",
-  blue: "#4f86c6",
-  sky: "#dcebf5",
-  cream: "#fbf7ef",
-  sand: "#f3ecdf",
+  gold: "#f28fe0",
+  berry: "#d6418f",
+  teal: "#6f7df5",
+  coral: "#b67cf5",
+  blue: "#3aa6e0",
+  sky: "#e4f7ff",
+  cream: "#fbf8ff",
+  sand: "#f3eaff",
 } as const;

@@ -49,7 +49,7 @@ export async function FamiliesView({ locale }: { locale: Locale }) {
         eyebrow={t.eyebrow}
         title={t.title}
         lede={t.lede}
-        accent="#4f86c6"
+        accent="#3aa6e0"
         actions={
           <ButtonLink href={site.phone.href} size="lg">
             {d.common.call} {site.phone.display}

@@ -31,9 +31,9 @@ export default function SceneCanvas() {
       <ProgressDriver />
       <CameraRig />
 
-      <hemisphereLight args={["#fff8ea", "#c9dcea", 1.15]} />
-      <directionalLight position={[4, 6, 6]} intensity={1.6} color="#fff3dc" />
-      <directionalLight position={[-6, -2, 3]} intensity={0.45} color="#bfd8ff" />
+      <hemisphereLight args={["#fdf6ff", "#d6ccf5", 1.15]} />
+      <directionalLight position={[4, 6, 6]} intensity={1.6} color="#fff0fb" />
+      <directionalLight position={[-6, -2, 3]} intensity={0.45} color="#bfe9ff" />
 
       <Blocks />
       <ServiceStar />

@@ -55,7 +55,7 @@ function StaticStar({ highlight }: { highlight: number }) {
       })}
       <polygon
         points={[0, 1, 2, 3, 4].map((k) => pt(inner, Math.PI / 2 + k * step + step / 2)).join(" ")}
-        fill="#fff4d6"
+        fill="#fff0fb"
       />
     </svg>
   );

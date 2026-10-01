@@ -11,7 +11,7 @@ import { NextStep } from "@/components/page/NextStep";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 
-const ACCENTS = ["#f2c230", "#e8735a", "#2f8f8a", "#4f86c6", "#c4323a", "#9a6f00"] as const;
+const ACCENTS = ["#f28fe0", "#b67cf5", "#6f7df5", "#3aa6e0", "#d6418f", "#8a1c80"] as const;
 
 export function ApproachView({ locale }: { locale: Locale }) {
   const t = approachCopy[locale];
@@ -26,7 +26,7 @@ export function ApproachView({ locale }: { locale: Locale }) {
         eyebrow={t.eyebrow}
         title={t.title}
         lede={t.lede}
-        accent="#2f8f8a"
+        accent="#6f7df5"
       >
         <Reveal className="glass mt-10 max-w-3xl p-6 sm:p-7">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted">{t.inShort}</p>
