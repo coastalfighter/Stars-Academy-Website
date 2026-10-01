@@ -4,6 +4,8 @@ import nextTs from "eslint-config-next/typescript";
 const config = [
   ...nextVitals,
   ...nextTs,
+  // CommonJS files (Node preloads, tool configs) legitimately use require().
+  { files: ["**/*.cjs"], rules: { "@typescript-eslint/no-require-imports": "off" } },
   {
     ignores: [
       ".next/**",

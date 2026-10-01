@@ -53,6 +53,9 @@ export const CMS_TAGS = {
   jobOpening: "cms:jobOpening",
   testimonial: "cms:testimonial",
   teamMember: "cms:teamMember",
+  event: "cms:event",
+  resource: "cms:resource",
+  galleryPhoto: "cms:galleryPhoto",
   siteSettings: "cms:siteSettings",
 } as const;
 

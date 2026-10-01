@@ -1,6 +1,8 @@
 import { faqs as enFaqs } from "@/content/faq";
 import { faqs as esFaqs } from "@/content/es/faq";
 import { openRoles } from "@/content/pages";
+import { bundledResources } from "@/content/resources";
+import { ROUTES } from "@/i18n/routes";
 
 /**
  * Builds the initial CMS dataset from the content bundled with the site, so
@@ -38,6 +40,23 @@ export function buildSeed(): SeedDoc[] {
       position: r.id,
       open: true,
       order: (i + 1) * 10,
+    });
+  });
+
+  bundledResources.forEach((r, i) => {
+    const link =
+      "route" in r.target
+        ? { en: ROUTES[r.target.route].en, es: ROUTES[r.target.route].es ?? undefined }
+        : { en: r.target.en ?? undefined, es: r.target.es ?? undefined };
+    docs.push({
+      _id: `resource-${r.id}`,
+      _type: "resource",
+      topic: r.topic,
+      publisher: r.publisher,
+      order: (i + 1) * 10,
+      title: { _type: "localeString", en: r.title.en, es: r.title.es },
+      summary: { _type: "localeText", en: r.summary.en, es: r.summary.es },
+      link: JSON.parse(JSON.stringify(link)) as Record<string, string>,
     });
   });
 

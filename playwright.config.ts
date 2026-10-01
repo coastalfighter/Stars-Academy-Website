@@ -36,7 +36,7 @@ const siteEnv = {
 
 const site = REMOTE ?? `http://127.0.0.1:${PORTS.site}`;
 const cms = `http://127.0.0.1:${PORTS.cms}`;
-const general = /(smoke|a11y|story|calm|i18n|forms|keyboard|analytics)\.spec\.ts/;
+const general = /(smoke|a11y|story|calm|i18n|forms|keyboard|analytics|community)\.spec\.ts/;
 
 export default defineConfig({
   testDir: "e2e",

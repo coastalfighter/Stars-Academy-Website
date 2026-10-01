@@ -29,6 +29,10 @@ The home page tells the STARS story as **one continuous 3D scroll**, built on th
 | `/faq` | `/es/preguntas-frecuentes` | All questions by audience (FAQPage structured data) |
 | `/contact-us`, `/schedule-a-tour` | `/es/contacto`, `/es/programar-visita` | General contact and tour requests |
 | `/privacy`, `/accessibility`, `/nondiscrimination` | `/es/privacidad`, `/es/accesibilidad`, `/es/no-discriminacion` | Policy pages |
+| `/events` | `/es/eventos` | Upcoming events (CMS), add-to-calendar `.ics`, schema.org `Event` data |
+| `/resources` | `/es/recursos` | Family resource library by topic, with language-aware PDFs and links |
+| `/team` | `/es/equipo` | Roles, plus staff by team (CMS), bilingual staff marked |
+| `/photos` | `/es/fotos` | Gallery with an accessible `<dialog>` viewer; consented photos only |
 | `/referrals`, `/careers`, `/careers/apply` | — (English only) | Physician/school referrals; jobs |
 
 Secondary pages share one hero: breadcrumbs (with `BreadcrumbList` JSON-LD) and a small interactive 3D STARS
@@ -150,6 +154,7 @@ Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse 
 ├── .github/workflows/ci.yml         # quality → E2E + Lighthouse; Studio checks
 ├── .github/workflows/preview-e2e.yml  # E2E against every Vercel preview
 ├── .github/workflows/uptime.yml     # production probe every 30 min
+├── .github/workflows/content-links.yml  # weekly resource link check
 ├── docs/OPERATIONS.md               # monitoring setup + incident runbook
 ├── docs/ANALYTICS.md                # website insights: staff guide, QR/UTM tagging, privacy model
 ├── docs/CONTENT-CHECKLIST.md        # facts awaiting client confirmation
@@ -158,6 +163,7 @@ Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse 
 ├── scripts/export-cms-seed.ts       # bundled content → CMS seed
 ├── scripts/e2e-build.mjs            # builds the site and its CMS-enabled twin for E2E
 ├── scripts/uptime-check.mts         # dependency-free production probe
+├── scripts/check-links.mts          # weekly check of the resource library's external links
 ├── e2e/                             # Playwright specs, fixtures (mock Sanity, webhook receiver)
 ├── public/                          # favicon + client photography
 ├── src/
@@ -194,7 +200,7 @@ Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse 
 │       ├── observability/           # JSON logger, PII redaction, alerts, health, browser error reports
 │       ├── analytics/               # beacon protocol, normalisation, stores, collector, reports, staff auth
 │       └── hooks/useMediaQuery.ts
-├── tests/                           # 333 unit/component tests (incl. CMS, translation coverage, route integrity)
+├── tests/                           # 359 unit/component tests (incl. CMS, translation coverage, route integrity)
 ├── .env.example
 ├── playwright.config.ts             # projects: desktop, mobile, reduced-motion, cms
 ├── lighthouserc.cjs                 # Lighthouse scores + resource budgets
@@ -218,18 +224,20 @@ npm run dev                  # http://localhost:3000
 | `npm run lint` | ESLint (Next core-web-vitals + TypeScript) |
 | `npm run e2e:build` | Builds `.next` and the CMS-enabled `.next-cms` for E2E |
 | `npm run e2e` / `npm run e2e:ui` | Playwright suite (headless / interactive) |
+| `npm run check:links` | Checks the resource library's external links (also weekly in `content-links.yml`) |
 | `npm run lhci` | Lighthouse CI against the production build (run `npm run build` first) |
 
 ## Testing & CI
 
 Three layers, all run by `.github/workflows/ci.yml` on every pull request and on `main`:
 
-1. **Unit and component tests** (Vitest, 333 tests): analytics (normalisation, stores, collector, consent,
+1. **Unit and component tests** (Vitest, 359 tests): community content (event, resource and gallery validation,
+   consent, language fallback, clinic-time formatting, RFC 5545 calendar files, the photo viewer, link checks), analytics (normalisation, stores, collector, consent,
    reports, staff sessions), validation and the PHI guard, delivery signing, rate
    limiting (memory, Upstash, failover), the origin guard, logging redaction, alerts, CSP and browser error
    reports, health, the uptime probe, error pages, CMS schemas, webhook signatures and preview, timeline maths, calm mode and
    WebGL detection, translation coverage and route integrity.
-2. **End-to-end** (Playwright, 104 tests across 4 projects; 85 run against previews). The suite builds the site twice: once with bundled
+2. **End-to-end** (Playwright, 128 tests across 4 projects; 105 run against previews). The suite builds the site twice: once with bundled
    content, and once with the CMS on, where Sanity is answered by `e2e/fixtures/mock-sanity.cjs`. A local
    receiver captures delivered inquiries so the HMAC signature can be checked.
    - `smoke`: every sitemap URL loads with the right `lang`, one `h1`, metadata and no console errors. Also
@@ -243,6 +251,12 @@ Three layers, all run by `.github/workflows/ci.yml` on every pull request and on
      applications pre-select the role, and cross-site or malformed posts are rejected.
    - `i18n` and `keyboard`: the language switcher, hreflang, the skip link, the FAQ disclosure and the
      mobile-menu focus trap.
+   - `community` and `cms` (Milestone 8):
+     - events, calendar files and structured data;
+     - language-aware resources and the refusal of unsafe links;
+     - team photos shown only with consent, through the site's own image optimizer;
+     - a gallery that never shows a photo without a release;
+     - the keyboard-operable photo viewer.
    - `analytics`: beacons are counted and show up for staff, visitors never get a cookie, GPC and the opt-out
      switch stop all counting, and the dashboard signs in, passes axe, exports CSV and signs out.
    - `smoke › operations endpoints`: the health check, both CSP report formats, and that browser error reports
@@ -358,5 +372,6 @@ checklist in [docs/OPERATIONS.md](docs/OPERATIONS.md) (alerts, Upstash, uptime, 
 - ~~Milestone 5: Playwright E2E (axe, forms, CMS), Lighthouse CI budgets, GitHub Actions pipeline~~
 - ~~Milestone 6: shared rate limiting, CSP reporting, error and uptime monitoring, preview E2E~~
 - ~~Milestone 7: privacy-friendly analytics, "how did you hear" field, staff insights dashboard~~
-8. **Content expansion**: staff bios and a photo gallery managed in the CMS, an events calendar, and a
-   resources library for families (handouts in English and Spanish).
+- ~~Milestone 8: events calendar, family resource library, Our Team, photo gallery (all CMS-managed)~~
+9. **Launch**: point the domain at Vercel and set up redirects from every old URL. Run a content-entry sprint with
+   staff, do a final accessibility audit with assistive-technology users, and then decommission the old site.

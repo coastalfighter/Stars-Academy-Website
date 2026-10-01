@@ -28,6 +28,10 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
+    // Photos uploaded in the CMS. Visitors fetch them from this site's own
+    // image optimizer (no third-party requests), which also re-encodes them
+    // and drops embedded metadata such as camera GPS positions.
+    remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io", pathname: "/images/**" }],
   },
   async headers() {
     return [

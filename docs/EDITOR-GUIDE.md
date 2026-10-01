@@ -1,7 +1,7 @@
 # Editing the STARS website — staff guide
 
-You can update announcements, FAQs, job openings, leadership, family
-testimonials and contact details yourself. Changes appear on the website
+You can update announcements, events, family resources, FAQs, job openings,
+team members, gallery photos, family testimonials and contact details yourself. Changes appear on the website
 within seconds of pressing **Publish** — no developer needed.
 
 **Where:** https://stars-academy.sanity.studio (sign in with the account your
@@ -49,10 +49,46 @@ Add or edit roles under **Job openings**. Switch **Open** off to hide a role
 without deleting it. **Application form role** pre-selects the role when an
 applicant clicks Apply.
 
-## Leadership
+## Events
 
-Add people under **Leadership**. The section appears on the About page as soon
-as one person is published.
+Add open houses, family nights and hiring days under **Events**. They appear on
+the Events page (and the next two family events on Current Families) and
+disappear on their own once they're over.
+
+- Click **Generate** next to *Web address* after typing the title.
+- Pick **Who it's for** and **Where**. For somewhere off campus, choose
+  *Somewhere else* and type the place in *Location details*.
+- *How to sign up*: none, call STARS, or a sign-up link (https only).
+- Families can add each event to their phone's calendar with one tap.
+
+## Family resources
+
+Under **Family resources**, upload a PDF (in English, Spanish or both) or paste a
+link, and choose a topic. The Spanish page shows the Spanish version when there
+is one, and marks English-only material "En inglés". Only link to sources you'd
+hand a family in person.
+
+## Team members
+
+Add everyone families might meet under **Team members** and choose their
+**Team**. Leadership also appears on the About page; everyone appears on Our Team.
+
+- Tick **Works with families in Spanish** for bilingual staff; families look for it.
+- A **photo** appears only when you also tick that the person agreed to it being
+  on the website. Without that, their name and bio still show, with their initials.
+
+## Photo gallery
+
+**Every photo that shows a child needs a signed photo release from the parent or
+guardian on file.** The editor won't publish a gallery photo without the release
+checkbox and date, and the website refuses it too.
+
+- Avoid name tags, cubbies or artwork with names, and equipment that hints at a
+  child's diagnosis.
+- Fill in the **description** in both languages. It's read aloud to people who
+  can't see the photo. Describe what's happening, never who it is.
+- Location data saved by phones (GPS) is removed automatically before photos are
+  shown on the website.
 
 ## Family testimonials
 

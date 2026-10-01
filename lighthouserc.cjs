@@ -15,13 +15,14 @@
 const PORT = Number(process.env.LHCI_PORT || 3300);
 const base = `http://localhost:${PORT}`;
 
-/** Representative templates: home (3D), service detail, long-form, form, Spanish. */
+/** Representative templates: home (3D), service detail, long-form, form, gallery, Spanish. */
 const urls = [
   "/",
   "/services/speech-therapy",
   "/families",
   "/faq",
   "/schedule-a-tour",
+  "/photos",
   "/es",
   "/es/servicios/terapia-del-habla-y-lenguaje",
 ].map((path) => `${base}${path}`);

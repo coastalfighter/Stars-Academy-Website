@@ -4,6 +4,7 @@ import { getDictionary } from "@/i18n/dictionary";
 import { href } from "@/i18n/routes";
 import { getContent } from "@/content";
 import { aboutCopy } from "@/content/copy/about";
+import { communityCopy } from "@/content/copy/community";
 import { PageHero } from "@/components/page/PageHero";
 import { Section, SectionIntro } from "@/components/page/Section";
 import { NextStep } from "@/components/page/NextStep";
@@ -20,7 +21,8 @@ export async function AboutView({ locale }: { locale: Locale }) {
   const t = aboutCopy[locale];
   const d = getDictionary(locale);
   const { site, values, pages, photos } = getContent(locale);
-  const [team, settings] = await Promise.all([getTeam(locale), getSiteSettings(locale)]);
+  const [everyone, settings] = await Promise.all([getTeam(locale), getSiteSettings(locale)]);
+  const team = everyone.filter((m) => m.group === "leadership");
   const socialClass =
     "inline-flex min-h-11 items-center rounded-full border border-ink/15 bg-white/70 px-5 text-sm font-semibold hover:border-ink/40";
 
@@ -128,6 +130,9 @@ export async function AboutView({ locale }: { locale: Locale }) {
               </Reveal>
             ))}
           </ul>
+          <ButtonLink href={href(locale, "team")} variant="ghost" className="mt-8" arrow>
+            {communityCopy[locale].team.peopleTitle}
+          </ButtonLink>
         </Section>
       ) : null}
 

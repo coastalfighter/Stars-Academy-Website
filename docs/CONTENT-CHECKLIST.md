@@ -13,6 +13,10 @@ Once STARS confirms an item, add it to `src/content/*.ts`.
 - [ ] Founder story, key milestones (e.g. opening STARS Academy South)
 - [ ] STARS Academy South street address and what's offered there
 - [ ] Leadership: names, titles, credentials and portraits (natural light, candid)
+- [ ] Team members for the Our Team page: role, team, bilingual staff, 2–3 sentence bios; photos only with each person's agreement
+- [ ] Photo releases on file for the five photos already published on the current site (they're the gallery's starting set)
+- [ ] Gallery photos from classrooms, therapy, outdoor play and events, each with a signed photo release
+- [ ] Upcoming open houses, family nights and hiring days for the Events page
 - [ ] A real family testimonial (2–3 sentences) with written permission, plus parent first name and child's age/program
 
 ## Families
@@ -29,6 +33,11 @@ Once STARS confirms an item, add it to `src/content/*.ts`.
 - [ ] Absence reporting process; weather/emergency closure announcements
 - [ ] Health forms and physician orders required at enrollment and for medication changes
 - [ ] Enrollment inquiry packet link (Adobe Sign)
+
+## Family resources (Milestone 8)
+- [ ] Open the two CDC "Learn the Signs. Act Early." links in a browser to confirm them (CDC blocks automated checks; `npm run check:links` reports them as "unverified")
+- [ ] Add Arkansas First Connections (early intervention, Part C) with the current DHS page address
+- [ ] STARS' own handouts as PDFs (e.g. what to pack, feeding tips, home activities), ideally in English and Spanish
 
 ## Referral partners
 - [ ] Referral fax number or secure method for prescriptions and records

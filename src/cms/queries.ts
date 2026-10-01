@@ -46,13 +46,62 @@ export const TESTIMONIALS_QUERY = /* groq */ `
   consentOnFile
 }`;
 
+/** Shared image projection: CDN URL, size and blur placeholder. */
+const IMAGE = /* groq */ `{ "url": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height, "lqip": asset->metadata.lqip }`;
+
+/**
+ * Staff. A photo is only returned when the staff member agreed to it being
+ * published; older entries without a group count as leadership.
+ */
 export const TEAM_QUERY = /* groq */ `
 *[_type == "teamMember"] | order(order asc, name asc){
   "id": _id,
   name,
   credentials,
   role,
-  bio
+  bio,
+  "group": coalesce(group, "leadership"),
+  speaksSpanish,
+  "photo": select(photoConsent == true && defined(photo.asset) => photo${IMAGE}, null)
+}`;
+
+/** `$since` (start of today, UTC) keeps the request URL stable; exact times are applied at render. */
+export const EVENTS_QUERY = /* groq */ `
+*[_type == "event" && coalesce(endsAt, startsAt) > $since] | order(startsAt asc)[0...40]{
+  "id": _id,
+  "slug": slug.current,
+  title,
+  summary,
+  startsAt,
+  endsAt,
+  allDay,
+  audience,
+  location,
+  locationDetail,
+  "registration": { "kind": coalesce(registration.kind, "none"), "href": registration.href },
+  spanishAvailable
+}`;
+
+export const RESOURCES_QUERY = /* groq */ `
+*[_type == "resource"] | order(topic asc, order asc, _createdAt asc)[0...120]{
+  "id": _id,
+  title,
+  summary,
+  topic,
+  publisher,
+  "link": { "en": link.en, "es": link.es },
+  "file": { "en": fileEn.asset->url, "es": fileEs.asset->url }
+}`;
+
+/** Only photos with consent on file — the site validates this again. */
+export const GALLERY_QUERY = /* groq */ `
+*[_type == "galleryPhoto" && consentOnFile == true && defined(image.asset)] | order(order asc, _createdAt desc)[0...60]{
+  "id": _id,
+  "image": image${IMAGE},
+  alt,
+  caption,
+  topic,
+  consentOnFile
 }`;
 
 export const SITE_SETTINGS_QUERY = /* groq */ `

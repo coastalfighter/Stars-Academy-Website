@@ -3,7 +3,9 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionary";
 import { hasLocale, href, serviceHref } from "@/i18n/routes";
 import { getContent } from "@/content";
-import { faqsInGroup, getAnnouncements, getFaqs } from "@/cms/repository";
+import { faqsInGroup, getAnnouncements, getEvents, getFaqs, getSiteSettings } from "@/cms/repository";
+import { communityCopy } from "@/content/copy/community";
+import { EventCard } from "@/components/community/EventCard";
 import { AnnouncementList } from "@/components/cms/AnnouncementList";
 import { familiesCopy } from "@/content/copy/families";
 import { PageHero } from "@/components/page/PageHero";
@@ -17,7 +19,9 @@ export async function FamiliesView({ locale }: { locale: Locale }) {
   const t = familiesCopy[locale];
   const d = getDictionary(locale);
   const { site, pages } = getContent(locale);
-  const [announcements, faqs] = await Promise.all([getAnnouncements(locale), getFaqs(locale)]);
+  const [announcements, faqs, events, settings] = await Promise.all([getAnnouncements(locale), getFaqs(locale), getEvents(locale), getSiteSettings(locale)]);
+  const c = communityCopy[locale];
+  const nextEvents = events.filter((e) => e.audience === "families" || e.audience === "community").slice(0, 2);
   const resources = [
     { ...t.resources[0]!, href: site.consciousDisciplineUrl, external: true },
     { ...t.resources[1]!, href: href(locale, "approach"), external: false },
@@ -102,6 +106,22 @@ export async function FamiliesView({ locale }: { locale: Locale }) {
         </div>
       </Section>
 
+      {nextEvents.length > 0 ? (
+        <Section id="events" tone="sand" labelledBy="events-teaser-title">
+          <SectionIntro id="events-teaser-title" eyebrow={c.events.teaserEyebrow} title={c.events.teaserTitle} />
+          <ul className="mt-10 grid gap-5 lg:grid-cols-2">
+            {nextEvents.map((e) => (
+              <li key={e.id}>
+                <EventCard event={e} locale={locale} settings={settings} />
+              </li>
+            ))}
+          </ul>
+          <ButtonLink href={href(locale, "events")} variant="ghost" className="mt-8" arrow>
+            {c.events.teaserAll}
+          </ButtonLink>
+        </Section>
+      ) : null}
+
       <Section id="resources" labelledBy="resources-title">
         <SectionIntro id="resources-title" eyebrow={t.resourcesEyebrow} title={t.resourcesTitle} />
         <ul className="mt-10 grid gap-4 md:grid-cols-3">
@@ -122,6 +142,9 @@ export async function FamiliesView({ locale }: { locale: Locale }) {
             </li>
           ))}
         </ul>
+        <ButtonLink href={href(locale, "resources")} variant="ghost" className="mt-8" arrow>
+          {c.resources.browseAll}
+        </ButtonLink>
       </Section>
 
       <Section id="contact" tone="sand" labelledBy="contact-title">

@@ -14,11 +14,17 @@ const PAGES = [
   "/referrals",
   "/careers/apply",
   "/privacy",
+  "/events",
+  "/resources",
+  "/team",
+  "/photos",
   "/es",
   "/es/servicios/terapia-del-habla-y-lenguaje",
   "/es/como-empezar",
   "/es/preguntas-frecuentes",
   "/es/programar-visita",
+  "/es/recursos",
+  "/es/fotos",
 ];
 
 for (const path of PAGES) {

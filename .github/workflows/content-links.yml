@@ -1,0 +1,32 @@
+name: Resource links
+
+# Weekly check that the external links in the bundled resource library still
+# work, so families never hit a dead link. Fails (and emails watchers) only
+# on links that are definitely broken; bot-protected sites are listed as
+# "unverified" for a person to open. Resources added in the CMS are checked by
+# the editor when they publish them.
+
+on:
+  schedule:
+    - cron: "17 13 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/check-links.mts
+            src/content/resources.ts
+            package.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm run check:links

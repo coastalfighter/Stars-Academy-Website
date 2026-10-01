@@ -6,6 +6,7 @@ export const structure: StructureResolver = (S) =>
     .title("STARS Academy website")
     .items([
       S.documentTypeListItem("announcement").title("Announcements & closures"),
+      S.documentTypeListItem("event").title("Events"),
       S.listItem()
         .title("FAQs")
         .child(
@@ -32,7 +33,9 @@ export const structure: StructureResolver = (S) =>
             ),
         ),
       S.documentTypeListItem("jobOpening").title("Job openings"),
-      S.documentTypeListItem("teamMember").title("Leadership"),
+      S.documentTypeListItem("resource").title("Family resources"),
+      S.documentTypeListItem("teamMember").title("Team members"),
+      S.documentTypeListItem("galleryPhoto").title("Photo gallery"),
       S.documentTypeListItem("testimonial").title("Family testimonials"),
       S.divider(),
       S.listItem().title("Contact details").id("siteSettings").child(S.document().schemaType("siteSettings").documentId("siteSettings")),

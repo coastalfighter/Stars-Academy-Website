@@ -87,3 +87,16 @@ describe("privacy notice", () => {
     expect(legalCopy.es.privacy.sections[3]?.title).toBe("Cómo medimos el sitio web");
   });
 });
+
+describe("community pages in navigation", () => {
+  it("are linked from the footer in both languages, and keep the header uncrowded", async () => {
+    const { getDictionary } = await import("@/i18n/dictionary");
+    for (const locale of ["en", "es"] as const) {
+      const d = getDictionary(locale);
+      const footer = d.footer.forYouLinks.map((l) => l.key);
+      for (const key of ["events", "resources", "team", "photos"] as const) expect(footer, `${locale} footer`).toContain(key);
+      const header = [...d.nav.primary, ...d.nav.utility].map((l) => l.key);
+      for (const key of ["events", "resources", "team", "photos"] as const) expect(header, `${locale} header`).not.toContain(key);
+    }
+  });
+});
