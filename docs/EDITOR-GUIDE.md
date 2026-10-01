@@ -106,6 +106,23 @@ South address. Each appears on the Contact and About pages once filled in.
 
 ---
 
+## Text families about a closure
+
+If text alerts are set up, a **closure** or **urgent** announcement shows *Also text families who signed up for
+alerts*. Tick it and write a short **text message** in English and Spanish (140 characters each; "STARS
+Academy:" and opt-out wording are added for you). It's sent once, when you publish.
+
+- Publishing again **without changing the text message** won't text anyone again.
+- To send a correction ("Reopening at 10:00 a.m."), edit the text message and publish.
+- The web team sees every text in the staff chat. If a text fails, they'll know straight away.
+
+## Secure forms (enrollment, referrals)
+
+Under **Contact details & secure forms** → *Secure forms & alerts* you'll find the enrollment form links, the
+physicians' upload link, the Direct messaging address and the text-alert number and keyword. Only paste links the
+web team has approved: links to services STARS hasn't approved are hidden automatically, and the team is alerted.
+See [PHI-INTEGRATIONS.md](PHI-INTEGRATIONS.md).
+
 ## Never put health information on the website
 
 The website is public. Don't enter a child's name, date of birth, diagnosis,

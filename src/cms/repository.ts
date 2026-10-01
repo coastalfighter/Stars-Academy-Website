@@ -9,6 +9,10 @@ import { paragraphs, pick, type LocalizedText } from "./localize";
 import { href as routeHref } from "@/i18n/routes";
 import { bundledResources } from "@/content/resources";
 import { HTML_LANG } from "@/i18n/config";
+import { site } from "@/content/site";
+import { isApprovedSecureUrl, secureHosts } from "@/lib/secure/hosts";
+import { logger } from "@/lib/observability/logger";
+import { sendAlert } from "@/lib/observability/alert";
 import {
   ANNOUNCEMENTS_QUERY,
   EVENTS_QUERY,
@@ -351,8 +355,10 @@ export type SiteSettings = {
 
 const EMPTY_SETTINGS: SiteSettings = { fax: null, email: null, southCampus: null };
 
+const loadSettings = () => cmsQuery(SITE_SETTINGS_QUERY, {}, siteSettingsSchema, opts(CMS_TAGS.siteSettings));
+
 export async function getSiteSettings(locale: Locale): Promise<SiteSettings> {
-  const raw = await cmsQuery(SITE_SETTINGS_QUERY, {}, siteSettingsSchema, opts(CMS_TAGS.siteSettings));
+  const raw = await loadSettings();
   if (!raw) return EMPTY_SETTINGS;
   return {
     fax: raw.fax,
@@ -361,4 +367,76 @@ export async function getSiteSettings(locale: Locale): Promise<SiteSettings> {
       ? { ...raw.southCampus, note: raw.southCampus.note ? pick(raw.southCampus.note, locale) : null }
       : null,
   };
+}
+
+/* ── Secure channels (PHI goes straight to BAA-covered services) ── */
+
+export type SecureChannels = {
+  /** Where families start enrollment: the CMS link if its host is approved, else STARS' Adobe Sign packet. */
+  enrollmentForm: { href: string; lang: string | null };
+  referralUpload: string | null;
+  directAddress: string | null;
+  fax: string | null;
+  textAlerts: { number: string; keyword: string; smsHref: string } | null;
+};
+
+/** `sms:` link that opens a new text with the keyword filled in (iOS and Android both read `?body=`). */
+export function smsHref(number: string, keyword: string): string {
+  const digits = number.replace(/[^\d+]/g, "");
+  return `sms:${digits}?body=${encodeURIComponent(keyword)}`;
+}
+
+/**
+ * Links that receive protected health information. Each CMS link must use
+ * an approved host (SECURE_FORM_HOSTS); a link that doesn't is dropped and
+ * reported, because it could be an attempt to redirect families' data.
+ */
+export async function getSecureChannels(
+  locale: Locale,
+  { env = process.env, report = reportRejectedLink }: { env?: NodeJS.ProcessEnv; report?: (field: string, url: string) => void } = {},
+): Promise<SecureChannels> {
+  const raw = await loadSettings();
+  const hosts = secureHosts(env);
+  const approved = (field: string, url: string | null | undefined): string | null => {
+    if (!url) return null;
+    if (isApprovedSecureUrl(url, hosts)) return url;
+    report(field, url);
+    return null;
+  };
+  const en = approved("enrollmentFormEn", raw?.enrollmentFormEn);
+  const es = approved("enrollmentFormEs", raw?.enrollmentFormEs);
+  const mine = locale === "es" ? es : en;
+  const other = locale === "es" ? en : es;
+  const enrollmentForm = mine
+    ? { href: mine, lang: null }
+    : other
+      ? { href: other, lang: HTML_LANG[locale === "es" ? "en" : "es"] }
+      : { href: site.secureForms.enrollmentPacket, lang: locale === "es" ? HTML_LANG.en : null };
+  return {
+    enrollmentForm,
+    referralUpload: approved("referralUploadUrl", raw?.referralUploadUrl),
+    directAddress: raw?.directAddress ?? null,
+    fax: raw?.fax ?? null,
+    textAlerts: raw?.textAlerts ? { ...raw.textAlerts, smsHref: smsHref(raw.textAlerts.number, raw.textAlerts.keyword) } : null,
+  };
+}
+
+function reportRejectedLink(field: string, url: string): void {
+  let host = "invalid";
+  try {
+    host = new URL(url).hostname;
+  } catch {
+    // keep "invalid"
+  }
+  logger.warn("secure link rejected", { event: "secure.rejected", field, host });
+  void sendAlert({
+    fingerprint: `secure-link:${field}:${host}`,
+    severity: "critical",
+    title: `A secure-form link in the CMS (${field}) points to an unapproved site (${host}) and was not shown`,
+    details: {
+      field,
+      host,
+      action: "If this is a new form provider STARS has a BAA with, add the host to SECURE_FORM_HOSTS. Otherwise, check who changed Contact details in the Studio.",
+    },
+  });
 }

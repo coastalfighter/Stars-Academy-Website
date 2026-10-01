@@ -108,5 +108,10 @@ export const SITE_SETTINGS_QUERY = /* groq */ `
 *[_type == "siteSettings" && _id == "siteSettings"][0]{
   fax,
   email,
-  "southCampus": select(defined(southCampus.street) => southCampus{ street, city, region, postalCode, note }, null)
+  "southCampus": select(defined(southCampus.street) => southCampus{ street, city, region, postalCode, note }, null),
+  enrollmentFormEn,
+  enrollmentFormEs,
+  referralUploadUrl,
+  directAddress,
+  "textAlerts": select(defined(textAlerts.number) && defined(textAlerts.keyword) => textAlerts{ number, keyword }, null)
 }`;

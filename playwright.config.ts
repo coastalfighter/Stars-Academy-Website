@@ -36,7 +36,7 @@ const siteEnv = {
 
 const site = REMOTE ?? `http://127.0.0.1:${PORTS.site}`;
 const cms = `http://127.0.0.1:${PORTS.cms}`;
-const general = /(smoke|a11y|story|calm|i18n|forms|keyboard|analytics|community)\.spec\.ts/;
+const general = /(smoke|a11y|story|calm|i18n|forms|keyboard|analytics|community|enroll)\.spec\.ts/;
 
 export default defineConfig({
   testDir: "e2e",
@@ -87,7 +87,14 @@ export default defineConfig({
     {
       command: `node --require ./e2e/fixtures/mock-sanity.cjs ${next} start -p ${PORTS.cms} -H 127.0.0.1`,
       url: cms,
-      env: { ...siteEnv, NEXT_DIST_DIR: ".next-cms", SANITY_PROJECT_ID: CMS_PROJECT_ID, SANITY_WEBHOOK_SECRET },
+      env: {
+        ...siteEnv,
+        NEXT_DIST_DIR: ".next-cms",
+        SANITY_PROJECT_ID: CMS_PROJECT_ID,
+        SANITY_WEBHOOK_SECRET,
+        SECURE_FORM_HOSTS: ".securefiles.test",
+        TEXT_ALERTS_MODE: "dry-run",
+      },
       reuseExistingServer: !CI,
       timeout: 60_000,
     },

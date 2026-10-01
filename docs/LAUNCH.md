@@ -27,7 +27,7 @@ keep their address (`/`, `/about-us`, `/contact-us`, `/schedule-a-tour`).
 | `/nursing` | `/services/nursing-care` |
 | `/classrooms` | `/services/developmental-classrooms` |
 | `/what-we-do` | `/services` |
-| `/enroll-now` | `/getting-started` |
+| `/enroll-now` | `/enroll` (enrollment check, then the secure form) |
 | `/apply-now` | `/careers/apply` |
 | `/general-8` (Career Opportunities) | `/careers` |
 | `/walk` (Instructional Videos, never finished) | `/resources` |

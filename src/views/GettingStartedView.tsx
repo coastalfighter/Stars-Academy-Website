@@ -4,7 +4,8 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionary";
 import { href, serviceHref } from "@/i18n/routes";
 import { getContent } from "@/content";
-import { faqsInGroup, getFaqs } from "@/cms/repository";
+import { faqsInGroup, getFaqs, getSecureChannels } from "@/cms/repository";
+import { enrollCopy } from "@/content/copy/enroll";
 import { gettingStartedCopy } from "@/content/copy/gettingStarted";
 import { PageHero } from "@/components/page/PageHero";
 import { Section, SectionIntro } from "@/components/page/Section";
@@ -19,7 +20,8 @@ export async function GettingStartedView({ locale }: { locale: Locale }) {
   const t = gettingStartedCopy[locale];
   const d = getDictionary(locale);
   const { site, pages, photos } = getContent(locale);
-  const faqs = await getFaqs(locale);
+  const [faqs, channels] = await Promise.all([getFaqs(locale), getSecureChannels(locale)]);
+  const e = enrollCopy[locale];
   const practical = [
     { title: t.practical.hours, body: site.hours.display },
     { title: t.practical.transportation, body: t.practical.transportationBody },
@@ -110,16 +112,24 @@ export async function GettingStartedView({ locale }: { locale: Locale }) {
           <div className="lg:col-span-5">
             <SectionIntro id="inquiry-title" eyebrow={t.inquiryEyebrow} title={t.inquiryTitle} lede={t.inquiryLede} />
             <Reveal className="card mt-8 p-6">
+              <h3 className="font-display text-lg">{e.title}</h3>
+              <p className="mt-2 leading-relaxed text-ink-soft">{e.lede}</p>
+              <ButtonLink href={href(locale, "enroll")} className="mt-4" arrow>
+                {e.crumb}
+              </ButtonLink>
+            </Reveal>
+            <Reveal className="card mt-4 p-6">
               <h3 className="font-display text-lg">{t.packetTitle}</h3>
               <p className="mt-2 leading-relaxed text-ink-soft">{t.packetBody}</p>
               <a
-                href={site.secureForms.enrollmentPacket}
+                href={channels.enrollmentForm.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-track="secure_form:enrollment"
                 className="mt-4 inline-block font-semibold text-teal-deep underline decoration-2 underline-offset-4"
               >
                 {t.packetLink}
-                <span className="sr-only">{d.common.opensAdobe}</span>
+                <span className="sr-only">{channels.enrollmentForm.href === site.secureForms.enrollmentPacket ? d.common.opensAdobe : ` ${e.startSecureNote}`}</span>
               </a>
             </Reveal>
           </div>

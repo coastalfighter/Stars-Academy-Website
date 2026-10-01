@@ -12,6 +12,7 @@ export const ROUTES = {
   approach: { en: "/approach", es: "/es/nuestro-enfoque" },
   about: { en: "/about-us", es: "/es/sobre-nosotros" },
   gettingStarted: { en: "/getting-started", es: "/es/como-empezar" },
+  enroll: { en: "/enroll", es: "/es/inscripcion" },
   families: { en: "/families", es: "/es/familias" },
   faq: { en: "/faq", es: "/es/preguntas-frecuentes" },
   contact: { en: "/contact-us", es: "/es/contacto" },

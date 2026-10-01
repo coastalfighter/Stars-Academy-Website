@@ -70,7 +70,7 @@ describe("launch check", () => {
   });
 
   it.each([
-    [{ brokenRedirect: true }, /\/enroll-now should redirect permanently to \/getting-started/],
+    [{ brokenRedirect: true }, /\/enroll-now should redirect permanently to \/enroll/],
     [{ placeholder: true }, /\/faq: placeholder text: unresolved client question/],
     [{ noindex: true }, /\/faq: marked noindex/],
     [{ noHeaders: true }, /content-security-policy header/],

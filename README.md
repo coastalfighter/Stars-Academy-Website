@@ -29,6 +29,7 @@ The home page tells the STARS story as **one continuous 3D scroll**, built on th
 | `/faq` | `/es/preguntas-frecuentes` | All questions by audience (FAQPage structured data) |
 | `/contact-us`, `/schedule-a-tour` | `/es/contacto`, `/es/programar-visita` | General contact and tour requests |
 | `/privacy`, `/accessibility`, `/nondiscrimination` | `/es/privacidad`, `/es/accesibilidad`, `/es/no-discriminacion` | Policy pages |
+| `/enroll` | `/es/inscripcion` | Four-question eligibility check (browser-only), then the secure enrollment form |
 | `/events` | `/es/eventos` | Upcoming events (CMS), add-to-calendar `.ics`, schema.org `Event` data |
 | `/resources` | `/es/recursos` | Family resource library by topic, with language-aware PDFs and links |
 | `/team` | `/es/equipo` | Roles, plus staff by team (CMS), bilingual staff marked |
@@ -158,6 +159,7 @@ Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse 
 ├── .github/workflows/launch-verify.yml  # launch check after every production deployment
 ├── docs/OPERATIONS.md               # monitoring setup + incident runbook
 ├── docs/ANALYTICS.md                # website insights: staff guide, QR/UTM tagging, privacy model
+├── docs/PHI-INTEGRATIONS.md         # secure enrollment, referrals and text alerts: rules, vendors, setup
 ├── docs/LAUNCH.md                   # Wix → Vercel launch runbook (DNS, email, rollback, decommission)
 ├── docs/ACCESSIBILITY-AUDIT.md      # protocol for sessions with assistive-technology users
 ├── docs/CONTENT-CHECKLIST.md        # facts awaiting client confirmation
@@ -203,7 +205,7 @@ Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse 
 │       ├── observability/           # JSON logger, PII redaction, alerts, health, browser error reports
 │       ├── analytics/               # beacon protocol, normalisation, stores, collector, reports, staff auth
 │       └── hooks/useMediaQuery.ts
-├── tests/                           # 375 unit/component tests (incl. CMS, translation coverage, route integrity)
+├── tests/                           # 415 unit/component tests (incl. CMS, translation coverage, route integrity)
 ├── .env.example
 ├── playwright.config.ts             # projects: desktop, mobile, reduced-motion, cms
 ├── lighthouserc.cjs                 # Lighthouse scores + resource budgets
@@ -235,14 +237,14 @@ npm run dev                  # http://localhost:3000
 
 Three layers, all run by `.github/workflows/ci.yml` on every pull request and on `main`:
 
-1. **Unit and component tests** (Vitest, 375 tests): launch readiness (old-URL coverage, redirect targets, preview
+1. **Unit and component tests** (Vitest, 415 tests): secure channels (host allowlist, fallback, Direct addresses), the enrollment check, text alerts (SMS segments, idempotency, cap, dry-run, signatures), launch readiness (old-URL coverage, redirect targets, preview
    noindex, placeholder guard, the launch checker against a faulty fake site), community content (event, resource and gallery validation,
    consent, language fallback, clinic-time formatting, RFC 5545 calendar files, the photo viewer, link checks), analytics (normalisation, stores, collector, consent,
    reports, staff sessions), validation and the PHI guard, delivery signing, rate
    limiting (memory, Upstash, failover), the origin guard, logging redaction, alerts, CSP and browser error
    reports, health, the uptime probe, error pages, CMS schemas, webhook signatures and preview, timeline maths, calm mode and
    WebGL detection, translation coverage and route integrity.
-2. **End-to-end** (Playwright, 130 tests across 4 projects; 107 run against previews). The suite builds the site twice: once with bundled
+2. **End-to-end** (Playwright, 143 tests across 4 projects; 117 run against previews). The suite builds the site twice: once with bundled
    content, and once with the CMS on, where Sanity is answered by `e2e/fixtures/mock-sanity.cjs`. A local
    receiver captures delivered inquiries so the HMAC signature can be checked.
    - `smoke`: every sitemap URL loads with the right `lang`, one `h1`, metadata and no console errors. Also
@@ -361,6 +363,28 @@ in text · visible focus rings · focus-trapped mobile menu with Escape · form 
 with `aria-invalid` and `aria-describedby` on fields · minimum 44 px touch targets · AA contrast · calm mode
 and `prefers-reduced-motion` support.
 
+## Secure enrollment, referrals and text alerts
+
+See **[docs/PHI-INTEGRATIONS.md](docs/PHI-INTEGRATIONS.md)**. Health information never passes through the
+website's own services; it goes from the visitor's browser straight to services STARS has a BAA with.
+
+- **`/enroll`** (`/es/inscripcion`): a four-question eligibility check that runs entirely in the browser (nothing is
+  sent or stored), then hands off to the secure enrollment form. The old `/enroll-now` redirects here.
+- **Secure referrals** on `/referrals`: secure upload, Direct secure messaging, fax and phone, showing only the
+  channels that are configured.
+- **Host allowlist**: PHI-receiving links are editable in the CMS but only render if their host is in
+  `SECURE_FORM_HOSTS`, which lives in Vercel. Anything else is hidden and raises a 🔴 alert. Adobe Acrobat Sign is
+  the default.
+- **Text closure alerts**: text-to-join sign-up on Current Families, with the required consent wording. Publishing
+  a closure with *Also text families* calls `/api/alerts/text`, which:
+  - checks the webhook signature, then re-reads the notice uncached;
+  - checks its kind and timing, and fits the text to 4 SMS parts;
+  - never sends the same text twice, and caps alerts at 4 per 6 hours;
+  - only sends in `TEXT_ALERTS_MODE=live` (`dry-run` previews in the staff chat);
+  - sends to the provider through a signed webhook.
+
+  Phone numbers stay at the provider.
+
 ## Launch
 
 **[docs/LAUNCH.md](docs/LAUNCH.md)** is the step-by-step move from Wix: the content sprint, services, DNS changes
@@ -402,7 +426,8 @@ checklist in [docs/OPERATIONS.md](docs/OPERATIONS.md) (alerts, Upstash, uptime, 
 - ~~Milestone 8: events calendar, family resource library, Our Team, photo gallery (all CMS-managed)~~
 - ~~Milestone 9: launch readiness: old-URL redirects, preview noindex, launch checker, runbook, accessibility
   audit protocol~~
-10. **After launch (optional)**:
-    - online enrollment intake that replaces the Adobe Sign packet with a HIPAA-eligible form service and a BAA;
-    - a referral-partner portal for secure prescription upload;
-    - an SMS closure-alert sign-up for families.
+- ~~Milestone 10: enrollment check and secure handoff, secure referral channels, text closure alerts (PHI kept
+  off the website's own systems)~~
+
+The build plan is complete. Further work is operational: vendor selection and BAAs, A2P 10DLC registration, content
+and the accessibility sessions.

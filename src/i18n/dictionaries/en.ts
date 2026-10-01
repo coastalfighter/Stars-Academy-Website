@@ -61,6 +61,7 @@ export const en = {
     forYou: "For you",
     forYouLinks: [
       { label: "Is STARS right for my child?", key: "gettingStarted" },
+      { label: "Start enrollment", key: "enroll" },
       { label: "Schedule a tour", key: "tour" },
       { label: "Current families", key: "families" },
       { label: "Frequently asked questions", key: "faq" },

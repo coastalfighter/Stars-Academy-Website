@@ -17,7 +17,7 @@ describe("healthReport", () => {
       status: "ok",
       version: "abcdef1",
       environment: "production",
-      checks: { inquiryDelivery: "configured", rateLimit: "shared", content: "bundled", alerts: "off", analytics: "shared" },
+      checks: { inquiryDelivery: "configured", rateLimit: "shared", content: "bundled", alerts: "off", analytics: "shared", textAlerts: "off" },
     });
     expect(JSON.stringify(r)).not.toContain("secret-token");
   });

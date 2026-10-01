@@ -3,7 +3,8 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionary";
 import { hasLocale, href, serviceHref } from "@/i18n/routes";
 import { getContent } from "@/content";
-import { faqsInGroup, getAnnouncements, getEvents, getFaqs, getSiteSettings } from "@/cms/repository";
+import { faqsInGroup, getAnnouncements, getEvents, getFaqs, getSecureChannels, getSiteSettings } from "@/cms/repository";
+import { TextAlertsSignup } from "@/components/enroll/TextAlertsSignup";
 import { communityCopy } from "@/content/copy/community";
 import { EventCard } from "@/components/community/EventCard";
 import { AnnouncementList } from "@/components/cms/AnnouncementList";
@@ -19,7 +20,13 @@ export async function FamiliesView({ locale }: { locale: Locale }) {
   const t = familiesCopy[locale];
   const d = getDictionary(locale);
   const { site, pages } = getContent(locale);
-  const [announcements, faqs, events, settings] = await Promise.all([getAnnouncements(locale), getFaqs(locale), getEvents(locale), getSiteSettings(locale)]);
+  const [announcements, faqs, events, settings, channels] = await Promise.all([
+    getAnnouncements(locale),
+    getFaqs(locale),
+    getEvents(locale),
+    getSiteSettings(locale),
+    getSecureChannels(locale),
+  ]);
   const c = communityCopy[locale];
   const nextEvents = events.filter((e) => e.audience === "families" || e.audience === "community").slice(0, 2);
   const resources = [
@@ -105,6 +112,8 @@ export async function FamiliesView({ locale }: { locale: Locale }) {
           </div>
         </div>
       </Section>
+
+      {channels.textAlerts ? <TextAlertsSignup alerts={channels.textAlerts} locale={locale} /> : null}
 
       {nextEvents.length > 0 ? (
         <Section id="events" tone="sand" labelledBy="events-teaser-title">

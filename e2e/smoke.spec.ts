@@ -45,7 +45,7 @@ test.describe("HTTP behaviour", () => {
     }
     // Query strings (campaign tags on old printed links) survive the redirect.
     const tagged = await request.get("/enroll-now?utm_source=flyer", { maxRedirects: 0 });
-    expect(tagged.headers().location).toBe("/getting-started?utm_source=flyer");
+    expect(tagged.headers().location).toBe("/enroll?utm_source=flyer");
   });
 
   test("security headers are set", async ({ request }) => {
@@ -86,7 +86,7 @@ test.describe("operations endpoints", () => {
     const body = (await res.json()) as { status: string; checks: Record<string, string> };
     expect(body.status).toBe("ok");
     expect(body.checks.inquiryDelivery).toBe("configured");
-    expect(Object.keys(body.checks).sort()).toEqual(["alerts", "analytics", "content", "inquiryDelivery", "rateLimit"]);
+    expect(Object.keys(body.checks).sort()).toEqual(["alerts", "analytics", "content", "inquiryDelivery", "rateLimit", "textAlerts"]);
     expect((await request.head("/api/health")).status()).toBe(200);
   });
 

@@ -1,0 +1,226 @@
+import type { Locale, Widen } from "@/i18n/config";
+
+/** Copy for the enrollment check (/enroll) and the secure-referral panel. */
+const en = {
+  metaTitle: "Start Enrollment",
+  metaDescription: "A two-minute check to see if STARS Academy is a fit for your child, then start enrollment securely online.",
+  crumb: "Start enrollment",
+  eyebrow: "Start enrollment",
+  title: "Is STARS right for your child?",
+  lede: "Four quick questions, then a secure way to start. It takes about two minutes.",
+  privacyNote: "Your answers stay on this device. Nothing is sent to STARS or stored until you choose to start enrollment.",
+  progress: "Question {n} of {total}",
+  next: "Next",
+  back: "Back",
+  seeResult: "See what’s next",
+  startOver: "Start over",
+  chooseOne: "Please choose an answer to continue.",
+  questions: {
+    age: {
+      legend: "How old is your child?",
+      options: { under3: "Under 3", "3to6": "3 to 6 years old", over6: "7 or older" },
+    },
+    coverage: {
+      legend: "What health coverage does your child have?",
+      options: {
+        medicaid: "Medicaid or ARKids First",
+        ssiTefra: "SSI or TEFRA",
+        private: "Private insurance",
+        none: "No coverage right now",
+        unsure: "I’m not sure",
+      },
+    },
+    doctor: {
+      legend: "Does your child have a primary care doctor?",
+      options: { yes: "Yes", no: "No", unsure: "I’m not sure" },
+    },
+    needs: {
+      legend: "What would you like help with? Choose any that apply.",
+      hint: "Optional. This only changes which services we point you to.",
+      options: {
+        speech: "Talking, understanding or eating",
+        movement: "Moving, walking or balance",
+        daily: "Play, sensory needs or everyday skills",
+        medical: "Medical needs during the day",
+        unsure: "I’m not sure yet",
+      },
+    },
+  },
+  results: {
+    fit: {
+      title: "STARS looks like a good fit.",
+      body: "Children with Medicaid, ARKids First, SSI or TEFRA and a primary care doctor can usually start with us. The next step is the secure enrollment form.",
+    },
+    talk: {
+      title: "Let’s talk it through. We can help.",
+      body: "A few things to sort out together. None of them rule your child out.",
+    },
+    age: {
+      title: "STARS serves children from birth to age six.",
+      body: "For school-age children, your school district’s special education team is the place to start. We’re happy to point you in the right direction.",
+    },
+    reasons: {
+      private: "We’ll check with you what your private insurance covers.",
+      none: "Your child may qualify for ARKids First. We can help you apply.",
+      unsure: "We can look up your child’s coverage with you.",
+      doctor: "Treatment at STARS is prescribed by a primary care doctor. If you don’t have one yet, we’ll help you find one.",
+    },
+    servicesTitle: "Services that may help",
+    services: {
+      speech: "Speech therapy",
+      movement: "Physical therapy",
+      daily: "Occupational therapy",
+      medical: "Nursing care",
+    },
+  },
+  startSecure: "Start secure enrollment",
+  startSecureNote: "Opens our secure enrollment form in a new tab. Your information goes directly to STARS through a service that protects health information.",
+  inEnglishOnly: "The form is in English for now; call us and we’ll fill it in with you in Spanish.",
+  call: "Call us",
+  ask: "Send a question instead",
+  arkids: "About ARKids First",
+  readyTitle: "Already know you want to enroll?",
+  readyBody: "Skip the questions and start the secure enrollment form.",
+  stepsTitle: "What happens after you start",
+  steps: [
+    { title: "We call you", body: "Usually within one business day, in English or Spanish." },
+    { title: "We handle the paperwork", body: "We check coverage and ask your child’s doctor for the prescription." },
+    { title: "Evaluations and a visit", body: "You tour STARS and meet the team who’ll work with your child." },
+  ],
+  referral: {
+    eyebrow: "Send a referral securely",
+    title: "Prescriptions and records, the secure way.",
+    lede: "Please don’t email health information. Use one of these instead:",
+    upload: "Upload securely",
+    uploadBody: "Prescriptions, evaluations and records, sent straight to our intake team.",
+    direct: "Direct secure messaging",
+    directBody: "From your EHR to our Direct address:",
+    fax: "Fax",
+    faxBody: "Our referral fax:",
+    phone: "Call our intake team",
+    phoneBody: "We’ll tell you the best way to send what we need.",
+  },
+  textAlerts: {
+    eyebrow: "Closure alerts",
+    title: "Get a text when STARS closes.",
+    lede: "Weather closures, emergencies and van delays, in English and Spanish. Sign up from your phone in seconds.",
+    instruction: "Text {keyword} to {number}",
+    button: "Text {keyword} to sign up",
+    consent:
+      "By texting {keyword} you agree to receive closure and emergency text messages from STARS Academy. Usually 1–4 messages a month. Message and data rates may apply. Reply STOP to cancel or HELP for help. Signing up is not required to enroll.",
+    privacy: "Your number is kept by our text-message service, not on this website, and is never used for anything else.",
+  },
+};
+
+const es: Widen<typeof en> = {
+  metaTitle: "Comenzar la inscripción",
+  metaDescription: "Una verificación de dos minutos para saber si STARS Academy es adecuado para su hijo y comenzar la inscripción de forma segura.",
+  crumb: "Comenzar la inscripción",
+  eyebrow: "Comenzar la inscripción",
+  title: "¿Es STARS adecuado para su hijo?",
+  lede: "Cuatro preguntas rápidas y luego una forma segura de comenzar. Toma unos dos minutos.",
+  privacyNote: "Sus respuestas se quedan en este dispositivo. No se envía ni se guarda nada hasta que usted decida comenzar la inscripción.",
+  progress: "Pregunta {n} de {total}",
+  next: "Siguiente",
+  back: "Atrás",
+  seeResult: "Ver el siguiente paso",
+  startOver: "Empezar de nuevo",
+  chooseOne: "Elija una respuesta para continuar.",
+  questions: {
+    age: {
+      legend: "¿Qué edad tiene su hijo?",
+      options: { under3: "Menos de 3 años", "3to6": "De 3 a 6 años", over6: "7 años o más" },
+    },
+    coverage: {
+      legend: "¿Qué cobertura de salud tiene su hijo?",
+      options: {
+        medicaid: "Medicaid o ARKids First",
+        ssiTefra: "SSI o TEFRA",
+        private: "Seguro médico privado",
+        none: "Ninguna por ahora",
+        unsure: "No estoy seguro",
+      },
+    },
+    doctor: {
+      legend: "¿Su hijo tiene un médico de cabecera?",
+      options: { yes: "Sí", no: "No", unsure: "No estoy seguro" },
+    },
+    needs: {
+      legend: "¿En qué le gustaría recibir ayuda? Elija todas las que correspondan.",
+      hint: "Opcional. Solo cambia los servicios que le mostramos.",
+      options: {
+        speech: "Hablar, comprender o comer",
+        movement: "Moverse, caminar o el equilibrio",
+        daily: "El juego, necesidades sensoriales o habilidades diarias",
+        medical: "Necesidades médicas durante el día",
+        unsure: "Todavía no estoy seguro",
+      },
+    },
+  },
+  results: {
+    fit: {
+      title: "STARS parece una buena opción.",
+      body: "Los niños con Medicaid, ARKids First, SSI o TEFRA y un médico de cabecera normalmente pueden comenzar con nosotros. El siguiente paso es el formulario seguro de inscripción.",
+    },
+    talk: {
+      title: "Hablemos. Podemos ayudarle.",
+      body: "Hay algunas cosas que resolver juntos. Ninguna descarta a su hijo.",
+    },
+    age: {
+      title: "STARS atiende a niños desde el nacimiento hasta los seis años.",
+      body: "Para niños en edad escolar, el equipo de educación especial de su distrito escolar es el lugar para comenzar. Con gusto le orientamos.",
+    },
+    reasons: {
+      private: "Revisaremos con usted lo que cubre su seguro privado.",
+      none: "Su hijo podría calificar para ARKids First. Podemos ayudarle a solicitarlo.",
+      unsure: "Podemos revisar la cobertura de su hijo con usted.",
+      doctor: "El tratamiento en STARS lo receta un médico de cabecera. Si todavía no tiene uno, le ayudaremos a encontrarlo.",
+    },
+    servicesTitle: "Servicios que pueden ayudar",
+    services: {
+      speech: "Terapia del habla y lenguaje",
+      movement: "Terapia física",
+      daily: "Terapia ocupacional",
+      medical: "Enfermería",
+    },
+  },
+  startSecure: "Comenzar la inscripción segura",
+  startSecureNote: "Abre nuestro formulario seguro de inscripción en una pestaña nueva. Su información llega directamente a STARS por un servicio que protege la información de salud.",
+  inEnglishOnly: "Por ahora el formulario está en inglés; llámenos y lo llenamos con usted en español.",
+  call: "Llámenos",
+  ask: "Mejor envíenos una pregunta",
+  arkids: "Sobre ARKids First",
+  readyTitle: "¿Ya sabe que quiere inscribir a su hijo?",
+  readyBody: "Omita las preguntas y comience el formulario seguro de inscripción.",
+  stepsTitle: "Qué pasa después de comenzar",
+  steps: [
+    { title: "Le llamamos", body: "Normalmente en un día hábil, en inglés o en español." },
+    { title: "Nos encargamos del papeleo", body: "Revisamos la cobertura y pedimos la receta al médico de su hijo." },
+    { title: "Evaluaciones y una visita", body: "Usted recorre STARS y conoce al equipo que trabajará con su hijo." },
+  ],
+  referral: {
+    eyebrow: "Envíe una referencia de forma segura",
+    title: "Recetas y expedientes, de forma segura.",
+    lede: "Por favor, no envíe información de salud por correo electrónico. Use una de estas opciones:",
+    upload: "Subir de forma segura",
+    uploadBody: "Recetas, evaluaciones y expedientes, directo a nuestro equipo de admisión.",
+    direct: "Mensajería segura Direct",
+    directBody: "Desde su expediente electrónico a nuestra dirección Direct:",
+    fax: "Fax",
+    faxBody: "Nuestro fax para referencias:",
+    phone: "Llame a nuestro equipo de admisión",
+    phoneBody: "Le diremos la mejor forma de enviar lo que necesitamos.",
+  },
+  textAlerts: {
+    eyebrow: "Avisos de cierre",
+    title: "Reciba un mensaje de texto cuando STARS cierre.",
+    lede: "Cierres por el clima, emergencias y retrasos de las camionetas, en inglés y en español. Inscríbase desde su teléfono en segundos.",
+    instruction: "Envíe {keyword} por mensaje de texto al {number}",
+    button: "Enviar {keyword} para inscribirse",
+    consent:
+      "Al enviar {keyword}, usted acepta recibir mensajes de texto de STARS Academy sobre cierres y emergencias. Normalmente de 1 a 4 mensajes al mes. Pueden aplicarse tarifas de mensajes y datos. Responda STOP para cancelar o HELP para recibir ayuda. Inscribirse no es un requisito para la inscripción.",
+    privacy: "Su número lo guarda nuestro servicio de mensajes de texto, no este sitio web, y nunca se usa para otra cosa.",
+  },
+};
+
+export const enrollCopy: Record<Locale, Widen<typeof en>> = { en, es };

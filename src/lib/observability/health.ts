@@ -2,6 +2,7 @@ import { cmsConfig } from "@/cms/config";
 import { configuredChannels } from "@/lib/inquiry/deliver";
 import { rateLimitBackend } from "@/lib/security/rateLimit";
 import { analyticsEnabled } from "@/lib/analytics/store";
+import { textAlertMode } from "@/lib/textAlerts/handler";
 
 export type HealthReport = {
   status: "ok" | "degraded";
@@ -15,6 +16,7 @@ export type HealthReport = {
     content: "cms" | "bundled";
     alerts: "on" | "off";
     analytics: "shared" | "memory" | "off";
+    textAlerts: "off" | "dry-run" | "live";
   };
 };
 
@@ -43,6 +45,7 @@ export function healthReport(env: NodeJS.ProcessEnv = process.env, now = Date.no
       content: cmsConfig(env) ? "cms" : "bundled",
       alerts: env.ALERT_WEBHOOK_URL ? "on" : "off",
       analytics: !analyticsEnabled(env) ? "off" : rateLimitBackend(env),
+      textAlerts: textAlertMode(env),
     },
   };
 }

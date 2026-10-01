@@ -25,7 +25,7 @@ export const LEGACY_REDIRECTS: readonly LegacyRedirect[] = [
   { from: "/nursing", to: "/services/nursing-care", was: "Nursing & LPN" },
   { from: "/classrooms", to: "/services/developmental-classrooms", was: "Classrooms" },
   { from: "/what-we-do", to: "/services", was: "What We Do (menu of the five services)" },
-  { from: "/enroll-now", to: "/getting-started", was: "Enroll Now (eligibility, Medicaid, enrollment packet)" },
+  { from: "/enroll-now", to: "/enroll", was: "Enroll Now (eligibility, Medicaid, enrollment packet)" },
   { from: "/apply-now", to: "/careers/apply", was: "Apply Now! (employment application)" },
   { from: "/general-8", to: "/careers", was: "Career Opportunities" },
   { from: "/walk", to: "/resources", was: "Instructional Videos (under construction)" },

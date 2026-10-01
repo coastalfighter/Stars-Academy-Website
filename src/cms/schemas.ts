@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { POSITIONS } from "@/lib/validation/inquiry";
+import { DIRECT_ADDRESS } from "@/lib/secure/hosts";
 
 /**
  * Validation for data coming back from the CMS. CMS content is treated as
@@ -182,6 +183,19 @@ export const siteSettingsSchema = z
         note: localized(200).nullish().transform((v) => v ?? null),
       })
       .nullish()
+      .transform((v) => v ?? null),
+    /* Secure channels (Milestone 10). Hosts are checked against SECURE_FORM_HOSTS later. */
+    enrollmentFormEn: z.url({ protocol: /^https$/ }).max(1000).nullish().catch(null).transform((v) => v ?? null),
+    enrollmentFormEs: z.url({ protocol: /^https$/ }).max(1000).nullish().catch(null).transform((v) => v ?? null),
+    referralUploadUrl: z.url({ protocol: /^https$/ }).max(1000).nullish().catch(null).transform((v) => v ?? null),
+    directAddress: z.string().trim().max(254).regex(DIRECT_ADDRESS).nullish().catch(null).transform((v) => v ?? null),
+    textAlerts: z
+      .object({
+        number: z.string().trim().regex(/^\+?1?[\s.-]?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$|^\d{5,6}$/),
+        keyword: z.string().trim().toUpperCase().regex(/^[A-Z0-9]{2,20}$/),
+      })
+      .nullish()
+      .catch(null)
       .transform((v) => v ?? null),
   })
   .nullable();

@@ -22,6 +22,10 @@ export const EVENTS = {
   form_start: [],
   language_switch: ["en", "es"],
   calm_mode: ["on", "off"],
+  /** The enrollment check finished, with its (anonymous) outcome. */
+  eligibility_check: ["fit", "talk", "age"],
+  /** Someone opened a secure form that collects health information. */
+  secure_form: ["enrollment", "referral"],
 } as const satisfies Record<string, readonly string[]>;
 
 export type EventName = keyof typeof EVENTS;

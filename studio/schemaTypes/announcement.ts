@@ -49,6 +49,32 @@ export const announcement = defineType({
     }),
     defineField({ name: "showBanner", title: "Show as a banner on every page", type: "boolean", initialValue: true }),
     defineField({
+      name: "sendText",
+      title: "Also text families who signed up for alerts",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "Sends once when you publish. Changing the text message and publishing again sends a correction. Only for closures and urgent notices.",
+      hidden: ({ document }) => !["closure", "urgent"].includes(String((document as { kind?: string } | undefined)?.kind)),
+    }),
+    defineField({
+      name: "textMessage",
+      title: "Text message",
+      type: "object",
+      description: "Short and plain, e.g. “Closed today, Jan 9, due to icy roads. Vans will not run.” “STARS Academy:” and opt-out wording are added automatically.",
+      hidden: ({ document }) => !(document as { sendText?: boolean } | undefined)?.sendText,
+      fields: [
+        defineField({
+          name: "en",
+          title: "English",
+          type: "string",
+          validation: (r) =>
+            r.max(140).custom((v: string | undefined, ctx) => ((ctx.document as { sendText?: boolean } | undefined)?.sendText && !v ? "Write the text message, or untick “Also text families”." : true)),
+        }),
+        defineField({ name: "es", title: "Español", type: "string", validation: (r) => r.max(140) }),
+      ],
+    }),
+    defineField({
       name: "link",
       title: "Link (optional)",
       type: "object",

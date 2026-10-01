@@ -29,6 +29,8 @@ const fixtures = () => ({
       endsAt: iso(48),
       banner: true,
       link: { label: { en: "Details", es: "Detalles" }, href: "/families#announcements" },
+      sendText: true,
+      text: { en: "Closed today due to icy roads. Vans will not run.", es: "Cerrado hoy por el hielo. No habrá camionetas." },
     },
     { id: "e2e-event", kind: "event", title: { en: "Family open house on Friday", es: null }, body: null, startsAt: iso(-2), endsAt: null, banner: false, link: null },
     { id: "e2e-future", kind: "urgent", title: { en: "Scheduled for later", es: null }, body: null, startsAt: iso(72), endsAt: null, banner: true, link: null },
@@ -135,6 +137,11 @@ const fixtures = () => ({
     fax: "870-555-0100",
     email: "info@mystarsacademy.org",
     southCampus: { street: "123 Example Rd.", city: "Batesville", region: "AR", postalCode: "72501", note: { en: "Infant and toddler classrooms", es: null } },
+    // An unapproved host (must be dropped) and an approved one (SECURE_FORM_HOSTS in playwright.config.ts).
+    enrollmentFormEn: "https://lookalike-forms.test/stars-enroll",
+    referralUploadUrl: "https://upload.securefiles.test/stars",
+    directAddress: "referrals@direct.stars.test",
+    textAlerts: { number: "870-555-0199", keyword: "stars" },
   },
 });
 
@@ -146,6 +153,9 @@ globalThis.fetch = async (input, init) => {
   if (!url.hostname.endsWith(".sanity.io")) return realFetch(input, init);
   const type = (url.searchParams.get("query") || "").match(/_type == "(\w+)"/)?.[1];
   let result = fixtures()[type] ?? null;
+  // Single-document lookups by ID (e.g. the text-alert endpoint re-reading a notice).
+  const idParam = url.searchParams.get("$id");
+  if (idParam && Array.isArray(result)) result = result.find((d) => d.id === JSON.parse(idParam)) ?? null;
   // Mirror the GROQ filter (the site also re-validates consent itself).
   // Testimonials mirror the GROQ consent filter. Gallery photos deliberately
   // don't, to prove the site's own validation drops a photo without consent.

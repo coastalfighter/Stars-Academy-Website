@@ -18,6 +18,7 @@ const PAGES = [
   "/resources",
   "/team",
   "/photos",
+  "/enroll",
   "/es",
   "/es/servicios/terapia-del-habla-y-lenguaje",
   "/es/como-empezar",

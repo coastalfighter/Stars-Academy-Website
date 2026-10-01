@@ -44,6 +44,7 @@ export const PAGE_LABELS: Record<string, string> = {
   approach: "Our approach",
   about: "About us",
   gettingStarted: "Getting started",
+  enroll: "Start enrollment",
   families: "Families",
   faq: "FAQ",
   contact: "Contact",
@@ -86,6 +87,11 @@ const INTERACTION_LABELS: Record<string, string> = {
   "language_switch|en": "Switched to English",
   "calm_mode|on": "Turned calm mode on",
   "calm_mode|off": "Turned calm mode off",
+  "eligibility_check|fit": "Enrollment check: looks like a fit",
+  "eligibility_check|talk": "Enrollment check: talk it through",
+  "eligibility_check|age": "Enrollment check: over age six",
+  "secure_form|enrollment": "Opened secure enrollment form",
+  "secure_form|referral": "Opened secure referral upload",
 };
 
 const labelOr = (map: Record<string, string>, key: string) => map[key] ?? (key === OTHER_FIELD || key === "-" ? "Other / not given" : key);

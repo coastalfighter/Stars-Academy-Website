@@ -34,6 +34,12 @@ Once STARS confirms an item, add it to `src/content/*.ts`.
 - [ ] Health forms and physician orders required at enrollment and for medication changes
 - [ ] Enrollment inquiry packet link (Adobe Sign)
 
+## Secure enrollment, referrals and text alerts (Milestone 10)
+- [ ] Confirm whether STARS has a BAA with Adobe for Acrobat Sign (the current enrollment packet and employment application)
+- [ ] Decide on an online intake form service (signed BAA, Spanish, accessible), or keep the Adobe Sign packet for now
+- [ ] Referral channels: secure upload service, Direct messaging address (HISP or EHR vendor), referral fax number
+- [ ] Text alerts: choose an SMS provider, register for A2P 10DLC or toll-free verification, pick the number and keyword, write the confirmation and HELP replies in English and Spanish
+
 ## Family resources (Milestone 8)
 - [ ] Open the two CDC "Learn the Signs. Act Early." links in a browser to confirm them (CDC blocks automated checks; `npm run check:links` reports them as "unverified")
 - [ ] Add Arkansas First Connections (early intervention, Part C) with the current DHS page address

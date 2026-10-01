@@ -5,6 +5,8 @@ export type QueryOptions = {
   tags: string[];
   /** Seconds before a cached result is considered stale (webhooks usually refresh sooner). */
   revalidate: number;
+  /** Bypass every cache and the CDN (decisions that must see the latest publish, e.g. text alerts). */
+  fresh?: boolean;
 };
 
 type Deps = {
@@ -46,7 +48,7 @@ export async function cmsQuery<S extends z.ZodType>(
   query: string,
   params: Record<string, unknown>,
   schema: S,
-  { tags, revalidate }: QueryOptions,
+  { tags, revalidate, fresh = false }: QueryOptions,
   deps: Deps = {},
 ): Promise<z.output<S> | null> {
   const config = deps.config === undefined ? cmsConfig() : deps.config;
@@ -56,10 +58,11 @@ export async function cmsQuery<S extends z.ZodType>(
   const fetchImpl = deps.fetchImpl ?? fetch;
 
   try {
-    const res = await fetchImpl(queryUrl(config, query, params, draft), {
+    const url = fresh && !draft ? queryUrl(config, query, params, false).replace(".apicdn.sanity.io", ".api.sanity.io") : queryUrl(config, query, params, draft);
+    const res = await fetchImpl(url, {
       headers: draft ? { Authorization: `Bearer ${config.readToken}` } : {},
       signal: AbortSignal.timeout(5000),
-      ...(draft ? { cache: "no-store" as const } : { cache: "force-cache" as const, next: { tags, revalidate } }),
+      ...(draft || fresh ? { cache: "no-store" as const } : { cache: "force-cache" as const, next: { tags, revalidate } }),
     });
     if (!res.ok) {
       console.warn(`[cms] query failed with HTTP ${res.status}; using bundled content.`);

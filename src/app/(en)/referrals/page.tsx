@@ -3,7 +3,8 @@ import Link from "next/link";
 import { referralCriteria, referralFacts, site } from "@/content/site";
 import { referralSpeechApproaches, referralSteps, schoolTransition } from "@/content/pages";
 import { services } from "@/content/services";
-import { faqsInGroup, getFaqs } from "@/cms/repository";
+import { faqsInGroup, getFaqs, getSecureChannels } from "@/cms/repository";
+import { SecureReferral } from "@/components/enroll/SecureReferral";
 import { PageHero } from "@/components/page/PageHero";
 import { Section, SectionIntro } from "@/components/page/Section";
 import { StepList } from "@/components/page/Lists";
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ReferralsPage() {
-  const faqs = await getFaqs("en");
+  const [faqs, channels] = await Promise.all([getFaqs("en"), getSecureChannels("en")]);
   return (
     <>
       <PageHero
@@ -156,6 +157,8 @@ export default async function ReferralsPage() {
           </div>
         </div>
       </Section>
+
+      <SecureReferral channels={channels} />
 
       <Section labelledBy="ref-faq-title">
         <div className="grid gap-10 lg:grid-cols-12">

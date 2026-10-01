@@ -44,7 +44,16 @@ describe("CMS schemas", () => {
   it("validates contact settings", () => {
     expect(siteSettingsSchema.parse(null)).toBeNull();
     expect(siteSettingsSchema.safeParse({ email: "not-an-email" }).success).toBe(false);
-    expect(siteSettingsSchema.parse({ fax: "870-555-0100" })).toEqual({ fax: "870-555-0100", email: null, southCampus: null });
+    expect(siteSettingsSchema.parse({ fax: "870-555-0100" })).toEqual({
+      fax: "870-555-0100",
+      email: null,
+      southCampus: null,
+      enrollmentFormEn: null,
+      enrollmentFormEs: null,
+      referralUploadUrl: null,
+      directAddress: null,
+      textAlerts: null,
+    });
   });
 });
 

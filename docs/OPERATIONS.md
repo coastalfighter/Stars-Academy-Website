@@ -18,6 +18,8 @@ section.
 | **A preview deployment is broken** | `.github/workflows/preview-e2e.yml` | Failed check on the pull request |
 | **A production deployment is broken** (redirects, pages, headers, health) | `.github/workflows/launch-verify.yml` | Failed workflow email |
 | **A resource link went dead** | `.github/workflows/content-links.yml` (weekly) | Failed workflow email |
+| **A secure-form link in the CMS points to an unapproved site** | `getSecureChannels` | Log `secure.rejected` + 🔴 alert; the link is hidden |
+| **Text alerts** sent, previewed (dry run), capped or failed | `/api/alerts/text` | Log `textalert.*` + chat message (🔴 when not sent) |
 
 Alerts are de-duplicated: the same problem alerts once per 15 minutes per server instance, and at most 20 alerts per
 hour, so an outage produces a handful of messages, not a flood.
@@ -74,6 +76,17 @@ Families who try the form are being asked to call instead, so no inquiry is lost
 **🔴 Uptime probe failing**
 1. Open the site in a private window. If it is down, check Vercel's status page and the latest deployment.
 2. If only `/api/health` fails with `degraded`, a delivery setting is missing (see the first case above).
+
+**🔴 "A secure-form link … points to an unapproved site"**
+Someone changed an enrollment or upload link in the Studio to a host that isn't on `SECURE_FORM_HOSTS`. The site is
+already showing the safe default. Check in the Studio's history who changed *Contact details & secure forms*. If it
+was a planned switch to a new BAA-covered vendor, add the host in Vercel and redeploy. If not, change the Studio
+passwords and review its members.
+
+**🔴 "Text alert NOT sent" or "FAILED to send"**
+Families didn't get the text. For an emergency, send it from the SMS provider's own console now. Then check the
+provider settings (`TEXT_ALERTS_PROVIDER_URL`) and the provider's status page, and publish the notice again to
+retry.
 
 **🟡 "A page failed to display in a visitor's browser"**
 Usually a specific browser or device. Reproduce with the `userAgent` from the alert, using the page named. If it

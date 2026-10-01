@@ -144,3 +144,37 @@ test("the gallery never shows a photo without a signed release", async ({ page }
   await expect(page.locator('img[src*="e2e-secret"]')).toHaveCount(0);
   await expect(page.locator('img[src^="https://cdn.sanity.io"]')).toHaveCount(0);
 });
+
+/* Secure channels and text alerts (Milestone 10). */
+
+test("secure links only go to approved services", async ({ page }) => {
+  await page.goto("/enroll");
+  // The CMS enrollment link uses an unapproved host, so the Adobe Sign packet is offered instead.
+  const secure = page.getByRole("link", { name: /Start secure enrollment/ }).first();
+  await expect(secure).toHaveAttribute("href", /documents\.adobe\.com/);
+  await expect(page.locator('a[href*="lookalike-forms.test"]')).toHaveCount(0);
+
+  await page.goto("/referrals");
+  const panel = page.getByRole("region", { name: "Prescriptions and records, the secure way." });
+  await expect(panel.getByRole("link", { name: /Upload securely/ })).toHaveAttribute("href", "https://upload.securefiles.test/stars");
+  await expect(panel).toContainText("referrals@direct.stars.test");
+  await expect(panel).toContainText("870-555-0100");
+});
+
+test("families can sign up for text alerts without giving the website their number", async ({ page }) => {
+  await page.goto("/es/familias");
+  const signup = page.getByRole("region", { name: /mensaje de texto cuando STARS cierre/ });
+  await expect(signup.getByRole("link", { name: "Enviar STARS para inscribirse" })).toHaveAttribute("href", "sms:8705550199?body=STARS");
+  await expect(signup).toContainText("Responda STOP para cancelar");
+  await expect(signup.locator("input")).toHaveCount(0);
+});
+
+test("publishing a closure previews a text alert in dry-run, and only for signed requests", async ({ request }) => {
+  const body = JSON.stringify({ _id: "e2e-closure" });
+  expect((await request.post("/api/alerts/text", { data: body, headers: { "content-type": "application/json" } })).status()).toBe(401);
+  const res = await request.post("/api/alerts/text", { data: body, headers: { "content-type": "application/json", "sanity-webhook-signature": sign(body) } });
+  expect(await res.json()).toMatchObject({ ok: true, sent: false, reason: "dry-run" });
+  const info = JSON.stringify({ _id: "e2e-event" });
+  const skipped = await request.post("/api/alerts/text", { data: info, headers: { "content-type": "application/json", "sanity-webhook-signature": sign(info) } });
+  expect(await skipped.json()).toMatchObject({ sent: false });
+});

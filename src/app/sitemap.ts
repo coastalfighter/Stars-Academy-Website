@@ -9,6 +9,7 @@ type Freq = MetadataRoute.Sitemap[number]["changeFrequency"];
 const PRIORITY: Record<RouteKey, [number, Freq]> = {
   home: [1, "monthly"],
   gettingStarted: [0.95, "monthly"],
+  enroll: [0.9, "monthly"],
   tour: [0.9, "yearly"],
   services: [0.9, "yearly"],
   referrals: [0.85, "yearly"],

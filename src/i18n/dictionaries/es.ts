@@ -66,6 +66,7 @@ export const es = {
     forYou: "Para usted",
     forYouLinks: [
       { label: "¿Es STARS adecuado para mi hijo?", key: "gettingStarted" },
+      { label: "Comenzar la inscripción", key: "enroll" },
       { label: "Programar una visita", key: "tour" },
       { label: "Familias actuales", key: "families" },
       { label: "Preguntas frecuentes", key: "faq" },
