@@ -1,27 +1,30 @@
-import { referralCriteria, referralFacts, site } from "@/content/site";
-import { services } from "@/content/services";
+import type { Locale } from "@/i18n/config";
+import { href } from "@/i18n/routes";
+import { getContent } from "@/content";
+import { homeCopy } from "@/content/copy/home";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 
-export function Referrals() {
+export function Referrals({ locale }: { locale: Locale }) {
+  const t = homeCopy[locale].referrals;
+  const { referralCriteria, referralFacts, site, services } = getContent(locale);
   return (
     <section id="referrals" aria-labelledby="referrals-title" className="relative z-10 scroll-mt-24 bg-sand py-28 lg:py-36">
       <div className="container-x grid gap-14 lg:grid-cols-12">
         <div className="lg:col-span-5">
           <Reveal>
-            <p className="eyebrow">For physicians, therapists &amp; schools</p>
+            <p className="eyebrow">{t.eyebrow}</p>
             <h2 id="referrals-title" className="display-lg mt-5">
-              A clear path to refer a child.
+              {t.title}
             </h2>
             <p className="lede mt-5">
-              Everything you need before referring: who we serve, eligibility, the conditions our nurses and therapists
-              routinely support, and exactly how to start.
+              {t.lede}
             </p>
           </Reveal>
 
           <Reveal className="mt-8">
-            <h3 className="font-display text-xl">Referral criteria</h3>
-            <p className="mt-2 text-ink-soft">A child is eligible for services at STARS when they:</p>
+            <h3 className="font-display text-xl">{t.criteriaTitle}</h3>
+            <p className="mt-2 text-ink-soft">{t.criteriaIntro}</p>
             <ol className="mt-4 space-y-3">
               {referralCriteria.map((c, i) => (
                 <li key={c} className="flex gap-3 leading-relaxed">
@@ -35,8 +38,8 @@ export function Referrals() {
           </Reveal>
 
           <Reveal className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href="/referrals#make-referral" size="lg" arrow>
-              Start a referral
+            <ButtonLink href={href(locale, "referrals", "#make-referral")} hrefLang={locale === "en" ? undefined : "en-US"} size="lg" arrow>
+              {t.cta}
             </ButtonLink>
             <ButtonLink href={site.phone.href} size="lg" variant="ghost">
               {site.phone.display}
@@ -47,7 +50,7 @@ export function Referrals() {
         <div className="lg:col-span-7">
           <Reveal className="card overflow-hidden">
             <h3 className="border-b border-line bg-cream px-7 py-4 text-xs font-bold uppercase tracking-[0.2em] text-muted">
-              STARS at a glance
+              {t.glance}
             </h3>
             <dl className="divide-y divide-line">
               {referralFacts.map((f) => (
@@ -60,7 +63,7 @@ export function Referrals() {
           </Reveal>
 
           <Reveal className="mt-6">
-            <h3 className="font-display text-xl">Clinical scope</h3>
+            <h3 className="font-display text-xl">{t.scope}</h3>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {services
                 .filter((s) => s.scope)

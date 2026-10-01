@@ -1,32 +1,30 @@
 import Image from "next/image";
-import { careerRoles } from "@/content/site";
-import { photos } from "@/content/photos";
+import type { Locale } from "@/i18n/config";
+import { href } from "@/i18n/routes";
+import { getContent } from "@/content";
+import { homeCopy } from "@/content/copy/home";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 
-const WHY = [
-  { title: "A true interdisciplinary team", body: "Speech, occupational and physical therapists, nurses and classroom teams work under one roof, around the same children — every day." },
-  { title: "Time to really know each child", body: "Children spend the whole day at STARS. Your work carries over into real moments — play, meals, movement." },
-  { title: "A culture that takes care of adults, too", body: "Our Adult First mindset recognizes that caring well for children starts with the adults who do it." },
-] as const;
-
-export function Careers() {
+export function Careers({ locale }: { locale: Locale }) {
+  const t = homeCopy[locale].careers;
+  const { careerRoles, photos } = getContent(locale);
+  const toEnglish = locale === "en" ? undefined : "en-US";
   return (
     <section id="careers" aria-labelledby="careers-title" className="relative z-10 scroll-mt-24 bg-ink py-28 text-cream lg:py-36">
       <div className="container-x grid gap-14 lg:grid-cols-12">
         <div className="lg:col-span-6">
           <Reveal>
-            <p className="eyebrow !text-gold">Careers</p>
+            <p className="eyebrow !text-gold">{t.eyebrow}</p>
             <h2 id="careers-title" className="display-lg mt-5">
-              Do the work you trained for, <span className="text-gold">with a team behind you.</span>
+              {t.titleA} <span className="text-gold">{t.titleB}</span>
             </h2>
             <p className="mt-5 text-lg leading-relaxed text-cream/75">
-              Therapists, nurses and educators at STARS work side by side, every day, around the same children. If
-              that’s the kind of practice you’ve been looking for, we’d love to meet you.
+              {t.lede}
             </p>
           </Reveal>
           <ul className="mt-10 space-y-5">
-            {WHY.map((w, i) => (
+            {t.why.map((w, i) => (
               <Reveal as="li" key={w.title} delay={i * 80} className="border-l-2 border-gold/60 pl-5">
                 <h3 className="font-display text-xl">{w.title}</h3>
                 <p className="mt-1.5 leading-relaxed text-cream/70">{w.body}</p>
@@ -46,7 +44,7 @@ export function Careers() {
               className="h-auto w-full"
             />
           </Reveal>
-          <h3 className="mt-10 text-xs font-bold uppercase tracking-[0.2em] text-cream/60">We hire for these roles on an ongoing basis</h3>
+          <h3 className="mt-10 text-xs font-bold uppercase tracking-[0.2em] text-cream/60">{t.rolesTitle}</h3>
           <ul className="mt-4 divide-y divide-cream/10 rounded-[var(--radius-card)] border border-cream/10">
             {careerRoles.map((r) => (
               <li key={r.title} className="flex flex-col gap-1 p-5">
@@ -58,11 +56,11 @@ export function Careers() {
           </ul>
           <Reveal className="mt-8">
             <div className="flex flex-col gap-3 sm:flex-row">
-              <ButtonLink href="/careers/apply" variant="secondary" size="lg" arrow>
-                Apply now
+              <ButtonLink href={href(locale, "apply")} hrefLang={toEnglish} variant="secondary" size="lg" arrow>
+                {t.apply}
               </ButtonLink>
-              <ButtonLink href="/careers" variant="light" size="lg">
-                Explore careers
+              <ButtonLink href={href(locale, "careers")} hrefLang={toEnglish} variant="light" size="lg">
+                {t.explore}
               </ButtonLink>
             </div>
           </Reveal>

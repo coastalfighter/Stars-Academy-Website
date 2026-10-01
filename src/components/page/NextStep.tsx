@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Reveal } from "@/components/ui/Reveal";
 import { Arrow } from "@/components/ui/Button";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionary";
 
 export type RelatedLink = { title: string; body: string; href: string };
 
@@ -11,7 +13,9 @@ export function NextStep({
   body,
   actions,
   related = [],
+  locale = "en",
 }: {
+  locale?: Locale;
   title: ReactNode;
   body: ReactNode;
   actions: ReactNode;
@@ -24,7 +28,7 @@ export function NextStep({
           <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full bg-gold/25 blur-3xl" />
           <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 h-72 w-72 rounded-full bg-teal/30 blur-3xl" />
           <div className="relative max-w-2xl">
-            <p className="eyebrow !text-gold">Next step</p>
+            <p className="eyebrow !text-gold">{getDictionary(locale).common.nextStep}</p>
             <h2 id="next-step-title" className="display-lg mt-4">
               {title}
             </h2>

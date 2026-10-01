@@ -1,4 +1,6 @@
 import { z } from "zod";
+import type { Locale } from "@/i18n/config";
+import { validationMessage, type ValidationCode } from "@/i18n/messages";
 
 /**
  * Shared (client + server) validation for the tour / inquiry / referral form.
@@ -79,50 +81,67 @@ const isoDate = /^\d{4}-\d{2}-\d{2}$/;
 /** Minimum time a human needs to fill the form; faster submissions are bots. */
 export const MIN_FILL_MS = 2500;
 
-const PHI_PATTERNS: { pattern: RegExp; reason: string }[] = [
-  { pattern: /\b(d\.?o\.?b\.?|date of birth|birth ?date|born on)\b/i, reason: "a date of birth" },
-  { pattern: /\b\d{1,2}[/.-]\d{1,2}[/.-](\d{4}|\d{2})\b/, reason: "a date" },
-  { pattern: /\b\d{3}-\d{2}-\d{4}\b/, reason: "a Social Security number" },
+export type PhiKind = "dob" | "date" | "ssn" | "memberId";
+
+/** English and Spanish phrasings; the site serves families in both languages. */
+const PHI_PATTERNS: { pattern: RegExp; kind: PhiKind }[] = [
   {
-    pattern: /\b(medicaid|member|policy|subscriber|insurance|mrn|ssn|patient)\s*(id|#|number|no\.?)?\s*[:#-]?\s*[a-z]{0,3}\d{5,}/i,
-    reason: "an insurance, member or record number",
+    pattern: /\b(d\.?o\.?b\.?|date of birth|birth ?date|born on|fecha de nacimiento|naci[oó] el|nacida el|nacido el)\b/i,
+    kind: "dob",
+  },
+  { pattern: /\b\d{1,2}[/.-]\d{1,2}[/.-](\d{4}|\d{2})\b/, kind: "date" },
+  { pattern: /\b\d{3}-\d{2}-\d{4}\b/, kind: "ssn" },
+  { pattern: /\bseguro social\s*[:#-]?\s*\d/i, kind: "ssn" },
+  {
+    pattern:
+      /\b(medicaid|member|policy|subscriber|insurance|mrn|ssn|patient|afiliado|miembro|p[oó]liza|seguro|expediente|paciente)\s*(id|#|number|no\.?|n[uú]mero( de)?)?\s*[:#-]?\s*[a-z]{0,3}\d{5,}/i,
+    kind: "memberId",
   },
 ];
 
-/** Returns a human-readable reason if the text looks like it contains PHI. */
-export function detectPhi(text: string): string | null {
-  for (const { pattern, reason } of PHI_PATTERNS) {
-    if (pattern.test(text)) return reason;
+/** Returns which kind of PHI the text appears to contain, if any. */
+export function detectPhi(text: string): PhiKind | null {
+  for (const { pattern, kind } of PHI_PATTERNS) {
+    if (pattern.test(text)) return kind;
   }
   return null;
 }
 
 const phoneRegex = /^\+?1?[\s.-]?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
 
-const trimmed = (max: number) => z.string().trim().max(max, `Please keep this under ${max} characters.`);
+const trimmed = (max: number) => z.string().trim().max(max, "tooLong" satisfies ValidationCode);
+
+/**
+ * Issue messages are *codes* (see i18n/messages.ts), translated for display by
+ * `toFieldErrors(error, locale)`. That keeps one schema for both languages and
+ * for both the browser and the API.
+ */
+const code = (c: ValidationCode) => c;
 
 export const inquirySchema = z
   .object({
-    audience: z.enum(AUDIENCES, { message: "Please tell us who you are." }),
-    reason: z.enum(REASONS, { message: "Please choose how we can help." }),
-    name: trimmed(100).min(2, "Please enter your name."),
+    audience: z.enum(AUDIENCES, { message: code("audience.required") }),
+    reason: z.enum(REASONS, { message: code("reason.required") }),
+    name: trimmed(100).min(2, code("name.required")),
     organization: trimmed(150).optional().default(""),
     email: z
       .string()
       .trim()
-      .max(254)
+      .max(254, code("tooLong"))
       .optional()
       .default("")
-      .refine((v) => v === "" || z.email().safeParse(v).success, "Please enter a valid email address."),
+      .refine((v) => v === "" || z.email().safeParse(v).success, code("email.invalid")),
     phone: z
       .string()
       .trim()
-      .max(25)
+      .max(25, code("tooLong"))
       .optional()
       .default("")
-      .refine((v) => v === "" || phoneRegex.test(v), "Please enter a 10-digit U.S. phone number."),
+      .refine((v) => v === "" || phoneRegex.test(v), code("phone.invalid")),
     preferredContact: z.enum(CONTACT_METHODS).default("phone"),
     language: z.enum(LANGUAGES).default("en"),
+    /** Language of the page the form was sent from (used for response messages). */
+    locale: z.enum(LANGUAGES).default("en"),
     childAge: optionalEnum(CHILD_AGES),
     hasPrimaryDoctor: optionalEnum(DOCTOR_ANSWERS),
     position: optionalEnum(POSITIONS),
@@ -131,38 +150,27 @@ export const inquirySchema = z
       .trim()
       .optional()
       .default("")
-      .refine((v) => v === "" || (isoDate.test(v) && !Number.isNaN(Date.parse(v))), "Please enter a valid date."),
+      .refine((v) => v === "" || (isoDate.test(v) && !Number.isNaN(Date.parse(v))), code("date.invalid")),
     message: trimmed(1000).optional().default(""),
-    consent: z.literal(true, { message: "Please confirm you have not included medical information." }),
+    consent: z.literal(true, { message: code("consent.required") }),
     /** Honeypot — real visitors never see or fill this field. */
     website: z.string().max(0).optional().default(""),
     /** Epoch ms when the form was rendered; used for the minimum fill time. */
     startedAt: z.coerce.number().int().nonnegative().optional(),
   })
   .superRefine((data, ctx) => {
-    if (!data.email && !data.phone) {
-      ctx.addIssue({ code: "custom", path: ["phone"], message: "Please share a phone number or email so we can reach you." });
-    }
-    if (data.preferredContact === "email" && !data.email) {
-      ctx.addIssue({ code: "custom", path: ["email"], message: "Add an email address, or choose phone as your preferred contact." });
-    }
+    const issue = (path: string, c: ValidationCode) => ctx.addIssue({ code: "custom", path: [path], message: c });
+    if (!data.email && !data.phone) issue("phone", "contact.required");
+    if (data.preferredContact === "email" && !data.email) issue("email", "email.requiredForPreference");
     if ((data.preferredContact === "phone" || data.preferredContact === "text") && !data.phone) {
-      ctx.addIssue({ code: "custom", path: ["phone"], message: "Add a phone number, or choose email as your preferred contact." });
+      issue("phone", "phone.requiredForPreference");
     }
-    if (data.reason === "careers" && data.audience === "job-seeker" && !data.position) {
-      ctx.addIssue({ code: "custom", path: ["position"], message: "Please choose the role you’re interested in." });
-    }
+    if (data.reason === "careers" && data.audience === "job-seeker" && !data.position) issue("position", "position.required");
     if ((data.audience === "physician" || data.audience === "school") && !data.organization) {
-      ctx.addIssue({ code: "custom", path: ["organization"], message: "Please enter your practice, school or organization." });
+      issue("organization", "organization.required");
     }
     const phi = detectPhi(`${data.message} ${data.organization}`);
-    if (phi) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["message"],
-        message: `It looks like this includes ${phi}. Please remove medical or identifying details — we’ll collect those through a secure channel.`,
-      });
-    }
+    if (phi) issue("message", `phi.${phi}`);
   });
 
 export type InquiryInput = z.input<typeof inquirySchema>;
@@ -170,13 +178,13 @@ export type Inquiry = z.output<typeof inquirySchema>;
 
 export type FieldErrors = Partial<Record<keyof Inquiry, string>>;
 
-/** Flattens zod issues into one message per field (first issue wins). */
-export function toFieldErrors(error: z.ZodError): FieldErrors {
+/** Flattens zod issues into one translated message per field (first issue wins). */
+export function toFieldErrors(error: z.ZodError, locale: Locale = "en"): FieldErrors {
   const out: FieldErrors = {};
   for (const issue of error.issues) {
     const key = issue.path[0];
     if (typeof key === "string" && !(key in out)) {
-      out[key as keyof Inquiry] = issue.message;
+      out[key as keyof Inquiry] = validationMessage(issue.message, locale);
     }
   }
   return out;

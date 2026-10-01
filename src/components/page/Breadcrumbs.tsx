@@ -1,15 +1,19 @@
 import Link from "next/link";
 import { site } from "@/content/site";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionary";
+import { href } from "@/i18n/routes";
 import { JsonLd } from "@/components/seo/JsonLd";
 
 export type Crumb = { label: string; href: string };
 
 /** Visible breadcrumb trail plus schema.org BreadcrumbList. "Home" is implied. */
-export function Breadcrumbs({ items }: { items: Crumb[] }) {
-  const trail: Crumb[] = [{ label: "Home", href: "/" }, ...items];
+export function Breadcrumbs({ items, locale = "en" }: { items: Crumb[]; locale?: Locale }) {
+  const d = getDictionary(locale);
+  const trail: Crumb[] = [{ label: d.common.home, href: href(locale, "home") }, ...items];
   return (
     <>
-      <nav aria-label="Breadcrumb" className="text-sm text-muted">
+      <nav aria-label={d.common.breadcrumb} className="text-sm text-muted">
         <ol className="flex flex-wrap items-center gap-2">
           {trail.map((c, i) => {
             const last = i === trail.length - 1;

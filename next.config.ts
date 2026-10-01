@@ -40,6 +40,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  experimental: {
+    // One root layout per language (route groups) needs a routing-level 404.
+    globalNotFound: true,
+  },
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],

@@ -53,29 +53,12 @@ export const site = {
   ],
 } as const;
 
-export type NavItem = { label: string; href: string; description?: string };
-
-export const primaryNav: NavItem[] = [
-  { label: "Our approach", href: "/approach" },
-  { label: "Services", href: "/services" },
-  { label: "Getting started", href: "/getting-started" },
-  { label: "Referral partners", href: "/referrals" },
-  { label: "Careers", href: "/careers" },
-];
-
-export const utilityNav: NavItem[] = [
-  { label: "Current families", href: "/families" },
-  { label: "About", href: "/about-us" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Contact", href: "/contact-us" },
-];
-
-export const pathways: { audience: string; action: string; href: string }[] = [
-  { audience: "Parents & caregivers", action: "Explore STARS for my child", href: "/getting-started" },
-  { audience: "Current STARS families", action: "Find family information", href: "/families" },
-  { audience: "Physicians & schools", action: "Refer a child", href: "/referrals" },
-  { audience: "Therapists, nurses & educators", action: "Work at STARS", href: "/careers" },
-];
+export const pathways = [
+  { audience: "Parents & caregivers", action: "Explore STARS for my child", key: "gettingStarted" },
+  { audience: "Current STARS families", action: "Find family information", key: "families" },
+  { audience: "Physicians & schools", action: "Refer a child", key: "referrals" },
+  { audience: "Therapists, nurses & educators", action: "Work at STARS", key: "careers" },
+] as const;
 
 export const pillars = [
   {

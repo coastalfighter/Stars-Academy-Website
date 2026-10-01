@@ -56,5 +56,13 @@ Once STARS confirms an item, add it to `src/content/*.ts`.
 ## Careers (Milestone 2)
 - [ ] Résumé collection: the new site sends applicants to the Adobe Sign application (which accepts attachments) rather than accepting file uploads on the website — confirm this is acceptable
 
+## Spanish site (Milestone 3)
+- [ ] **Professional health-care translation review** of all Spanish copy: `src/content/es/*`, the `es` blocks in `src/content/copy/*`, `src/i18n/dictionaries/es.ts` and `src/i18n/messages.ts`. Register is formal *usted* and neutral U.S. Spanish.
+- [ ] **Official Spanish USDA nondiscrimination statement**: `/es/no-discriminacion` shows a provisional translation of the short form, labelled as such
+- [ ] Spanish review of the privacy notice by the compliance advisor
+- [ ] Confirm the Spanish glossing of the STARS acronym ("Esforzarnos para lograr un éxito verdadero")
+- [ ] Decide whether referral-partner and careers pages should also be translated (currently English-only, labelled "(en inglés)")
+- [ ] Bilingual staff available to return Spanish inquiries (inquiry emails show "Sent from: Spanish website")
+
 ## Leadership review
 - [ ] STARS leadership to review the "Our approach" descriptions and examples for accuracy

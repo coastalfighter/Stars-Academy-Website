@@ -3,13 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { primaryNav, site, utilityNav } from "@/content/site";
-import { services } from "@/content/services";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionary";
+import { href, serviceHref } from "@/i18n/routes";
+import { getContent } from "@/content";
 import { ButtonLink } from "@/components/ui/Button";
 import { StarMark } from "@/components/ui/StarMark";
 import { CalmToggle } from "./CalmToggle";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
-export function Header() {
+export function Header({ locale }: { locale: Locale }) {
+  const d = getDictionary(locale);
+  const { site, services } = getContent(locale);
+  const primaryNav = d.nav.primary.map((n) => ({ label: n.label, href: href(locale, n.key) }));
+  const utilityNav = d.nav.utility.map((n) => ({ label: n.label, href: href(locale, n.key) }));
+  const tourHref = href(locale, "tour");
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const menuId = useId();
@@ -66,8 +74,8 @@ export function Header() {
     <header className="fixed inset-x-0 top-0 z-50">
       <div className="hidden bg-ink text-cream/90 md:block">
         <div className="container-x flex h-9 items-center justify-between text-xs">
-          <p>Pediatric developmental day treatment · Batesville, Arkansas</p>
-          <p className="flex items-center gap-5">
+          <p className="hidden truncate xl:block">{d.header.topbar}</p>
+          <p className="ml-auto flex items-center gap-5 whitespace-nowrap">
             {utilityNav.map((item) => (
               <Link key={item.href} href={item.href} className="underline-offset-4 hover:text-cream hover:underline">
                 {item.label}
@@ -86,8 +94,8 @@ export function Header() {
           scrolled || open ? "bg-cream/85 shadow-[0_1px_0_rgb(23_21_58/0.08)] backdrop-blur-xl" : "bg-transparent"
         }`}
       >
-        <nav aria-label="Primary" className="container-x flex h-18 items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-3 rounded-lg" onClick={close}>
+        <nav aria-label={d.header.primaryNav} className="container-x flex h-18 items-center justify-between gap-4">
+          <Link href={href(locale, "home")} className="flex items-center gap-3 rounded-lg" onClick={close}>
             <StarMark className="h-10 w-10" />
             <span className="flex flex-col leading-none">
               <span className="font-display text-xl font-semibold tracking-tight">STARS</span>
@@ -101,7 +109,7 @@ export function Header() {
                 <Link
                   href={item.href}
                   aria-current={pathname === item.href || pathname.startsWith(`${item.href}/`) ? "page" : undefined}
-                  className="rounded-full px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-ink/5 hover:text-ink aria-[current=page]:bg-ink/5 aria-[current=page]:text-ink xl:px-3.5"
+                  className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-ink/5 hover:text-ink aria-[current=page]:bg-ink/5 aria-[current=page]:text-ink xl:px-3.5"
                 >
                   {item.label}
                 </Link>
@@ -112,12 +120,13 @@ export function Header() {
           <div className="flex items-center gap-2">
             {/* Wrappers own the responsive visibility so it can't be overridden by
                 the components' own display classes. */}
-            <div className="hidden sm:block">
-              <CalmToggle />
+            <LanguageSwitcher locale={locale} />
+            <div className="hidden md:block">
+              <CalmToggle locale={locale} compact />
             </div>
             <div className="hidden sm:block">
-              <ButtonLink href="/schedule-a-tour" variant="primary">
-                Schedule a tour
+              <ButtonLink href={tourHref} variant="primary" className="whitespace-nowrap">
+                {d.common.scheduleTour}
               </ButtonLink>
             </div>
             <button
@@ -128,7 +137,7 @@ export function Header() {
               aria-controls={menuId}
               onClick={() => setOpen((o) => !o)}
             >
-              <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
+              <span className="sr-only">{open ? d.header.closeMenu : d.header.openMenu}</span>
               <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5">
                 {open ? (
                   <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -167,12 +176,12 @@ export function Header() {
             ))}
           </ul>
           <div>
-            <p className="eyebrow mb-3">Services</p>
+            <p className="eyebrow mb-3">{d.header.services}</p>
             <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
               {services.map((s) => (
                 <li key={s.slug}>
                   <Link
-                    href={`/services/${s.slug}`}
+                    href={serviceHref(locale, s.slug)}
                     onClick={close}
                     className="flex items-center gap-3 rounded-xl px-3 py-2.5 font-semibold text-ink-soft hover:bg-ink/5"
                   >
@@ -184,13 +193,13 @@ export function Header() {
             </ul>
           </div>
           <div className="flex flex-col gap-3">
-            <ButtonLink href="/schedule-a-tour" onClick={close} size="lg">
-              Schedule a tour
+            <ButtonLink href={tourHref} onClick={close} size="lg">
+              {d.common.scheduleTour}
             </ButtonLink>
             <a href={site.phone.href} className="text-center font-semibold text-teal-deep">
-              Call {site.phone.display}
+              {d.common.call} {site.phone.display}
             </a>
-            <CalmToggle className="self-center" />
+            <CalmToggle locale={locale} className="self-center" />
           </div>
         </div>
       </div>

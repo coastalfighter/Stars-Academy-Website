@@ -1,15 +1,16 @@
-import { site } from "@/content/site";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionary";
+import { href } from "@/i18n/routes";
+import { getContent } from "@/content";
+import { homeCopy } from "@/content/copy/home";
 import { ButtonLink } from "@/components/ui/Button";
 
-const DISCIPLINES = [
-  { label: "Speech", color: "bg-coral" },
-  { label: "Occupational", color: "bg-teal" },
-  { label: "Physical", color: "bg-blue" },
-  { label: "Nursing", color: "bg-berry" },
-  { label: "Classrooms", color: "bg-gold" },
-] as const;
+const DISCIPLINE_COLORS = ["bg-coral", "bg-teal", "bg-blue", "bg-berry", "bg-gold"] as const;
 
-export function Hero() {
+export function Hero({ locale }: { locale: Locale }) {
+  const t = homeCopy[locale].hero;
+  const d = getDictionary(locale);
+  const { site } = getContent(locale);
   return (
     <section aria-labelledby="hero-title" className="relative flex min-h-[100svh] items-center pt-32 pb-20 md:pt-40">
       {/* Soft wash on the copy side keeps text crisp over the 3D scene. */}
@@ -19,45 +20,43 @@ export function Hero() {
       />
       <div className="container-x relative">
         <div className="over-scene copy-col lg:max-w-[640px]">
-          <p className="eyebrow">Pediatric therapy &amp; developmental preschool · Batesville, AR</p>
+          <p className="eyebrow">{t.eyebrow}</p>
           <h1 id="hero-title" className="display-xl mt-6">
-            Therapy, learning and care,{" "}
+            {t.titleBefore}{" "}
             <span className="relative whitespace-nowrap text-teal-deep">
-              woven into
+              {t.titleEmphasis}
               <svg aria-hidden="true" viewBox="0 0 300 16" preserveAspectRatio="none" className="absolute -bottom-2 left-0 h-3 w-full text-gold">
                 <path d="M2 11C60 3 120 3 150 8s110 6 146-2" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
               </svg>
             </span>{" "}
-            one full day.
+            {t.titleAfter}
           </h1>
           <p className="lede mt-7">
-            STARS Academy serves children from birth to age six who need extra support with development. Speech,
-            occupational and physical therapy, licensed nursing care and developmental classrooms all happen here —
-            together, with one team that knows your child.
+            {t.lede}
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <ButtonLink href="/getting-started" size="lg" arrow>
-              See if STARS is right for your child
+            <ButtonLink href={href(locale, "gettingStarted")} size="lg" arrow>
+              {t.primaryCta}
             </ButtonLink>
-            <ButtonLink href="/schedule-a-tour" size="lg" variant="ghost">
-              Schedule a tour
+            <ButtonLink href={href(locale, "tour")} size="lg" variant="ghost">
+              {t.secondaryCta}
             </ButtonLink>
           </div>
           <p className="mt-5 text-sm text-muted">
-            Prefer to talk? Call{" "}
+            {t.preferTalk}{" "}
             <a href={site.phone.href} className="font-semibold text-ink underline decoration-gold decoration-2 underline-offset-4">
               {site.phone.display}
             </a>{" "}
-            — {site.hours.short.toLowerCase()}
+            — {locale === "en" ? site.hours.short.toLowerCase() : site.hours.short}
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center gap-2" aria-label="One team, on site">
-            <span className="mr-1 text-xs font-bold uppercase tracking-[0.18em] text-muted">One team, on site</span>
-            {DISCIPLINES.map((d) => (
-              <span key={d.label} className="inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white/70 px-3 py-1.5 text-xs font-semibold text-ink-soft">
-                <span aria-hidden="true" className={`h-2 w-2 rotate-45 rounded-[2px] ${d.color}`} />
-                {d.label}
+          <div className="mt-10 flex flex-wrap items-center gap-2" aria-label={t.teamLabel}>
+            <span className="mr-1 text-xs font-bold uppercase tracking-[0.18em] text-muted">{t.teamLabel}</span>
+            {t.disciplines.map((label, i) => (
+              <span key={label} className="inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white/70 px-3 py-1.5 text-xs font-semibold text-ink-soft">
+                <span aria-hidden="true" className={`h-2 w-2 rotate-45 rounded-[2px] ${DISCIPLINE_COLORS[i]}`} />
+                {label}
               </span>
             ))}
           </div>
@@ -68,7 +67,7 @@ export function Hero() {
         href="#pathways"
         className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted md:flex"
       >
-        Scroll to explore
+        {d.common.scrollToExplore}
         <span aria-hidden="true" className="flex h-9 w-5 justify-center rounded-full border-2 border-ink/25 pt-1.5">
           <span className="h-2 w-1 animate-bounce rounded-full bg-ink/50" />
         </span>

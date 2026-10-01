@@ -75,17 +75,30 @@ describe("inquirySchema", () => {
 
 describe("detectPhi", () => {
   it.each([
-    ["Date of birth is in May", "a date of birth"],
-    ["born on 3-4-2022", "a date of birth"],
-    ["seen on 12/01/2024", "a date"],
-    ["SSN 123-45-6789", "a Social Security number"],
-    ["Medicaid ID 1234567890", "an insurance, member or record number"],
-    ["member #AB123456", "an insurance, member or record number"],
-  ])("flags %s", (text, reason) => {
-    expect(detectPhi(text)).toBe(reason);
+    ["Date of birth is in May", "dob"],
+    ["born on 3-4-2022", "dob"],
+    ["seen on 12/01/2024", "date"],
+    ["SSN 123-45-6789", "ssn"],
+    ["Medicaid ID 1234567890", "memberId"],
+    ["member #AB123456", "memberId"],
+    ["Su fecha de nacimiento es en mayo", "dob"],
+    ["Mi hija nació el martes", "dob"],
+    ["Seguro Social 123456789", "ssn"],
+    ["número de Medicaid 1234567890", "memberId"],
+    ["póliza 98765432", "memberId"],
+  ])("flags %s", (text, kind) => {
+    expect(detectPhi(text)).toBe(kind);
   });
 
-  it.each(["Please call after 2pm", "We live in Batesville", "Can we visit on Tuesday?", "Call me at 870-555-0134"])(
+  it.each([
+    "Please call after 2pm",
+    "We live in Batesville",
+    "Can we visit on Tuesday?",
+    "Call me at 870-555-0134",
+    "Por favor llámeme después de las 2",
+    "Mi hijo tiene 3 años y no habla mucho",
+    "Llámeme al 870-555-0134",
+  ])(
     "allows %s",
     (text) => {
       expect(detectPhi(text)).toBeNull();

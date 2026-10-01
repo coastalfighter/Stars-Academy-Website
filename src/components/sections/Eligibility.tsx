@@ -1,20 +1,26 @@
 import Image from "next/image";
-import { enrollmentSteps, fitSignals, site } from "@/content/site";
-import { photos } from "@/content/photos";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionary";
+import { href } from "@/i18n/routes";
+import { getContent } from "@/content";
+import { homeCopy } from "@/content/copy/home";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 
-export function Eligibility() {
+export function Eligibility({ locale }: { locale: Locale }) {
+  const t = homeCopy[locale].eligibility;
+  const d = getDictionary(locale);
+  const { enrollmentSteps, fitSignals, site, photos } = getContent(locale);
   return (
     <section id="eligibility" aria-labelledby="eligibility-title" className="relative z-10 scroll-mt-24 bg-paper py-28 lg:py-36">
       <div className="container-x grid gap-16 lg:grid-cols-12">
         <div className="lg:col-span-6">
           <Reveal>
-            <p className="eyebrow">For families</p>
+            <p className="eyebrow">{t.eyebrow}</p>
             <h2 id="eligibility-title" className="display-lg mt-5">
-              Could STARS help <em className="text-teal-deep">your</em> child?
+              {t.titleBefore} <em className="text-teal-deep">{t.titleEmphasis}</em> {t.titleAfter}
             </h2>
-            <p className="lede mt-5">STARS may be a good fit if your child is between birth and age six and…</p>
+            <p className="lede mt-5">{t.lede}</p>
           </Reveal>
           <ul className="mt-8 space-y-3">
             {fitSignals.map((s, i) => (
@@ -28,8 +34,7 @@ export function Eligibility() {
             ))}
           </ul>
           <Reveal className="mt-8 rounded-2xl border border-gold/60 bg-gold/10 p-5 leading-relaxed">
-            <strong className="font-semibold">Paying for services:</strong> Services are paid for through {site.funding}. We
-            can check your child’s coverage for you. You don’t need a diagnosis to ask a question.
+            <strong className="font-semibold">{t.payingLabel}</strong> {t.payingPrefix} {site.funding}. {t.payingBody}
           </Reveal>
         </div>
 
@@ -46,7 +51,7 @@ export function Eligibility() {
           </Reveal>
 
           <Reveal className="mt-8">
-            <h3 className="font-display text-2xl">Getting started takes four steps</h3>
+            <h3 className="font-display text-2xl">{t.stepsTitle}</h3>
           </Reveal>
           <ol className="mt-6 grid gap-4 sm:grid-cols-2">
             {enrollmentSteps.map((step, i) => (
@@ -58,7 +63,9 @@ export function Eligibility() {
                   {i + 1}
                 </span>
                 <h4 className="mt-4 font-display text-lg">
-                  <span className="sr-only">Step {i + 1}: </span>
+                  <span className="sr-only">
+                    {d.common.step} {i + 1}:{" "}
+                  </span>
                   {step.title}
                 </h4>
                 <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{step.body}</p>
@@ -66,11 +73,11 @@ export function Eligibility() {
             ))}
           </ol>
           <Reveal className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href="/getting-started#inquiry" size="lg" arrow>
-              Start a conversation
+            <ButtonLink href={href(locale, "gettingStarted", "#inquiry")} size="lg" arrow>
+              {t.cta}
             </ButtonLink>
             <ButtonLink href={site.phone.href} size="lg" variant="ghost">
-              Call {site.phone.display}
+              {d.common.call} {site.phone.display}
             </ButtonLink>
           </Reveal>
         </div>

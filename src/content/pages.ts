@@ -284,8 +284,8 @@ export const familyTopics = [
 /* ── Contact ──────────────────────────────────────────────── */
 
 export const whoHandlesWhat = [
-  { team: "New families & enrollment", body: "Questions about eligibility, tours and getting started.", href: "/getting-started" },
-  { team: "Physicians & referral partners", body: "Referrals, prescriptions and care coordination.", href: "/referrals" },
-  { team: "Current families", body: "Attendance, transportation and day-to-day questions.", href: "/families" },
-  { team: "Careers & human resources", body: "Open positions, applications and interviews.", href: "/careers" },
+  { team: "New families & enrollment", body: "Questions about eligibility, tours and getting started.", key: "gettingStarted" },
+  { team: "Physicians & referral partners", body: "Referrals, prescriptions and care coordination.", key: "referrals" },
+  { team: "Current families", body: "Attendance, transportation and day-to-day questions.", key: "families" },
+  { team: "Careers & human resources", body: "Open positions, applications and interviews.", key: "careers" },
 ] as const;

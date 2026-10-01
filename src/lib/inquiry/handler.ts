@@ -3,6 +3,8 @@ import { isAllowedOrigin } from "@/lib/security/origin";
 import { checkRateLimit, clientIp, MemoryRateLimitStore, type RateLimitStore } from "@/lib/security/rateLimit";
 import { inquirySchema, MIN_FILL_MS, toFieldErrors } from "@/lib/validation/inquiry";
 import { site } from "@/content/site";
+import { isLocale, type Locale } from "@/i18n/config";
+import { serverMessage, type ServerMessageKey } from "@/i18n/messages";
 
 export type InquiryResponse =
   | { ok: true; message: string }
@@ -17,7 +19,6 @@ type Deps = {
 };
 
 const MAX_BODY_BYTES = 16 * 1024;
-const PHONE_FALLBACK = `Please call us at ${site.phone.display} (${site.hours.short}).`;
 
 const json = (body: InquiryResponse, status: number, headers: Record<string, string> = {}) =>
   Response.json(body, { status, headers: { "Cache-Control": "no-store", ...headers } });
@@ -40,21 +41,25 @@ export function createInquiryHandler(deps: Deps = {}) {
   const windowMs = Number(env.RATE_LIMIT_WINDOW_MS) > 0 ? Number(env.RATE_LIMIT_WINDOW_MS) : 10 * 60 * 1000;
 
   return async function POST(request: Request): Promise<Response> {
+    // Until the body is parsed, respond in the language of the page that sent it.
+    let locale: Locale = (request.headers.get("accept-language") ?? "").toLowerCase().startsWith("es") ? "es" : "en";
+    const t = (key: ServerMessageKey) => serverMessage(key, locale, site.phone.display);
+
     if (!isAllowedOrigin(request, env)) {
-      return json({ ok: false, error: "This request isn’t allowed from that origin." }, 403);
+      return json({ ok: false, error: t("badOrigin") }, 403);
     }
 
     if (!(request.headers.get("content-type") ?? "").toLowerCase().startsWith("application/json")) {
-      return json({ ok: false, error: "Unsupported content type." }, 415);
+      return json({ ok: false, error: t("unsupportedType") }, 415);
     }
 
     const declared = Number(request.headers.get("content-length") ?? "0");
-    if (declared > MAX_BODY_BYTES) return json({ ok: false, error: "Request is too large." }, 413);
+    if (declared > MAX_BODY_BYTES) return json({ ok: false, error: t("tooLarge") }, 413);
 
     const limit = await checkRateLimit(store, `inquiry:${clientIp(request.headers)}`, { max, windowMs, now: now() });
     if (!limit.allowed) {
       return json(
-        { ok: false, error: `Too many requests. ${PHONE_FALLBACK}` },
+        { ok: false, error: t("rateLimited") },
         429,
         { "Retry-After": String(limit.retryAfterSeconds) },
       );
@@ -63,34 +68,35 @@ export function createInquiryHandler(deps: Deps = {}) {
     let raw: unknown;
     try {
       const text = await request.text();
-      if (text.length > MAX_BODY_BYTES) return json({ ok: false, error: "Request is too large." }, 413);
+      if (text.length > MAX_BODY_BYTES) return json({ ok: false, error: t("tooLarge") }, 413);
       raw = JSON.parse(text);
     } catch {
-      return json({ ok: false, error: "We couldn’t read that request." }, 400);
+      return json({ ok: false, error: t("unreadable") }, 400);
     }
     if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
-      return json({ ok: false, error: "We couldn’t read that request." }, 400);
+      return json({ ok: false, error: t("unreadable") }, 400);
     }
 
     const record = raw as Record<string, unknown>;
+    if (isLocale(record.locale)) locale = record.locale;
     const honeypot = typeof record.website === "string" && record.website.length > 0;
     const startedAt = Number(record.startedAt);
     const tooFast = Number.isFinite(startedAt) && startedAt > 0 && now() - startedAt < MIN_FILL_MS;
     if (honeypot || tooFast) {
       // Pretend success so automated submitters get no signal to adapt to.
       logger.warn("[inquiry] dropped likely bot submission", { honeypot, tooFast });
-      return json({ ok: true, message: "Thank you — our team will be in touch." }, 200);
+      return json({ ok: true, message: t("received") }, 200);
     }
 
     const parsed = inquirySchema.safeParse(record);
     if (!parsed.success) {
-      return json({ ok: false, error: "Please check the highlighted fields.", fieldErrors: toFieldErrors(parsed.error) }, 422);
+      return json({ ok: false, error: t("checkFields"), fieldErrors: toFieldErrors(parsed.error, locale) }, 422);
     }
 
     const result = await deliver(parsed.data, { env });
     if (result.ok) {
       logger.info("[inquiry] delivered", { channels: result.channels, reason: parsed.data.reason });
-      return json({ ok: true, message: "Thank you — our team will contact you within one business day." }, 200);
+      return json({ ok: true, message: t("thanks") }, 200);
     }
 
     if (result.reason === "not-configured") {
@@ -100,13 +106,13 @@ export function createInquiryHandler(deps: Deps = {}) {
           reason: parsed.data.reason,
           audience: parsed.data.audience,
         });
-        return json({ ok: true, message: "Thank you — our team will contact you within one business day." }, 200);
+        return json({ ok: true, message: t("thanks") }, 200);
       }
       logger.error("[inquiry] no delivery channel configured");
-      return json({ ok: false, error: `Our online form is temporarily unavailable. ${PHONE_FALLBACK}` }, 503);
+      return json({ ok: false, error: t("unavailable") }, 503);
     }
 
     logger.error("[inquiry] delivery failed", { detail: result.detail });
-    return json({ ok: false, error: `We couldn’t send your message just now. ${PHONE_FALLBACK}` }, 502);
+    return json({ ok: false, error: t("failed") }, 502);
   };
 }

@@ -2,20 +2,17 @@
 
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { site } from "@/content/site";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionary";
+import { getContent } from "@/content";
 import { buttonClass } from "@/components/ui/Button";
 import {
   AUDIENCES,
-  AUDIENCE_LABELS,
   CHILD_AGES,
-  CHILD_AGE_LABELS,
-  CONTACT_LABELS,
   CONTACT_METHODS,
   DOCTOR_ANSWERS,
-  DOCTOR_LABELS,
   POSITIONS,
-  POSITION_LABELS,
   REASONS,
-  REASON_LABELS,
   inquirySchema,
   toFieldErrors,
   type Audience,
@@ -31,6 +28,8 @@ type Status =
   | { kind: "error"; message: string };
 
 export type InquiryFormProps = {
+  /** Language of the page; drives every label, message and the server reply. */
+  locale?: Locale;
   defaultAudience?: Audience;
   defaultReason?: Reason;
   /** Preselected role for job applications. */
@@ -63,21 +62,6 @@ const FIELD_ORDER: (keyof Inquiry)[] = [
   "consent",
 ];
 
-const LABELS: Partial<Record<keyof Inquiry, string>> = {
-  audience: "I am a…",
-  reason: "How can we help?",
-  name: "Your name",
-  organization: "Practice, school or organization",
-  position: "Position",
-  startDate: "Earliest start date",
-  childAge: "Child’s age",
-  hasPrimaryDoctor: "Does your child have a primary care doctor?",
-  phone: "Phone",
-  email: "Email",
-  preferredContact: "Best way to reach you",
-  message: "Anything you’d like us to know",
-  consent: "Confirmation",
-};
 
 const str = (data: FormData, key: string, fallback = "") => {
   const v = data.get(key);
@@ -90,11 +74,15 @@ export function InquiryForm({
   defaultPosition,
   audiences = AUDIENCES,
   reasons = REASONS,
-  submitLabel = "Send my request",
+  submitLabel,
   successNote,
-  messageHint = "Optional. General questions only — for example, best times to reach you.",
+  messageHint,
   fetchImpl,
+  locale = "en",
 }: InquiryFormProps) {
+  const d = getDictionary(locale).form;
+  const hoursDisplay = getContent(locale).site.hours.display;
+  const LABELS: Partial<Record<keyof Inquiry, string>> = d.labels;
   const formId = useId();
   const [audience, setAudience] = useState<Audience>(
     defaultAudience && audiences.includes(defaultAudience) ? defaultAudience : (audiences[0] ?? "family"),
@@ -144,7 +132,8 @@ export function InquiryForm({
       phone: str(data, "phone"),
       email: str(data, "email"),
       preferredContact: str(data, "preferredContact", "phone"),
-      language: str(data, "language", "en"),
+      language: str(data, "language", locale),
+      locale,
       childAge: str(data, "childAge"),
       hasPrimaryDoctor: str(data, "hasPrimaryDoctor"),
       position: str(data, "position"),
@@ -157,7 +146,7 @@ export function InquiryForm({
 
     const parsed = inquirySchema.safeParse(payload);
     if (!parsed.success) {
-      setErrors(toFieldErrors(parsed.error));
+      setErrors(toFieldErrors(parsed.error, locale));
       setStatus({ kind: "idle" });
       requestAnimationFrame(() => summaryRef.current?.focus());
       return;
@@ -187,10 +176,10 @@ export function InquiryForm({
       }
       setStatus({
         kind: "error",
-        message: body && !body.ok ? body.error : `Something went wrong. Please call ${site.phone.display}.`,
+        message: body && !body.ok ? body.error : `${d.genericError} ${site.phone.display}.`,
       });
     } catch {
-      setStatus({ kind: "error", message: `We couldn’t reach our server. Please call ${site.phone.display}.` });
+      setStatus({ kind: "error", message: `${d.networkError} ${site.phone.display}.` });
     }
   }
 
@@ -201,18 +190,18 @@ export function InquiryForm({
           <circle cx="24" cy="24" r="22" fill="#2f8f8a" opacity="0.15" />
           <path d="m15 24.5 6 6 12-13" fill="none" stroke="#1f6b67" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        <h2 className="mt-5 font-display text-3xl">Thank you.</h2>
+        <h2 className="mt-5 font-display text-3xl">{d.successTitle}</h2>
         <p className="lede mx-auto mt-3 max-w-md">{status.message}</p>
         {successNote ? <div className="mx-auto mt-5 max-w-md text-ink-soft">{successNote}</div> : null}
         <p className="mt-6 text-sm text-muted">
-          Need us sooner? Call{" "}
+          {d.needSooner}{" "}
           <a className="font-semibold text-ink underline" href={site.phone.href}>
             {site.phone.display}
           </a>
-          , {site.hours.display}
+          , {hoursDisplay}
         </p>
         <button type="button" className={buttonClass("ghost", "md", "mt-8")} onClick={() => setStatus({ kind: "idle" })}>
-          Send another message
+          {d.sendAnother}
         </button>
       </div>
     );
@@ -227,7 +216,7 @@ export function InquiryForm({
     <form noValidate onSubmit={onSubmit} className="card relative space-y-6 p-6 sm:p-10" aria-describedby={id("phi")}>
       {errorKeys.length > 0 ? (
         <div ref={summaryRef} tabIndex={-1} role="alert" className="rounded-2xl border-2 border-berry/60 bg-berry/5 p-5 outline-none">
-          <h2 className="font-semibold text-berry-deep">Please fix the following:</h2>
+          <h2 className="font-semibold text-berry-deep">{d.fixTitle}</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
             {errorKeys.map((k) => (
               <li key={k}>
@@ -246,8 +235,7 @@ export function InquiryForm({
           <path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
         </svg>
         <p>
-          <strong>Please don’t include medical details.</strong> This form is for contact information only — no child
-          names, dates of birth, diagnoses or insurance numbers. We’ll collect those through a secure channel.
+          <strong>{d.phiTitle}</strong> {d.phiBody}
         </p>
       </div>
 
@@ -258,7 +246,7 @@ export function InquiryForm({
               <select {...fieldProps("audience")} value={audience} onChange={(e) => setAudience(e.target.value as Audience)}>
                 {audiences.map((a) => (
                   <option key={a} value={a}>
-                    {AUDIENCE_LABELS[a]}
+                    {d.audience[a]}
                   </option>
                 ))}
               </select>
@@ -269,7 +257,7 @@ export function InquiryForm({
               <select {...fieldProps("reason")} value={reason} onChange={(e) => setReason(e.target.value as Reason)}>
                 {reasons.map((r) => (
                   <option key={r} value={r}>
-                    {REASON_LABELS[r]}
+                    {d.reason[r]}
                   </option>
                 ))}
               </select>
@@ -287,10 +275,14 @@ export function InquiryForm({
             <input {...fieldProps("organization")} autoComplete="organization" maxLength={150} />
           </Field>
         ) : (
-          <Field label="Preferred language" htmlFor={id("language")}>
-            <select id={id("language")} name="language" defaultValue="en" className={inputClass()}>
-              <option value="en">English</option>
-              <option value="es">Español</option>
+          <Field label={d.labels.language} htmlFor={id("language")}>
+            <select id={id("language")} name="language" defaultValue={locale} className={inputClass()}>
+              <option value="en" lang="en-US">
+                {d.languages.en}
+              </option>
+              <option value="es" lang="es-US">
+                {d.languages.es}
+              </option>
             </select>
           </Field>
         )}
@@ -300,20 +292,20 @@ export function InquiryForm({
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label={LABELS.childAge ?? ""} htmlFor={id("childAge")} error={errors.childAge} errorId={id("childAge-error")}>
             <select {...fieldProps("childAge")} defaultValue="">
-              <option value="">Choose one (optional)</option>
+              <option value="">{d.chooseOptional}</option>
               {CHILD_AGES.map((a) => (
                 <option key={a} value={a}>
-                  {CHILD_AGE_LABELS[a]}
+                  {d.childAge[a]}
                 </option>
               ))}
             </select>
           </Field>
           <Field label={LABELS.hasPrimaryDoctor ?? ""} htmlFor={id("hasPrimaryDoctor")}>
             <select {...fieldProps("hasPrimaryDoctor")} defaultValue="">
-              <option value="">Choose one (optional)</option>
+              <option value="">{d.chooseOptional}</option>
               {DOCTOR_ANSWERS.map((a) => (
                 <option key={a} value={a}>
-                  {DOCTOR_LABELS[a]}
+                  {d.doctor[a]}
                 </option>
               ))}
             </select>
@@ -326,11 +318,11 @@ export function InquiryForm({
           <Field label={LABELS.position ?? ""} htmlFor={id("position")} error={errors.position} errorId={id("position-error")} required>
             <select {...fieldProps("position")} defaultValue={defaultPosition ?? ""}>
               <option value="" disabled>
-                Choose one
+                {d.chooseOne}
               </option>
               {POSITIONS.map((p) => (
                 <option key={p} value={p}>
-                  {POSITION_LABELS[p]}
+                  {d.position[p]}
                 </option>
               ))}
             </select>
@@ -359,7 +351,7 @@ export function InquiryForm({
               className="flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line bg-cream px-4 has-[:checked]:border-teal has-[:checked]:bg-teal/10"
             >
               <input type="radio" name="preferredContact" value={m} defaultChecked={m === "phone"} className="h-4 w-4 accent-teal" />
-              <span className="text-sm font-semibold">{CONTACT_LABELS[m]}</span>
+              <span className="text-sm font-semibold">{d.contact[m]}</span>
             </label>
           ))}
         </div>
@@ -370,7 +362,7 @@ export function InquiryForm({
         htmlFor={id("message")}
         error={errors.message}
         errorId={id("message-error")}
-        hint={messageHint}
+        hint={messageHint ?? d.messageHint}
         hintId={id("message-hint")}
       >
         <textarea {...fieldProps("message", true)} rows={4} maxLength={1000} />
@@ -378,7 +370,7 @@ export function InquiryForm({
 
       {/* Honeypot: hidden from people and assistive tech, attractive to bots. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
-        <label htmlFor={id("website")}>Leave this field empty</label>
+        <label htmlFor={id("website")}>{d.honeypot}</label>
         <input id={id("website")} name="website" tabIndex={-1} autoComplete="off" />
       </div>
 
@@ -393,8 +385,7 @@ export function InquiryForm({
             className="mt-1 h-5 w-5 shrink-0 accent-teal"
           />
           <span>
-            I haven’t included a child’s name, date of birth, diagnosis or insurance details, and I agree that STARS
-            may contact me about this request.
+            {d.consentText}
           </span>
         </label>
         {errors.consent ? (
@@ -412,10 +403,10 @@ export function InquiryForm({
 
       <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
         <button type="submit" disabled={submitting} aria-busy={submitting} className={buttonClass("primary", "lg")}>
-          {submitting ? "Sending…" : submitLabel}
+          {submitting ? d.sending : (submitLabel ?? d.submit)}
         </button>
         <p className="text-sm text-muted">
-          Prefer to talk?{" "}
+          {d.preferTalk}{" "}
           <a href={site.phone.href} className="font-semibold text-ink underline underline-offset-4">
             {site.phone.display}
           </a>

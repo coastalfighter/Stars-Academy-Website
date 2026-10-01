@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/ui/Reveal";
 import type { Step } from "@/content/pages";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionary";
 
 export function CheckIcon({ className = "mt-0.5 h-6 w-6 shrink-0 text-teal" }: { className?: string }) {
   return (
@@ -30,11 +32,14 @@ export function StepList({
   steps,
   dark = false,
   columns = 4,
+  locale = "en",
 }: {
   steps: readonly Step[];
   dark?: boolean;
   columns?: 3 | 4 | 5;
+  locale?: Locale;
 }) {
+  const stepWord = getDictionary(locale).common.step;
   const cols = { 3: "lg:grid-cols-3", 4: "lg:grid-cols-4", 5: "lg:grid-cols-5" }[columns];
   return (
     <ol className={`grid gap-4 sm:grid-cols-2 ${cols}`}>
@@ -47,7 +52,9 @@ export function StepList({
         >
           <span className={`font-display text-4xl ${dark ? "text-gold" : "text-teal-deep"}`}>{String(i + 1).padStart(2, "0")}</span>
           <h3 className="mt-3 font-display text-xl">
-            <span className="sr-only">Step {i + 1}: </span>
+            <span className="sr-only">
+              {stepWord} {i + 1}:{" "}
+            </span>
             {step.title}
           </h3>
           <p className={`mt-2 leading-relaxed ${dark ? "text-cream/75" : "text-ink-soft"}`}>{step.body}</p>

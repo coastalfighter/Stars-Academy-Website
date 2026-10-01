@@ -1,33 +1,38 @@
 import Image from "next/image";
 import Link from "next/link";
-import { approachPrinciples } from "@/content/site";
-import { photos } from "@/content/photos";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionary";
+import { href } from "@/i18n/routes";
+import { getContent } from "@/content";
+import { homeCopy } from "@/content/copy/home";
 import { Reveal } from "@/components/ui/Reveal";
 
 const ACCENTS = ["bg-gold", "bg-coral", "bg-teal", "bg-blue"] as const;
 
-export function Approach() {
+export function Approach({ locale }: { locale: Locale }) {
+  const t = homeCopy[locale].approach;
+  const d = getDictionary(locale);
+  const { approachPrinciples, photos, site } = getContent(locale);
   return (
     <section id="approach" aria-labelledby="approach-title" className="relative scroll-mt-24 py-28 lg:py-40">
       <div className="container-x">
         <div className="over-scene copy-col lg:max-w-[600px]">
           <Reveal>
-            <p className="eyebrow">Our approach</p>
+            <p className="eyebrow">{t.eyebrow}</p>
             <h2 id="approach-title" className="display-lg mt-5">
-              Children learn best when they feel safe, connected and understood.
+              {t.title}
             </h2>
             <p className="lede mt-5">
-              So that’s where we start. Our culture is shaped by{" "}
+              {t.ledeBefore}{" "}
               <a
-                href="https://consciousdiscipline.com"
+                href={site.consciousDisciplineUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-teal-deep underline decoration-2 underline-offset-4"
               >
-                Conscious Discipline<span className="sr-only"> (opens in a new tab)</span>
+                Conscious Discipline<span className="sr-only">{d.common.opensNewTab}</span>
               </a>
-              , an Adult First mindset, and sensory-informed, neuroaffirming care. Here’s what that means — in everyday
-              words.
+              {t.ledeAfter}
             </p>
           </Reveal>
 
@@ -42,8 +47,8 @@ export function Approach() {
           </ul>
 
           <Reveal className="mt-8">
-            <Link href="/approach" className="font-semibold text-teal-deep underline decoration-2 underline-offset-4">
-              Read about our approach
+            <Link href={href(locale, "approach")} className="font-semibold text-teal-deep underline decoration-2 underline-offset-4">
+              {t.readMore}
             </Link>
           </Reveal>
 

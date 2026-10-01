@@ -1,25 +1,25 @@
 import Image from "next/image";
-import { pillars } from "@/content/site";
-import { photos } from "@/content/photos";
+import type { Locale } from "@/i18n/config";
+import { getContent } from "@/content";
+import { homeCopy } from "@/content/copy/home";
 import { Reveal } from "@/components/ui/Reveal";
 
 const DOTS = ["bg-gold", "bg-teal", "bg-berry"] as const;
 
-export function WhatStars() {
+export function WhatStars({ locale }: { locale: Locale }) {
+  const t = homeCopy[locale].what;
+  const { pillars, photos } = getContent(locale);
   return (
     <section aria-labelledby="what-title" className="relative py-28 lg:min-h-[140vh] lg:py-40">
       <div className="container-x">
         <div className="over-scene copy-col">
           <Reveal>
-            <p className="eyebrow">What STARS is</p>
+            <p className="eyebrow">{t.eyebrow}</p>
             <h2 id="what-title" className="display-lg mt-5">
-              Not a daycare. Not a therapy clinic.{" "}
-              <span className="text-teal-deep">Both, working as one.</span>
+              {t.titleA} <span className="text-teal-deep">{t.titleB}</span>
             </h2>
             <p className="lede mt-6">
-              Many families piece support together — a preschool in one place, therapy appointments somewhere else,
-              medical instructions on a sheet of paper. At STARS, it all happens here, in one day, with one team that
-              talks to each other about your child.
+              {t.lede}
             </p>
           </Reveal>
 
@@ -43,13 +43,11 @@ export function WhatStars() {
               <Image src={photos.storyTime.src} alt={photos.storyTime.alt} fill sizes="128px" className="object-cover" />
             </div>
             <p className="font-display text-2xl leading-snug">
-              At STARS, these aren’t three separate places.{" "}
-              <span className="text-berry">One day. One plan. One team.</span>
+              {t.quoteA} <span className="text-berry">{t.quoteB}</span>
             </p>
           </Reveal>
           <p className="sr-only">
-            Illustration: three overlapping circles — developmental classroom, therapy and nursing. Where all three
-            meet is your child.
+            {t.illustration}
           </p>
         </div>
       </div>

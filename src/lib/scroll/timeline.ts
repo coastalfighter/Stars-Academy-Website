@@ -90,10 +90,12 @@ export const DAY_START_HOUR = 7;
 export const DAY_END_HOUR = 15;
 export const dayHourAt = (t: number): number => lerp(DAY_START_HOUR, DAY_END_HOUR, clamp(t));
 
-export const formatHour = (hour: number): string => {
+export const formatHour = (hour: number, locale: "en" | "es" = "en"): string => {
   const h = Math.floor(hour);
   const m = Math.floor((hour - h) * 60);
-  const suffix = h >= 12 ? "p.m." : "a.m.";
+  const pm = h >= 12;
+  // AP style in English; RAE style ("a. m.") in Spanish.
+  const suffix = locale === "es" ? (pm ? "p. m." : "a. m.") : pm ? "p.m." : "a.m.";
   const h12 = ((h + 11) % 12) + 1;
   return `${h12}:${m.toString().padStart(2, "0")} ${suffix}`;
 };

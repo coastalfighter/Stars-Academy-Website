@@ -18,19 +18,18 @@ The home page tells the STARS story as **one continuous 3D scroll**, built on th
 
 ## Pages
 
-| Route | Purpose |
-|---|---|
-| `/` | The 7-chapter 3D scroll story |
-| `/services`, `/services/[slug]` | Overview + 5 statically generated discipline pages |
-| `/approach` | The six ideas behind STARS' care, with "what it can look like" examples |
-| `/about-us` | Story, name, vision, values, facilities |
-| `/getting-started` | Fit, eligibility, funding, first-call-to-first-day, enrollment inquiry form |
-| `/referrals` | Criteria, clinical scope, referral call-back form, partner FAQs |
-| `/careers`, `/careers/apply` | Why STARS, open roles, hiring steps, job-interest form + Adobe Sign application |
-| `/families` | Hours, absences, transport, health, kindergarten transition, who to contact |
-| `/faq` | All questions by audience (FAQPage structured data) |
-| `/contact-us`, `/schedule-a-tour` | General contact and tour requests |
-| `/privacy`, `/accessibility`, `/nondiscrimination` | Policy pages |
+| English | Spanish | Purpose |
+|---|---|---|
+| `/` | `/es` | The 7-chapter 3D scroll story |
+| `/services`, `/services/[slug]` | `/es/servicios`, `/es/servicios/[slug]` | Overview + 5 statically generated discipline pages |
+| `/approach` | `/es/nuestro-enfoque` | The six ideas behind STARS' care |
+| `/about-us` | `/es/sobre-nosotros` | Story, name, vision, values, facilities |
+| `/getting-started` | `/es/como-empezar` | Fit, eligibility, funding, steps, enrollment inquiry form |
+| `/families` | `/es/familias` | Hours, absences, transport, health, kindergarten, who to contact |
+| `/faq` | `/es/preguntas-frecuentes` | All questions by audience (FAQPage structured data) |
+| `/contact-us`, `/schedule-a-tour` | `/es/contacto`, `/es/programar-visita` | General contact and tour requests |
+| `/privacy`, `/accessibility`, `/nondiscrimination` | `/es/privacidad`, `/es/accesibilidad`, `/es/no-discriminacion` | Policy pages |
+| `/referrals`, `/careers`, `/careers/apply` | — (English only) | Physician/school referrals; jobs |
 
 Secondary pages share one hero: breadcrumbs (with `BreadcrumbList` JSON-LD) and a small interactive 3D STARS
 star. On a service page, that service's point of the star lifts and lights up. The star only renders while it's
@@ -60,6 +59,33 @@ on screen, and in Calm mode it's a static SVG.
   has to receive, scan or store documents.
 - **Old URLs keep working.** `/speech-therapy`, `/nursing` and the other old service URLs 308-redirect to `/services/*`.
 
+## Languages (English & Spanish)
+
+The Spanish site covers everything a family needs. Referral-partner and careers pages stay English-only: Spanish links to them say "(en inglés)", carry `hreflang="en-US"`, and are left out of the hreflang pairs.
+
+- **One root layout per language.** `src/app/(en)` and `src/app/(es)` are route groups, each with its own root
+  layout. That way `<html lang="en-US">` or `<html lang="es-US">` is correct in the server-rendered HTML
+  (WCAG 3.1.1, screen-reader pronunciation and search engines), and pages stay statically generated. URLs that
+  match no route get a bilingual `global-not-found` page.
+- **Views are shared.** Each page is a single component in `src/views/` that takes a `locale`. The files in
+  `src/app/(en)` and `src/app/(es)` are thin wrappers that only add metadata.
+- **One route map.** `src/i18n/routes.ts` lists every page's address in each language. The language switcher,
+  hreflang alternates, the sitemap and a route-integrity test all read from it.
+- **Type-checked translations.** Spanish copy must `satisfies Widen<typeof en>`, so a missing or extra key is a
+  compile error. Page copy lives in `src/content/copy/<page>.ts` with English and Spanish side by side, which makes
+  line-by-line review easy. Shared facts and lists are in `src/content/es/`. Tests fail if a Spanish string still
+  equals its English source.
+- **The forms speak both languages.** zod issues are *codes* (`src/i18n/messages.ts`), translated in the browser
+  and on the server. The API replies in the language of the page that sent the form. The PHI guard recognizes
+  Spanish ("fecha de nacimiento", "seguro social", "número de Medicaid"), and staff emails show which language
+  version of the site an inquiry came from.
+- **Register.** Formal *usted*, neutral U.S. Spanish, and clinical terms in common U.S. pediatric usage. The
+  organization's name and acronym (Striving To Achieve Real Success) stay in English and are marked `lang="en-US"`,
+  with a Spanish gloss.
+
+> **Before launch:** the Spanish text must be reviewed by a qualified health-care translator, and the official
+> Spanish USDA nondiscrimination statement must replace the provisional translation. See the content checklist.
+
 ## Stack
 
 Next.js 16 (App Router, TypeScript strict) · React 19 · Tailwind CSS v4 · three.js + React Three Fiber + drei ·
@@ -74,12 +100,10 @@ Lenis · zod · Vitest + Testing Library.
 ├── src/
 │   ├── app/
 │   │   ├── api/inquiry/route.ts     # POST endpoint (delegates to lib/inquiry/handler)
-│   │   ├── services/                # overview + [slug] (5 SSG pages)
-│   │   ├── approach/ about-us/ getting-started/ referrals/ careers/ (+ apply/)
-│   │   ├── families/ faq/ contact-us/ schedule-a-tour/
-│   │   ├── privacy/ accessibility/ nondiscrimination/
-│   │   ├── layout.tsx               # fonts, metadata, JSON-LD, providers, skip link
-│   │   ├── page.tsx                 # the 7-chapter 3D scroll story
+│   │   ├── (en)/                    # English root layout + thin route files
+│   │   ├── (es)/es/                 # Spanish root layout + thin route files
+│   │   ├── global-not-found.tsx     # bilingual 404 for unmatched URLs
+│   │   ├── fonts.ts                 # next/font (Latin subset covers Spanish)
 │   │   ├── globals.css              # design tokens (Tailwind @theme) + calm-mode rules
 │   │   └── sitemap.ts · robots.ts · not-found.tsx
 │   ├── components/
@@ -87,18 +111,20 @@ Lenis · zod · Vitest + Testing Library.
 │   │   ├── page/                    # PageHero, Breadcrumbs, Section, FaqList, StepList, NextStep, LegalPage
 │   │   ├── sections/                # home page sections, grouped into <Chapter>s
 │   │   ├── providers/               # MotionProvider (calm mode), SmoothScroll, ScrollDirector
-│   │   ├── layout/                  # Header (accessible mobile menu), Footer, CalmToggle
+│   │   ├── layout/                  # SiteShell, Header, Footer, CalmToggle, LanguageSwitcher
 │   │   ├── forms/InquiryForm.tsx
 │   │   ├── seo/JsonLd.tsx           # schema.org MedicalClinic
 │   │   └── ui/                      # Button, Reveal, CountUp, ScrollRail, StarMark
-│   ├── content/                     # typed copy: site, services, pages, faq, photos
+│   ├── views/                       # one locale-aware component per page
+│   ├── i18n/                        # locales, route map, UI dictionaries, messages, metadata
+│   ├── content/                     # English facts & lists; es/ mirrors; copy/ = page copy (en + es)
 │   └── lib/
 │       ├── scroll/                  # timeline math, scroll store, hooks
 │       ├── validation/inquiry.ts    # shared zod schema + PHI detection
 │       ├── inquiry/                 # request handler + email/webhook delivery
 │       ├── security/                # rate limiter, origin (CSRF) guard
 │       └── hooks/useMediaQuery.ts
-├── tests/                           # 104 unit/component tests (incl. sitemap ↔ routes ↔ nav integrity)
+├── tests/                           # 156 unit/component tests (incl. translation coverage, route integrity)
 ├── .env.example
 └── next.config.ts                   # security headers (CSP, HSTS…), legacy redirects
 ```
@@ -155,7 +181,7 @@ Built for Vercel (or any Node 20.9+ host). Set `NEXT_PUBLIC_SITE_URL` and at lea
 
 - ~~Milestone 1: 3D home page, service pages, inquiry API~~
 - ~~Milestone 2: every remaining page, form presets, legal pages, shared page system~~
-3. **Spanish-language pages** (`/es`), building on the Spanish speech-therapy service.
+- ~~Milestone 3: Spanish site, bilingual forms/API, hreflang, bilingual 404~~
 4. **CMS integration** so staff can edit copy, announcements and the checklist items without a deploy.
 5. **Shared rate-limit store** (Upstash Redis) and privacy-friendly analytics, if STARS wants them (the privacy
    notice would need updating).

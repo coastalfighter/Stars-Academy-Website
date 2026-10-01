@@ -1,24 +1,29 @@
-import { site } from "@/content/site";
+import type { Locale } from "@/i18n/config";
+import { getContent } from "@/content";
+import { homeCopy } from "@/content/copy/home";
 import { Reveal } from "@/components/ui/Reveal";
 
 const COLORS = ["text-gold-deep", "text-coral-deep", "text-teal-deep", "text-blue-deep", "text-berry"] as const;
 
 /** "Our name is our promise" — the 3D blocks stack into S·T·A·R·S above this copy. */
-export function StarsName() {
+export function StarsName({ locale }: { locale: Locale }) {
+  const t = homeCopy[locale].name;
+  const { site } = getContent(locale);
   return (
     <section aria-labelledby="name-title" className="relative flex min-h-[150vh] flex-col justify-between py-28 lg:py-32">
       <div className="container-x">
         <Reveal className="over-scene mx-auto max-w-2xl text-center">
-          <p className="eyebrow">Our name is our promise</p>
+          <p className="eyebrow">{t.eyebrow}</p>
           <h2 id="name-title" className="display-md mt-4">
-            Every child, every day.
+            {t.title}
           </h2>
         </Reveal>
       </div>
 
       <div className="container-x">
         <Reveal className="over-scene mx-auto max-w-4xl text-center">
-          <p className="font-display text-[clamp(1.9rem,4.4vw,3.6rem)] leading-tight" aria-label={site.acronym.join(" ")}>
+          {/* The acronym is the organization's English name, so it is marked as English for screen readers. */}
+          <p lang="en-US" className="font-display text-[clamp(1.9rem,4.4vw,3.6rem)] leading-tight" aria-label={site.acronym.join(" ")}>
             {site.acronym.map((word, i) => (
               <span key={word} aria-hidden="true" className="mr-[0.25em] inline-block">
                 <span className={COLORS[i]}>{word[0]}</span>
@@ -26,10 +31,8 @@ export function StarsName() {
               </span>
             ))}
           </p>
-          <p className="lede mx-auto mt-6 max-w-2xl">
-            Success looks different for every child — a first word, a first step, a calm goodbye at drop-off. We build
-            it one block at a time.
-          </p>
+          {site.acronymMeaning ? <p className="mt-3 font-display text-xl text-ink-soft">“{site.acronymMeaning}”</p> : null}
+          <p className="lede mx-auto mt-6 max-w-2xl">{t.lede}</p>
         </Reveal>
       </div>
     </section>

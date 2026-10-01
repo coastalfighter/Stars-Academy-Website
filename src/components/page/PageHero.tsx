@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
 import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 import { HeroStar } from "@/components/three/HeroStar";
+import type { Locale } from "@/i18n/config";
 
 type Props = {
+  locale?: Locale;
   crumbs: Crumb[];
   eyebrow: string;
   title: ReactNode;
@@ -16,7 +18,7 @@ type Props = {
 };
 
 /** Standard hero for every secondary page: breadcrumbs, headline, and the STARS star. */
-export function PageHero({ crumbs, eyebrow, title, lede, actions, star = -1, accent = "#f2c230", children }: Props) {
+export function PageHero({ locale = "en", crumbs, eyebrow, title, lede, actions, star = -1, accent = "#f2c230", children }: Props) {
   return (
     <header className="relative overflow-hidden pt-32 pb-16 md:pt-40 md:pb-20">
       <div
@@ -27,7 +29,7 @@ export function PageHero({ crumbs, eyebrow, title, lede, actions, star = -1, acc
       <div aria-hidden="true" className="pointer-events-none absolute -left-40 top-1/2 h-[26rem] w-[26rem] rounded-full bg-teal/10 blur-3xl" />
       <div className="container-x relative grid items-center gap-10 lg:grid-cols-12">
         <div className={star === null ? "lg:col-span-12" : "lg:col-span-8"}>
-          <Breadcrumbs items={crumbs} />
+          <Breadcrumbs items={crumbs} locale={locale} />
           <p className="eyebrow mt-8">{eyebrow}</p>
           <h1 className="display-xl mt-5 max-w-4xl">{title}</h1>
           {lede ? <div className="lede mt-6 max-w-3xl">{lede}</div> : null}
