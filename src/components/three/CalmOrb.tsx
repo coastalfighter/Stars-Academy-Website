@@ -3,7 +3,8 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import type { Group, Mesh, MeshStandardMaterial } from "three";
-import { band } from "@/lib/scroll/timeline";
+import { fitScale } from "@/lib/scene/slots";
+import { easeVis, useSlot } from "./useSlot";
 import { BRAND, sceneState } from "./sceneState";
 
 /**
@@ -14,6 +15,8 @@ import { BRAND, sceneState } from "./sceneState";
  */
 const COMPANIONS = [BRAND.pink, BRAND.lilac, BRAND.periwinkle, BRAND.azure] as const;
 const BREATH_SECONDS = 8;
+/** Natural width: the companions' widest orbit plus their size, with a little air. */
+const ORBIT_WIDTH = 2 * (2.45 + 0.24) * 1.08;
 
 export function CalmOrb() {
   const root = useRef<Group>(null);
@@ -21,13 +24,18 @@ export function CalmOrb() {
   const ring = useRef<Mesh>(null);
   const moons = useRef<(Mesh | null)[]>([]);
 
+  const readSlot = useSlot("approach");
+
   useFrame(() => {
     const r = root.current;
     if (!r) return;
-    const { p, elapsed } = sceneState;
-    const vis = band(p, 4.1, 4.42, 0.25);
-    r.visible = vis > 0.002;
-    if (!r.visible) return;
+    const { elapsed } = sceneState;
+    const frame = readSlot();
+    r.visible = Boolean(frame);
+    if (!frame) return;
+    const vis = easeVis(frame.presence);
+    r.position.set(frame.box.x, frame.box.y, 0);
+    r.scale.setScalar(fitScale(frame.box, ORBIT_WIDTH, ORBIT_WIDTH));
 
     const breath = (1 - Math.cos((elapsed / BREATH_SECONDS) * Math.PI * 2)) / 2; // 0 → 1 → 0
     if (orb.current) {

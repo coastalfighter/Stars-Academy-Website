@@ -6,6 +6,7 @@ import { href } from "@/i18n/routes";
 import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { Reveal } from "@/components/ui/Reveal";
+import { SideSlot } from "@/components/three/SceneSlot";
 
 const ACCENTS = ["bg-accent", "bg-lilac", "bg-accent-strong", "bg-azure"] as const;
 
@@ -14,9 +15,10 @@ export function Approach({ locale }: { locale: Locale }) {
   const d = getDictionary(locale);
   const { approachPrinciples, photos, site } = getContent(locale);
   return (
-    <section id="approach" aria-labelledby="approach-title" className="relative scroll-mt-24 py-28 lg:py-40">
-      <div className="container-x">
-        <div className="over-scene copy-col lg:max-w-[600px]">
+    <section id="approach" aria-labelledby="approach-title" className="relative scroll-mt-24 py-28 lg:pt-36 lg:pb-28">
+      <SideSlot name="approach" art="orb" />
+      <div className="container-x relative">
+        <div className="copy-col xl:max-w-[600px]">
           <Reveal>
             <p className="eyebrow">{t.eyebrow}</p>
             <h2 id="approach-title" className="display-lg mt-5">

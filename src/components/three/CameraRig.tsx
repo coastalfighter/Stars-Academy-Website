@@ -2,30 +2,28 @@
 
 import { useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Vector3 } from "three";
-import { CAMERA_PATH, damp, responsiveCamera, sampleKeyframes } from "@/lib/scroll/timeline";
-import { sceneState } from "./sceneState";
+import { damp } from "@/lib/scroll/timeline";
+import { CAMERA_Z } from "@/lib/scene/slots";
 
-/** Moves the camera along the scroll-driven path with gentle pointer parallax. */
+/** How far (world units) the camera drifts with the pointer: a hint of depth, never enough to leave a slot. */
+const PARALLAX = 0.12;
+
+/**
+ * The camera stays square-on to the page so layout slots map exactly onto the
+ * scene (src/lib/scene/slots.ts). It only drifts slightly with the pointer;
+ * the drift is a pure sideways move, so subjects keep their slot while blocks
+ * at different depths shift a little against each other.
+ */
 export function CameraRig() {
-  const { camera, size, pointer } = useThree();
-  const look = useRef(new Vector3());
-  const parallax = useRef({ x: 0, y: 0 });
+  const { camera, pointer } = useThree();
+  const drift = useRef({ x: 0, y: 0 });
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.1);
-    const sample = responsiveCamera(sampleKeyframes(sceneState.p, CAMERA_PATH), size.width / Math.max(size.height, 1));
-
-    parallax.current.x = damp(parallax.current.x, pointer.x * 0.35, 2.5, dt);
-    parallax.current.y = damp(parallax.current.y, pointer.y * 0.2, 2.5, dt);
-
-    camera.position.set(
-      sample.position[0] + parallax.current.x,
-      sample.position[1] + parallax.current.y,
-      sample.position[2],
-    );
-    look.current.set(sample.target[0], sample.target[1], sample.target[2]);
-    camera.lookAt(look.current);
+    drift.current.x = damp(drift.current.x, pointer.x * PARALLAX, 2.5, dt);
+    drift.current.y = damp(drift.current.y, pointer.y * PARALLAX * 0.6, 2.5, dt);
+    camera.position.set(drift.current.x, drift.current.y, CAMERA_Z);
+    camera.lookAt(drift.current.x, drift.current.y, 0);
   });
 
   return null;

@@ -25,7 +25,6 @@ export const es = {
     step: "Paso",
     lastUpdated: "Última actualización",
     nextService: "Siguiente servicio",
-    scrollToExplore: "Desplácese para explorar",
     onThisPage: "En esta página",
   },
   header: {

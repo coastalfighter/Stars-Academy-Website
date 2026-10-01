@@ -20,3 +20,10 @@ export const BRAND = {
   cream: "#f7fdff",
   sand: "#d9f4ff",
 } as const;
+
+/**
+ * The hero slot holds the star with the block cloud around it. The cloud's
+ * natural extent (world units at scale 1) decides how both are fitted into
+ * the slot; the star is drawn at `starScale` of that fit.
+ */
+export const HERO_CLOUD = { width: 6.4, height: 4.6, starScale: 0.86 } as const;

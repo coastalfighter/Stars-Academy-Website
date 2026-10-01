@@ -1,18 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, type MutableRefObject } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
 import type { Group, CanvasTexture } from "three";
-import { band, clamp, easeInOutCubic, lerp, smoothstep } from "@/lib/scroll/timeline";
-import { BRAND, sceneState } from "./sceneState";
+import { clamp, easeInOutCubic, lerp } from "@/lib/scroll/timeline";
+import { arrival, fitScale } from "@/lib/scene/slots";
+import { easeVis, useSlot, type SlotFrame } from "./useSlot";
+import { BRAND, HERO_CLOUD, sceneState } from "./sceneState";
 import { createLetterTexture } from "./letterTexture";
 
 /**
- * "We build it one block at a time." — STARS
+ * "We build it one block at a time." (STARS)
  *
- * Soft toy blocks float around the hero. In the "stars" chapter the five
- * lettered blocks glide in, one after another, and stack into S·T·A·R·S.
+ * Soft toy blocks float around the star in the hero slot. Further down, the
+ * five lettered blocks drop into the S·T·A·R·S slot one after another.
  */
 
 const LETTERS = ["S", "T", "A", "R", "S"] as const;
@@ -46,30 +48,31 @@ function buildBlocks(): BlockSpec[] {
   const specs: BlockSpec[] = [];
   const total = 13;
   for (let i = 0; i < total; i += 1) {
-    // A C-shaped arc wrapping the right-hand side of the star, so blocks never
-    // sit behind the headline on the left or the navigation at the top.
-    const angle = -0.72 * Math.PI + (i / (total - 1)) * 1.44 * Math.PI + (rand() - 0.5) * 0.18;
-    const radius = 2.2 + rand() * 1.1;
+    // An even ring around the star (the hero slot keeps the whole cloud clear of the copy).
+    const angle = Math.PI / 2 + (i / total) * Math.PI * 2 + (rand() - 0.5) * 0.22;
+    const radius = 2.15 + rand() * 0.85;
     const isLetter = i < LETTERS.length;
     specs.push({
       letter: isLetter ? LETTERS[i] : undefined,
       color: isLetter ? (LETTER_COLORS[i] as string) : (FILLER_COLORS[i % FILLER_COLORS.length] as string),
       size: isLetter ? 0.78 : 0.36 + rand() * 0.34,
-      cloud: [Math.cos(angle) * radius + 0.3, Math.max(-1.9, Math.min(1.35, Math.sin(angle) * radius * 0.62)), (rand() - 0.5) * 2.4],
+      cloud: [Math.cos(angle) * radius, Math.sin(angle) * radius * 0.66, (rand() - 0.5) * 2.4],
       spin: [(rand() - 0.5) * 0.5, (rand() - 0.5) * 0.6, (rand() - 0.5) * 0.3],
       bob: rand() * Math.PI * 2,
       // A gentle staircase: each letter a little higher, like a block tower being built.
-      stack: isLetter ? [(i - 2) * 0.98, -0.55 + Math.abs(i - 2) * -0.12 + (i % 2) * 0.14, 0] : undefined,
+      stack: isLetter ? [(i - 2) * 0.98, Math.abs(i - 2) * -0.12 + (i % 2) * 0.14 + 0.1, 0] : undefined,
     });
   }
   return specs;
 }
 
-function Block({ spec, index }: { spec: BlockSpec; index: number }) {
+type Frames = { hero: SlotFrame | null; stars: SlotFrame | null; viewport: { width: number; height: number } };
+
+/** Stack layout (world units at scale 1): five blocks side by side, plus headroom for the landing. */
+const STACK = { width: 5.2, height: 1.8 } as const;
+
+function Block({ spec, index, frames }: { spec: BlockSpec; index: number; frames: MutableRefObject<Frames> }) {
   const group = useRef<Group>(null);
-  const size = useThree((s) => s.size);
-  // Portrait screens can't fit five blocks side by side at full size.
-  const fit = clamp((size.width / Math.max(size.height, 1)) / 0.95, 0.52, 1);
   const texture = useMemo<CanvasTexture | null>(
     () => (spec.letter && typeof document !== "undefined" ? createLetterTexture(spec.letter, BRAND.ink) : null),
     [spec.letter],
@@ -80,52 +83,46 @@ function Block({ spec, index }: { spec: BlockSpec; index: number }) {
   useFrame(() => {
     const g = group.current;
     if (!g) return;
-    const { p, elapsed } = sceneState;
+    const { elapsed } = sceneState;
+    const { hero, stars, viewport } = frames.current;
 
-    // Hero: visible at the top, drifting outward as the visitor scrolls on.
-    const heroVis = band(p, -1, 0.25, 0.8);
-    const scatter = 1 + smoothstep(0, 1.1, p) * 0.9;
-
-    // Stars chapter: letters arrive one by one ("one block at a time").
-    let stackT = 0;
-    if (spec.stack) {
-      const arrive = smoothstep(4.82, 5.4, p);
-      const staggered = clamp((arrive - index * 0.1) / 0.6);
-      const leave = 1 - smoothstep(5.88, 6.3, p);
-      stackT = easeInOutCubic(staggered) * leave;
-    }
-
-    const scale = Math.max(heroVis, stackT * fit) * spec.size;
-    g.visible = scale > 0.002;
-    if (!g.visible) return;
-
-    const bob = Math.sin(elapsed * 0.7 + spec.bob) * 0.12;
-    const cx = spec.cloud[0] * scatter;
-    const cy = spec.cloud[1] * scatter + bob;
-    const cz = spec.cloud[2];
-
-    if (spec.stack && stackT > 0) {
-      // Arrive from above the stack position, landing softly.
-      const sx = spec.stack[0] * fit;
-      const sy = spec.stack[1];
-      const sz = spec.stack[2];
-      const from = heroVis > 0 ? [cx, cy, cz] : [sx * 1.6, sy + 3.2, sz - 1.5];
+    // Stars slot: the letters land one by one ("one block at a time").
+    if (spec.stack && stars) {
+      const land = arrival(stars.rect, viewport, 0.92, 0.38);
+      const t = easeInOutCubic(clamp((land - index * 0.1) / 0.6));
+      const k = fitScale(stars.box, STACK.width, STACK.height);
+      const [sx, sy, sz] = spec.stack;
+      const fromY = sy + 2.6;
       g.position.set(
-        lerp(from[0] as number, sx, stackT),
-        lerp(from[1] as number, sy + Math.sin(elapsed * 0.9 + index) * 0.03, stackT),
-        lerp(from[2] as number, sz, stackT),
+        stars.box.x + sx * k,
+        stars.box.y + lerp(fromY, sy + Math.sin(elapsed * 0.9 + index) * 0.03, t) * k,
+        sz + (1 - t) * -1.2,
       );
-      const tumble = 1 - stackT;
+      const tumble = 1 - t;
       g.rotation.set(
         spec.spin[0] * elapsed * tumble + Math.sin(elapsed * 0.6 + index) * 0.04,
-        spec.spin[1] * elapsed * tumble + Math.sin(elapsed * 0.5 + index) * 0.08 * stackT,
+        spec.spin[1] * elapsed * tumble + Math.sin(elapsed * 0.5 + index) * 0.08 * t,
         spec.spin[2] * elapsed * tumble,
       );
-    } else {
-      g.position.set(cx, cy, cz);
-      g.rotation.set(spec.spin[0] * elapsed, spec.spin[1] * elapsed, spec.spin[2] * elapsed);
+      const scale = spec.size * k * t * stars.presence;
+      g.scale.setScalar(Math.max(0.001, scale));
+      g.visible = scale > 0.002;
+      return;
     }
-    g.scale.setScalar(scale);
+
+    // Hero slot: the cloud floats around the star.
+    if (hero) {
+      const k = fitScale(hero.box, HERO_CLOUD.width, HERO_CLOUD.height);
+      const bob = Math.sin(elapsed * 0.7 + spec.bob) * 0.12;
+      g.position.set(hero.box.x + spec.cloud[0] * k, hero.box.y + (spec.cloud[1] + bob) * k, spec.cloud[2] * k);
+      g.rotation.set(spec.spin[0] * elapsed, spec.spin[1] * elapsed, spec.spin[2] * elapsed);
+      const scale = spec.size * k * easeVis(hero.presence);
+      g.scale.setScalar(Math.max(0.001, scale));
+      g.visible = scale > 0.002;
+      return;
+    }
+
+    g.visible = false;
   });
 
   return (
@@ -145,10 +142,20 @@ function Block({ spec, index }: { spec: BlockSpec; index: number }) {
 
 export function Blocks() {
   const specs = useMemo(() => buildBlocks(), []);
+  const readHero = useSlot("hero");
+  const readStars = useSlot("stars");
+  const size = useThree((s) => s.size);
+  const frames = useRef<Frames>({ hero: null, stars: null, viewport: { width: 1, height: 1 } });
+
+  // Read both slots once per frame, before the blocks move (negative priority runs first).
+  useFrame(() => {
+    frames.current = { hero: readHero(), stars: readStars(), viewport: { width: size.width, height: size.height } };
+  }, -0.5);
+
   return (
-    <group position={[0, 0.2, 0]}>
+    <group>
       {specs.map((spec, i) => (
-        <Block key={i} spec={spec} index={i} />
+        <Block key={i} spec={spec} index={i} frames={frames} />
       ))}
     </group>
   );

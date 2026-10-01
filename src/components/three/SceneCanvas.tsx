@@ -3,6 +3,7 @@
 import { Canvas } from "@react-three/fiber";
 import { AdaptiveDpr } from "@react-three/drei";
 import { ACESFilmicToneMapping, SRGBColorSpace } from "three";
+import { CAMERA_FOV, CAMERA_Z } from "@/lib/scene/slots";
 import { ProgressDriver } from "./ProgressDriver";
 import { CameraRig } from "./CameraRig";
 import { Blocks } from "./Blocks";
@@ -17,7 +18,7 @@ export default function SceneCanvas() {
     <Canvas
       aria-hidden="true"
       dpr={[1, 1.75]}
-      camera={{ fov: 35, near: 0.1, far: 60, position: [-2.2, 0.2, 9] }}
+      camera={{ fov: CAMERA_FOV, near: 0.1, far: 60, position: [0, 0, CAMERA_Z] }}
       gl={{
         antialias: true,
         alpha: true,

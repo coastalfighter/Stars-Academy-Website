@@ -3,7 +3,9 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import type { Group, Mesh, MeshStandardMaterial } from "three";
-import { band, lerp, localProgress, smoothstep } from "@/lib/scroll/timeline";
+import { lerp, localProgress, smoothstep } from "@/lib/scroll/timeline";
+import { fitScale } from "@/lib/scene/slots";
+import { easeVis, useSlot } from "./useSlot";
 import { BRAND, sceneState } from "./sceneState";
 
 /**
@@ -18,19 +20,26 @@ const RINGS = [
 ] as const;
 
 const CARE_CHAPTER = 1;
+/** Natural width of the group at its widest (spheres apart): ring radius 2.5 plus a sphere each side. */
+const SPREAD = 2 * (2.5 + 1.18) * 1.04;
 
 export function CareSpheres() {
   const root = useRef<Group>(null);
   const spheres = useRef<(Mesh | null)[]>([]);
   const core = useRef<Mesh>(null);
 
+  const readSlot = useSlot("care");
+
   useFrame(() => {
     const r = root.current;
     if (!r) return;
     const { p, elapsed } = sceneState;
-    const vis = band(p, 0.72, 1.7, 0.28);
-    r.visible = vis > 0.002;
-    if (!r.visible) return;
+    const frame = readSlot();
+    r.visible = Boolean(frame);
+    if (!frame) return;
+    const vis = easeVis(frame.presence);
+    r.position.set(frame.box.x, frame.box.y, 0);
+    r.scale.setScalar(fitScale(frame.box, SPREAD, SPREAD));
 
     const local = localProgress(p, CARE_CHAPTER);
     const converge = smoothstep(0.1, 0.62, local);

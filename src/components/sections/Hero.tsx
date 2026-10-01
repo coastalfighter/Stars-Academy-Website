@@ -1,16 +1,14 @@
 import type { Locale } from "@/i18n/config";
-import { getDictionary } from "@/i18n/dictionary";
 import { href } from "@/i18n/routes";
 import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { ButtonLink } from "@/components/ui/Button";
-import { FlatStar } from "@/components/three/FlatScene";
+import { SideSlot } from "@/components/three/SceneSlot";
 
 const DISCIPLINE_COLORS = ["bg-lilac", "bg-accent-strong", "bg-azure", "bg-rose", "bg-accent"] as const;
 
 export function Hero({ locale }: { locale: Locale }) {
   const t = homeCopy[locale].hero;
-  const d = getDictionary(locale);
   const { site } = getContent(locale);
   return (
     <section aria-labelledby="hero-title" className="relative flex min-h-[100svh] items-center pt-32 pb-20 md:pt-40">
@@ -19,9 +17,9 @@ export function Hero({ locale }: { locale: Locale }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 left-0 hidden w-[62%] bg-gradient-to-r from-white/60 via-white/35 to-transparent lg:block"
       />
-      <FlatStar />
+      <SideSlot name="hero" art="star" />
       <div className="container-x relative">
-        <div className="over-scene copy-col lg:max-w-[640px]">
+        <div className="copy-col xl:max-w-[640px]">
           <p className="eyebrow">{t.eyebrow}</p>
           <h1 id="hero-title" className="display-xl mt-6">
             {t.titleBefore}{" "}
@@ -65,15 +63,6 @@ export function Hero({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      <a
-        href="#pathways"
-        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted md:flex"
-      >
-        {d.common.scrollToExplore}
-        <span aria-hidden="true" className="flex h-9 w-5 justify-center rounded-full border-2 border-ink/25 pt-1.5">
-          <span className="h-2 w-1 animate-bounce rounded-full bg-ink/50" />
-        </span>
-      </a>
     </section>
   );
 }

@@ -64,19 +64,19 @@ export function Referrals({ locale }: { locale: Locale }) {
 
           <Reveal className="mt-6">
             <h3 className="font-display text-xl">{t.scope}</h3>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid gap-3">
               {services
                 .filter((s) => s.scope)
                 .map((s) => (
-                  <details key={s.slug} className="group card p-5 open:shadow-[var(--shadow-lift)]">
-                    <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-semibold [&::-webkit-details-marker]:hidden">
+                  <details key={s.slug} className="group card px-5 py-4 open:shadow-[var(--shadow-lift)]">
+                    <summary className="flex min-h-8 cursor-pointer list-none items-center justify-between gap-3 font-semibold [&::-webkit-details-marker]:hidden">
                       <span className="flex items-center gap-3">
                         <span aria-hidden="true" className="h-2.5 w-2.5 rotate-45 rounded-[2px]" style={{ background: s.color }} />
                         {s.name}
                       </span>
                       <span aria-hidden="true" className="text-xl leading-none text-muted transition-transform group-open:rotate-45">+</span>
                     </summary>
-                    <ul className="mt-4 space-y-1.5 text-sm leading-relaxed text-ink-soft">
+                    <ul className="mt-4 gap-x-6 text-sm leading-relaxed text-ink-soft sm:columns-2 [&>li]:mb-1.5 [&>li]:break-inside-avoid">
                       {s.scope?.map((item) => (
                         <li key={item} className="flex gap-2">
                           <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-ink/30" />

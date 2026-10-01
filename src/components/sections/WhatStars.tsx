@@ -3,7 +3,7 @@ import type { Locale } from "@/i18n/config";
 import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { Reveal } from "@/components/ui/Reveal";
-import { FlatSpheres } from "@/components/three/FlatScene";
+import { SideSlot } from "@/components/three/SceneSlot";
 
 const DOTS = ["bg-accent", "bg-accent-strong", "bg-rose"] as const;
 
@@ -11,10 +11,10 @@ export function WhatStars({ locale }: { locale: Locale }) {
   const t = homeCopy[locale].what;
   const { pillars, photos } = getContent(locale);
   return (
-    <section aria-labelledby="what-title" className="relative py-28 lg:min-h-[140vh] lg:py-40">
-      <FlatSpheres />
-      <div className="container-x">
-        <div className="over-scene copy-col">
+    <section aria-labelledby="what-title" className="relative pt-16 pb-28 lg:pt-20 lg:pb-32">
+      <SideSlot name="care" art="spheres" />
+      <div className="container-x relative">
+        <div className="copy-col">
           <Reveal>
             <p className="eyebrow">{t.eyebrow}</p>
             <h2 id="what-title" className="display-lg mt-5">

@@ -6,7 +6,7 @@ import { getContent } from "@/content";
 import { homeCopy } from "@/content/copy/home";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
-import { FlatStar } from "@/components/three/FlatScene";
+import { SideSlot } from "@/components/three/SceneSlot";
 
 export function Visit({ locale }: { locale: Locale }) {
   const t = homeCopy[locale].visit;
@@ -18,9 +18,9 @@ export function Visit({ locale }: { locale: Locale }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 left-0 hidden w-[60%] bg-gradient-to-r from-white/60 via-white/30 to-transparent lg:block"
       />
-      <FlatStar />
+      <SideSlot name="visit" art="star" />
       <div className="container-x relative">
-        <div className="over-scene copy-col">
+        <div className="copy-col">
           <Reveal>
             <p className="eyebrow">{t.eyebrow}</p>
             <h2 id="visit-title" className="display-lg mt-5">

@@ -19,4 +19,10 @@ export function useMediaQuery(query: string): boolean {
   );
 }
 
-export const DESKTOP_QUERY = "(min-width: 64rem)";
+/**
+ * Screens big enough for the pinned, scroll-scrubbed sections: desktop width
+ * and at least 640 px tall. Shorter screens get the plain stacked layout,
+ * because a pinned panel taller than the screen would spill into the next
+ * section.
+ */
+export const PINNED_QUERY = "(min-width: 64rem) and (min-height: 40rem)";

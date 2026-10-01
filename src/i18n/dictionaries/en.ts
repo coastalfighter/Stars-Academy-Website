@@ -19,7 +19,6 @@ export const en = {
     step: "Step",
     lastUpdated: "Last updated",
     nextService: "Next service",
-    scrollToExplore: "Scroll to explore",
     onThisPage: "On this page",
   },
   header: {

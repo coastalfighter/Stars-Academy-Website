@@ -15,7 +15,6 @@ export type ChapterId = (typeof CHAPTERS)[number];
 export const chapterIndex = (id: ChapterId): number => CHAPTERS.indexOf(id);
 
 export type ChapterRect = { top: number; height: number };
-export type Vec3 = readonly [number, number, number];
 
 export const clamp = (v: number, min = 0, max = 1): number => Math.min(max, Math.max(min, v));
 
@@ -99,77 +98,6 @@ export const formatHour = (hour: number, locale: "en" | "es" = "en"): string => 
   const h12 = ((h + 11) % 12) + 1;
   return `${h12}:${m.toString().padStart(2, "0")} ${suffix}`;
 };
-
-/**
- * Position of the sun on a semicircular arc for a given hour.
- * 7:00 → rising on the left, 11:00 → zenith, 15:00 → setting on the right.
- */
-export function sunPosition(hour: number, radius = 6, depth = -6): Vec3 {
-  const t = clamp((hour - DAY_START_HOUR) / (DAY_END_HOUR - DAY_START_HOUR));
-  const angle = Math.PI * (1 - t); // π → 0
-  return [Math.cos(angle) * radius, Math.sin(angle) * radius * 0.6 - 0.5, depth];
-}
-
-export type CameraKey = { p: number; position: Vec3; target: Vec3 };
-
-const lerpVec = (a: Vec3, b: Vec3, t: number): Vec3 => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
-
-/**
- * Samples an ordered list of camera keyframes at progress `p`, easing between
- * neighbouring keys. Values outside the range clamp to the first/last key.
- */
-export function sampleKeyframes(p: number, keys: readonly CameraKey[]): { position: Vec3; target: Vec3 } {
-  const first = keys[0];
-  const last = keys[keys.length - 1];
-  if (!first || !last) return { position: [0, 0, 8], target: [0, 0, 0] };
-  if (p <= first.p) return { position: first.position, target: first.target };
-  if (p >= last.p) return { position: last.position, target: last.target };
-
-  for (let i = 0; i < keys.length - 1; i += 1) {
-    const a = keys[i];
-    const b = keys[i + 1];
-    if (a && b && p >= a.p && p <= b.p) {
-      const t = easeInOutCubic((p - a.p) / Math.max(b.p - a.p, 1e-6));
-      return { position: lerpVec(a.position, b.position, t), target: lerpVec(a.target, b.target, t) };
-    }
-  }
-  return { position: last.position, target: last.target };
-}
-
-/**
- * Camera path through the home page. Scene subjects live around the world
- * origin; on desktop the camera looks to the LEFT of them so they render in
- * the right-hand half and the copy column on the left stays legible.
- */
-export const CAMERA_PATH: readonly CameraKey[] = [
-  { p: 0, position: [-2.2, 0.2, 9], target: [-2.4, 0, 0] },
-  { p: 1, position: [-2, 0.5, 8.4], target: [-2.3, 0.2, 0] },
-  { p: 2, position: [-0.6, 1.2, 10], target: [-0.8, 1.2, -4] },
-  { p: 3, position: [-2.6, 0, 8.2], target: [-2.4, 0, 0] },
-  { p: 4, position: [-1.8, -0.3, 9.4], target: [-2.2, -0.1, 0] },
-  { p: 5, position: [0, 0.2, 8.8], target: [0, -1.25, 0] },
-  { p: 5.6, position: [0, 0.2, 8.8], target: [0, -1.25, 0] },
-  { p: 6, position: [-1.6, 0.4, 11], target: [-2, 0.2, 0] },
-];
-
-/**
- * Narrow (portrait) viewports centre the subject horizontally, lift it into
- * the upper part of the screen and pull the camera back so it fits.
- */
-export function responsiveCamera(
-  sample: { position: Vec3; target: Vec3 },
-  aspect: number,
-): { position: Vec3; target: Vec3 } {
-  if (aspect >= 1) return sample;
-  const narrow = clamp((1 - aspect) / 0.5); // 0 at square, 1 at portrait 1:2
-  const [px, py, pz] = sample.position;
-  const [tx, ty, tz] = sample.target;
-  const shiftX = lerp(0, -tx, narrow);
-  return {
-    position: [px + shiftX, py, pz + narrow * 4.5],
-    target: [tx + shiftX, ty - narrow * 1.6, tz],
-  };
-}
 
 /** Chapter indices used by both the DOM and the 3D scene. */
 export const SERVICES_CHAPTER = chapterIndex("services");

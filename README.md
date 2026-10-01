@@ -58,8 +58,15 @@ on screen, and in Calm mode it's a static SVG.
   single accent for highlighted words, links, labels and controls. The star's five points (one per service)
   step from pink through lilac and periwinkle to azure and rose, so everything stays in the pink/blue family.
   Navy ink carries the text. Every text colour meets WCAG AA on every point of the background.
-- **Nothing left blank without 3D.** In calm mode, with reduced motion or without WebGL, flat versions of the
-  star, the care spheres and the S·T·A·R·S blocks fill the space the 3D scene would use.
+- **3D that never covers the copy.** Every 3D subject is anchored to a "scene slot", an empty box the layout
+  reserves for it (`src/lib/scene/slots.ts`). Each frame the scene reads the box's position and fits its subject
+  inside, so at any screen size a 3D object can only appear where the layout left room, and it scrolls with
+  its section. Slots sit in the right-hand column on desktop and are hidden on phones. In calm mode, with
+  reduced motion or without WebGL, the same slots show flat versions of the star, spheres, orb, sun and
+  S·T·A·R·S blocks.
+- **Pinned sections only where they fit.** The scroll-scrubbed day and services panels need a screen at least
+  1024 × 640 px; shorter screens (e.g. laptops at 150% scaling) get the stacked layout, and screens under
+  820 px tall get tighter spacing.
 - **One form pipeline, many contexts.** Enrollment, referral, job-interest and general contact forms are all
   presets of one `InquiryForm` backed by one zod schema and one hardened API route. Fields appear only when they're
   relevant: child age band and "has a doctor?" for families, organization for physicians and schools, role and

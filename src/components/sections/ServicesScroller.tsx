@@ -13,7 +13,7 @@ import { StarSpikes } from "@/components/three/HeroStar";
 import { Reveal } from "@/components/ui/Reveal";
 import { serviceIndexAt } from "@/lib/scroll/timeline";
 import { useScrollDerived } from "@/lib/scroll/useScrollDerived";
-import { DESKTOP_QUERY, useMediaQuery } from "@/lib/hooks/useMediaQuery";
+import { PINNED_QUERY, useMediaQuery } from "@/lib/hooks/useMediaQuery";
 
 const selectService = (p: number) => serviceIndexAt(p, enServices.length);
 
@@ -26,7 +26,7 @@ function Intro({ t, compact = false }: { t: HomeCopy["services"]; compact?: bool
       <h2 id="services-title" className={compact ? "display-md mt-4" : "display-lg mt-5"}>
         {t.titleA} <span className="text-accent-deep">{t.titleB}</span>
       </h2>
-      <p className={compact ? "mt-3 leading-relaxed text-ink-soft" : "lede mt-5"}>
+      <p className={compact ? "mt-3 leading-relaxed text-ink-soft short:text-[0.95rem]" : "lede mt-5"}>
         {t.lede}
       </p>
     </div>
@@ -40,11 +40,11 @@ function PinnedServices({ locale, t, services }: Props) {
 
   return (
     <div className="relative h-[460vh]">
-      <div className="sticky-below-banner flex items-center pt-28 pb-6">
+      <div className="sticky-below-banner flex items-center pt-28 pb-8 short:pb-4">
         <div className="container-x grid grid-cols-12 items-center gap-10">
           <div className="col-span-6 xl:col-span-5">
             <Intro t={t} compact />
-            <ol className="mt-6 space-y-1">
+            <ol className="mt-6 space-y-1 short:mt-4">
               {services.map((s, i) => {
                 const on = i === active;
                 return (
@@ -55,7 +55,7 @@ function PinnedServices({ locale, t, services }: Props) {
                         on ? "border-white/70 bg-cream/90 shadow-[var(--shadow-lift)] backdrop-blur-xl" : "border-transparent"
                       }`}
                     >
-                      <Link href={serviceHref(locale, s.slug)} className="group flex items-center gap-4 px-5 py-2.5">
+                      <Link href={serviceHref(locale, s.slug)} className="group flex items-center gap-4 px-5 py-2.5 short:py-2">
                         <span className="w-6 text-xs font-bold tabular-nums text-muted">{String(i + 1).padStart(2, "0")}</span>
                         <span
                           aria-hidden="true"
@@ -74,7 +74,7 @@ function PinnedServices({ locale, t, services }: Props) {
                         <div className="overflow-hidden">
                           <div className="px-5 pb-4 pl-[4.25rem]">
                             <p className="text-sm font-semibold text-muted">{s.short}</p>
-                            <ul className="mt-2 space-y-1 text-sm leading-relaxed text-ink-soft">
+                            <ul className="mt-2 space-y-1 text-sm leading-relaxed text-ink-soft short:hidden">
                               {s.provides.slice(0, 3).map((item) => (
                                 <li key={item} className="flex gap-2">
                                   <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: s.color }} />
@@ -98,8 +98,11 @@ function PinnedServices({ locale, t, services }: Props) {
               })}
             </ol>
           </div>
-          <div className="col-span-6 xl:col-span-7" aria-hidden="true">
-            {!webgl ? <StaticStar active={active} /> : null}
+          <div className="col-span-6 flex justify-center xl:col-span-7" aria-hidden="true">
+            {/* Scene slot: the 3D star is drawn here (src/lib/scene/slots.ts); the flat star when 3D is off. */}
+            <div data-scene-slot="services" className="relative aspect-square w-full max-w-[min(100%,58svh)]">
+              {!webgl ? <StaticStar active={active} /> : null}
+            </div>
           </div>
         </div>
       </div>
@@ -108,14 +111,14 @@ function PinnedServices({ locale, t, services }: Props) {
 }
 
 function StaticStar({ active }: { active: number }) {
-  return <StarSpikes highlight={active} className="mx-auto h-80 w-80 animate-float-slow" />;
+  return <StarSpikes highlight={active} className="h-full w-full animate-float-slow" />;
 }
 
 function ListServices({ locale, t, services }: Props) {
   const d = getDictionary(locale);
   return (
     <div className="container-x py-28">
-      <Reveal className="over-scene max-w-3xl">
+      <Reveal className="max-w-3xl">
         <Intro t={t} />
       </Reveal>
       <ul className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -142,7 +145,7 @@ function ListServices({ locale, t, services }: Props) {
 export function ServicesScroller({ locale }: { locale: Locale }) {
   const props: Props = { locale, t: homeCopy[locale].services, services: getContent(locale).services };
   const { calm, ready } = useMotion();
-  const desktop = useMediaQuery(DESKTOP_QUERY);
+  const desktop = useMediaQuery(PINNED_QUERY);
   return (
     <section id="services" aria-labelledby="services-title" className="relative scroll-mt-24">
       {ready && !calm && desktop ? <PinnedServices {...props} /> : <ListServices {...props} />}

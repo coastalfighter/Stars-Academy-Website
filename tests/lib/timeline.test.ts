@@ -1,7 +1,6 @@
 import {
   activeIndex,
   band,
-  CAMERA_PATH,
   CHAPTERS,
   clamp,
   computeChapterProgress,
@@ -10,12 +9,9 @@ import {
   dayIndexAt,
   formatHour,
   localProgress,
-  responsiveCamera,
-  sampleKeyframes,
   serviceIndexAt,
   SERVICES_CHAPTER,
   smoothstep,
-  sunPosition,
 } from "@/lib/scroll/timeline";
 
 describe("math helpers", () => {
@@ -126,45 +122,5 @@ describe("day helpers", () => {
     expect(formatHour(7)).toBe("7:00 a.m.");
     expect(formatHour(12.5)).toBe("12:30 p.m.");
     expect(formatHour(15)).toBe("3:00 p.m.");
-  });
-
-  it("puts the sun left at dawn, highest at 11:00 and right at 3 p.m.", () => {
-    const dawn = sunPosition(7);
-    const zenith = sunPosition(11);
-    const dusk = sunPosition(15);
-    expect(dawn[0]).toBeLessThan(0);
-    expect(dusk[0]).toBeGreaterThan(0);
-    expect(zenith[1]).toBeGreaterThan(dawn[1]);
-    expect(zenith[0]).toBeCloseTo(0);
-  });
-});
-
-describe("camera", () => {
-  it("returns exact keys at key positions and clamps outside the range", () => {
-    const first = CAMERA_PATH[0]!;
-    const last = CAMERA_PATH[CAMERA_PATH.length - 1]!;
-    expect(sampleKeyframes(-5, CAMERA_PATH).position).toEqual(first.position);
-    expect(sampleKeyframes(99, CAMERA_PATH).target).toEqual(last.target);
-    const atKey = sampleKeyframes(2, CAMERA_PATH).position;
-    CAMERA_PATH[2]!.position.forEach((v, i) => expect(atKey[i]).toBeCloseTo(v));
-  });
-
-  it("interpolates between keys", () => {
-    const mid = sampleKeyframes(0.5, CAMERA_PATH);
-    const a = CAMERA_PATH[0]!.position[2];
-    const b = CAMERA_PATH[1]!.position[2];
-    expect(mid.position[2]).toBeCloseTo((a + b) / 2);
-  });
-
-  it("falls back to a default when there are no keys", () => {
-    expect(sampleKeyframes(1, [])).toEqual({ position: [0, 0, 8], target: [0, 0, 0] });
-  });
-
-  it("centres the subject and pulls back on portrait screens", () => {
-    const sample = sampleKeyframes(0, CAMERA_PATH);
-    expect(responsiveCamera(sample, 1.6)).toEqual(sample);
-    const portrait = responsiveCamera(sample, 0.5);
-    expect(portrait.target[0]).toBeCloseTo(0);
-    expect(portrait.position[2]).toBeGreaterThan(sample.position[2]);
   });
 });
