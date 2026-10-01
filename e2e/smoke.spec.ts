@@ -70,7 +70,7 @@ test.describe("operations endpoints", () => {
     const body = (await res.json()) as { status: string; checks: Record<string, string> };
     expect(body.status).toBe("ok");
     expect(body.checks.inquiryDelivery).toBe("configured");
-    expect(Object.keys(body.checks).sort()).toEqual(["alerts", "content", "inquiryDelivery", "rateLimit"]);
+    expect(Object.keys(body.checks).sort()).toEqual(["alerts", "analytics", "content", "inquiryDelivery", "rateLimit"]);
     expect((await request.head("/api/health")).status()).toBe(200);
   });
 

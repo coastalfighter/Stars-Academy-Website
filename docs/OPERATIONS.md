@@ -41,7 +41,10 @@ other text, and URLs lose their query strings. The rate limiter stores only keye
      guarantee.
 5. **Preview checks**: in Vercel, *Settings → Deployment Protection → Protection Bypass for Automation*. Copy the
    secret into the `VERCEL_AUTOMATION_BYPASS_SECRET` GitHub secret.
-6. **Logs**: Vercel keeps runtime logs briefly. For history, add a log drain (*Settings → Log Drains*, e.g. Better
+6. **Website insights**: set `INSIGHTS_PASSWORD` (12+ characters) and `INSIGHTS_SESSION_SECRET` (32+ random
+   characters) in Vercel, then share the password with the staff who need it. Counts use the same Upstash database
+   as rate limiting. See [ANALYTICS.md](ANALYTICS.md).
+7. **Logs**: Vercel keeps runtime logs briefly. For history, add a log drain (*Settings → Log Drains*, e.g. Better
    Stack, Axiom or Datadog). Every line is JSON, so you can filter on `event`, `level` or `path`.
 
 `GET /api/health` shows which of these are active:
@@ -81,7 +84,7 @@ it may be injected code.
 
 ## Routine
 
-- **Monthly**: check that the uptime workflow is still running (GitHub pauses scheduled workflows in inactive
+- **Monthly**: look at `/admin/insights` (inquiries per 100 visits, how families heard about STARS), check that the uptime workflow is still running (GitHub pauses scheduled workflows in inactive
   repositories), review `client.error` and `csp.violation` volumes, and run `npm audit`.
 - **After each content change**: nothing; the site revalidates itself.
 - **Before a big launch or campaign**: run the Lighthouse and E2E workflows manually (*Actions → CI → Run workflow*).

@@ -76,6 +76,11 @@ The website is public. Don't enter a child's name, date of birth, diagnosis,
 Medicaid or insurance number, or any other health details anywhere in the
 editor. The editor shows a warning if text looks like it might contain them.
 
+## Website numbers
+
+Visits, inquiries and how families heard about STARS are at **`/admin/insights`** (staff password). To measure a
+flyer or a Facebook post, tag its link. See [ANALYTICS.md](ANALYTICS.md), "Tracking flyers, QR codes and posts".
+
 ## What's not in the editor
 
 Long-form page text (Our Approach, service descriptions, legal pages) is

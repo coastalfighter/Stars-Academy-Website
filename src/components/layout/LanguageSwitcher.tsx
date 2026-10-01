@@ -21,6 +21,7 @@ export function LanguageSwitcher({ locale, className = "" }: { locale: Locale; c
     <Link
       href={match ?? href(target, "home")}
       hrefLang={HTML_LANG[target]}
+      data-track={`language_switch:${target}`}
       lang={HTML_LANG[target]}
       aria-label={match ? d.switchAria : d.siteAria}
       className={`inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-full border border-ink/10 bg-white/70 px-3.5 text-xs font-bold text-ink-soft backdrop-blur transition-colors hover:border-ink/30 hover:text-ink ${className}`}

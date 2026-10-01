@@ -20,6 +20,7 @@ const silent = { info: vi.fn(), warn: vi.fn(), error: vi.fn() };
 function setup(opts: { env?: Record<string, string>; deliver?: typeof deliverInquiry } = {}) {
   const deliver = opts.deliver ?? vi.fn(async () => ({ ok: true as const, channels: ["email" as const] }));
   const alert = vi.fn<AlertSender>(async () => "sent");
+  const analytics = { record: vi.fn(async () => undefined) };
   const handler = createInquiryHandler({
     env: { NODE_ENV: "production", RATE_LIMIT_MAX: "3", ...opts.env } as unknown as NodeJS.ProcessEnv,
     store: new MemoryRateLimitStore(),
@@ -27,8 +28,9 @@ function setup(opts: { env?: Record<string, string>; deliver?: typeof deliverInq
     now: () => NOW,
     logger: silent,
     alert,
+    analytics,
   });
-  return { handler, deliver, alert };
+  return { handler, deliver, alert, analytics };
 }
 
 const post = (data: unknown, headers: Record<string, string> = {}) =>
@@ -46,6 +48,21 @@ describe("POST /api/inquiry", () => {
     expect(await res.json()).toMatchObject({ ok: true });
     expect(deliver).toHaveBeenCalledOnce();
     expect(res.headers.get("cache-control")).toBe("no-store");
+  });
+
+  it("counts a delivered inquiry by category only", async () => {
+    const { handler, analytics } = setup();
+    await handler(post({ ...body, heardFrom: "early-intervention", locale: "es" }));
+    expect(analytics.record).toHaveBeenCalledWith(expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/), [
+      { metric: "inq", field: "tour|family|early-intervention|es" },
+    ]);
+    expect(JSON.stringify(analytics.record.mock.calls)).not.toMatch(/Jordan|870/);
+  });
+
+  it("doesn't count inquiries that weren't delivered", async () => {
+    const { handler, analytics } = setup({ deliver: vi.fn(async () => ({ ok: false as const, reason: "failed" as const, detail: "x" })) });
+    await handler(post(body));
+    expect(analytics.record).not.toHaveBeenCalled();
   });
 
   it("rejects cross-origin requests", async () => {

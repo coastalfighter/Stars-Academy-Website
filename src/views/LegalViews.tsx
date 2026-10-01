@@ -4,18 +4,24 @@ import { href } from "@/i18n/routes";
 import { getContent } from "@/content";
 import { legalCopy } from "@/content/copy/legal";
 import { LegalPage } from "@/components/page/LegalPage";
+import { AnalyticsOptOut } from "@/components/analytics/AnalyticsOptOut";
+
+/** Position of "How we measure the website" in the privacy sections. */
+const MEASUREMENT_SECTION = 3;
 
 export function PrivacyView({ locale }: { locale: Locale }) {
   const t = legalCopy[locale].privacy;
   const { site } = getContent(locale);
   return (
     <LegalPage locale={locale} crumbHref={href(locale, "privacy")} crumb={t.crumb} eyebrow={t.eyebrow} title={t.title} lede={t.lede}>
-      {t.sections.map((section) => (
+      {t.sections.map((section, i) => (
         <section key={section.title}>
           <h2>{section.title}</h2>
           {section.body.map((p) => (
             <p key={p}>{p}</p>
           ))}
+          {/* The measurement section ends with the visitor's own switch. */}
+          {i === MEASUREMENT_SECTION ? <AnalyticsOptOut copy={t.optOut} /> : null}
         </section>
       ))}
       <h2>{t.contactTitle}</h2>

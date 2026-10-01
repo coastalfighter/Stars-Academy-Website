@@ -94,6 +94,18 @@ export const en = {
       message: "Anything you’d like us to know",
       consent: "Confirmation",
       language: "Preferred language",
+      heardFrom: "How did you hear about STARS?",
+    },
+    heardFrom: {
+      doctor: "Our doctor or clinic",
+      "therapist-school": "A therapist, school or child care",
+      "early-intervention": "First Connections or early intervention",
+      "friend-family": "A friend or family member",
+      search: "Search engine (Google, Bing…)",
+      social: "Social media",
+      "event-flyer": "A flyer, event or news story",
+      "job-board": "A job listing",
+      other: "Somewhere else",
     },
     audience: {
       family: "Parent or caregiver",

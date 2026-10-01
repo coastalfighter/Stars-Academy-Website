@@ -9,13 +9,17 @@ import { ROUTES, href, type RouteKey } from "@/i18n/routes";
 
 const APP = join(process.cwd(), "src", "app");
 
-/** Static page URLs found on disk. Route groups "(x)" don't appear in URLs; dynamic segments are skipped. */
+/**
+ * Public static page URLs found on disk. Route groups "(x)" don't appear in
+ * URLs; dynamic segments are skipped, and so is the staff-only "(admin)" group,
+ * which must stay out of the route map and the sitemap.
+ */
 function pageRoutes(dir = APP): string[] {
   const out: string[] = [];
   for (const name of readdirSync(dir)) {
     const full = join(dir, name);
     if (!statSync(full).isDirectory()) continue;
-    if (name === "api" || name.startsWith("[") || name.startsWith("_")) continue;
+    if (name === "api" || name === "(admin)" || name.startsWith("[") || name.startsWith("_")) continue;
     if (existsSync(join(full, "page.tsx"))) {
       const url = relative(APP, full)
         .split(sep)
@@ -64,5 +68,14 @@ describe("routes", () => {
 
   it("uses the organisation's real domain by default", () => {
     expect(site.url).toMatch(/mystarsacademy\.org/);
+  });
+});
+
+describe("staff pages", () => {
+  it("are never public: not in the route map, robots disallows them", async () => {
+    const urls = Object.values(ROUTES).flatMap((r) => [r.en, r.es]);
+    expect(urls.some((u) => u?.startsWith("/admin"))).toBe(false);
+    const { default: robots } = await import("@/app/robots");
+    expect(JSON.stringify(robots().rules)).toContain("/admin");
   });
 });

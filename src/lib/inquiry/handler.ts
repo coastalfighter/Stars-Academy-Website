@@ -3,6 +3,8 @@ import { isAllowedOrigin } from "@/lib/security/origin";
 import { checkRateLimit, clientIp, createRateLimitStore, type RateLimitStore } from "@/lib/security/rateLimit";
 import { logger as defaultLogger } from "@/lib/observability/logger";
 import { sendAlert as defaultSendAlert, type AlertSender } from "@/lib/observability/alert";
+import { dayKey } from "@/lib/analytics/normalize";
+import { analyticsEnabled, analyticsStore, type AnalyticsStore } from "@/lib/analytics/store";
 import { inquirySchema, MIN_FILL_MS, toFieldErrors } from "@/lib/validation/inquiry";
 import { site } from "@/content/site";
 import { isLocale, type Locale } from "@/i18n/config";
@@ -19,6 +21,7 @@ type Deps = {
   now?: () => number;
   logger?: { info: (message: string, fields?: unknown) => void; warn: (message: string, fields?: unknown) => void; error: (message: string, fields?: unknown) => void };
   alert?: AlertSender;
+  analytics?: Pick<AnalyticsStore, "record">;
 };
 
 const MAX_BODY_BYTES = 16 * 1024;
@@ -41,6 +44,7 @@ export function createInquiryHandler(deps: Deps = {}) {
   const deliver = deps.deliver ?? deliverInquiry;
   const now = deps.now ?? Date.now;
   const alert = deps.alert ?? defaultSendAlert;
+  const analytics = deps.analytics ?? (analyticsEnabled(env) ? analyticsStore() : null);
   const max = Number(env.RATE_LIMIT_MAX) > 0 ? Number(env.RATE_LIMIT_MAX) : 5;
   const windowMs = Number(env.RATE_LIMIT_WINDOW_MS) > 0 ? Number(env.RATE_LIMIT_WINDOW_MS) : 10 * 60 * 1000;
 
@@ -100,6 +104,11 @@ export function createInquiryHandler(deps: Deps = {}) {
     const result = await deliver(parsed.data, { env });
     if (result.ok) {
       logger.info("[inquiry] delivered", { event: "inquiry.delivered", channels: result.channels, reason: parsed.data.reason });
+      // Conversion count for the insights dashboard: categories only, never who sent it.
+      const { reason, audience, heardFrom, locale: from } = parsed.data;
+      await analytics
+        ?.record(dayKey(now()), [{ metric: "inq", field: `${reason}|${audience}|${heardFrom || "-"}|${from}` }])
+        .catch((error: unknown) => logger.warn("analytics write failed", { event: "analytics.write-failed", error }));
       return json({ ok: true, message: t("thanks") }, 200);
     }
 

@@ -99,6 +99,18 @@ export const es = {
       message: "¿Algo más que quiera contarnos?",
       consent: "Confirmación",
       language: "Idioma preferido",
+      heardFrom: "¿Cómo se enteró de STARS?",
+    },
+    heardFrom: {
+      doctor: "Nuestro médico o clínica",
+      "therapist-school": "Un terapeuta, la escuela o la guardería",
+      "early-intervention": "First Connections o intervención temprana",
+      "friend-family": "Un amigo o familiar",
+      search: "Un buscador (Google, Bing…)",
+      social: "Redes sociales",
+      "event-flyer": "Un volante, un evento o una noticia",
+      "job-board": "Un anuncio de empleo",
+      other: "Otro lugar",
     },
     audience: {
       family: "Madre, padre o cuidador",

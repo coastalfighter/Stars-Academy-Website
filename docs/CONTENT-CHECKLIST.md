@@ -43,7 +43,7 @@ Once STARS confirms an item, add it to `src/content/*.ts`.
 
 ## Legal & compliance (Milestone 2)
 - [ ] **Complete USDA nondiscrimination statement** (with program-information and complaint-filing instructions), exactly as provided by the sponsoring agency — `/nondiscrimination` currently shows the short form only
-- [ ] Compliance review of the website privacy notice (`/privacy`), which describes this build: no analytics, form submissions delivered by email/webhook and not stored, calm-mode preference kept in the visitor's browser
+- [ ] Compliance review of the website privacy notice (`/privacy`), which describes this build: cookieless first-party analytics (aggregate daily counts, no IPs or identifiers, GPC/DNT honoured, opt-out switch; see docs/ANALYTICS.md), form submissions delivered by email/webhook and not stored, calm-mode and opt-out preferences kept in the visitor's browser
 - [ ] Link to the HIPAA Notice of Privacy Practices (PDF)
 - [ ] Hosting provider name and log-retention period
 - [ ] Main fax number and general inbox (e.g. info@mystarsacademy.org) for the Contact page

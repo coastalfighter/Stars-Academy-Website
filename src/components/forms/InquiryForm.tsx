@@ -6,11 +6,13 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionary";
 import { getContent } from "@/content";
 import { buttonClass } from "@/components/ui/Button";
+import { track } from "@/lib/analytics/client";
 import {
   AUDIENCES,
   CHILD_AGES,
   CONTACT_METHODS,
   DOCTOR_ANSWERS,
+  HEARD_FROM,
   POSITIONS,
   REASONS,
   inquirySchema,
@@ -58,6 +60,7 @@ const FIELD_ORDER: (keyof Inquiry)[] = [
   "phone",
   "email",
   "preferredContact",
+  "heardFrom",
   "message",
   "consent",
 ];
@@ -94,6 +97,7 @@ export function InquiryForm({
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [startedAt, setStartedAt] = useState(0);
   const summaryRef = useRef<HTMLDivElement>(null);
+  const started = useRef(false);
   const successRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -138,6 +142,7 @@ export function InquiryForm({
       hasPrimaryDoctor: str(data, "hasPrimaryDoctor"),
       position: str(data, "position"),
       startDate: str(data, "startDate"),
+      heardFrom: str(data, "heardFrom"),
       message: str(data, "message"),
       consent: data.get("consent") === "on",
       website: str(data, "website"),
@@ -213,7 +218,18 @@ export function InquiryForm({
   const showReason = reasons.length > 1;
 
   return (
-    <form noValidate onSubmit={onSubmit} className="card relative space-y-6 p-6 sm:p-10" aria-describedby={id("phi")}>
+    <form
+      noValidate
+      onSubmit={onSubmit}
+      onFocus={() => {
+        // Funnel step: someone began filling the form (counted once per form).
+        if (started.current) return;
+        started.current = true;
+        track("form_start");
+      }}
+      className="card relative space-y-6 p-6 sm:p-10"
+      aria-describedby={id("phi")}
+    >
       {errorKeys.length > 0 ? (
         <div ref={summaryRef} tabIndex={-1} role="alert" className="rounded-2xl border-2 border-berry/60 bg-berry/5 p-5 outline-none">
           <h2 className="font-semibold text-berry-deep">{d.fixTitle}</h2>
@@ -356,6 +372,17 @@ export function InquiryForm({
           ))}
         </div>
       </fieldset>
+
+      <Field label={LABELS.heardFrom ?? ""} htmlFor={id("heardFrom")} error={errors.heardFrom} errorId={id("heardFrom-error")}>
+        <select {...fieldProps("heardFrom")} defaultValue="">
+          <option value="">{d.chooseOptional}</option>
+          {HEARD_FROM.filter((h) => h !== "job-board" || isJob).map((h) => (
+            <option key={h} value={h}>
+              {d.heardFrom[h]}
+            </option>
+          ))}
+        </select>
+      </Field>
 
       <Field
         label={LABELS.message ?? ""}

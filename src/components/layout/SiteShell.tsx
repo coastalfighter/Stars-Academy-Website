@@ -11,6 +11,8 @@ import { JsonLd, organizationSchema } from "@/components/seo/JsonLd";
 import { DraftModeBar } from "@/components/cms/DraftModeBar";
 import { getAnnouncements } from "@/cms/repository";
 import { ErrorReporter } from "@/components/observability/ErrorReporter";
+import { Analytics } from "@/components/analytics/Analytics";
+import { analyticsEnabled } from "@/lib/analytics/store";
 
 /**
  * Runs before paint: marks JS as available (enables reveal animations) and
@@ -50,6 +52,7 @@ export async function SiteShell({ locale, children }: { locale: Locale; children
           {d.common.skipToMain}
         </a>
         <ErrorReporter locale={locale} />
+        {analyticsEnabled() ? <Analytics /> : null}
         <MotionProvider>
           <SmoothScroll />
           <Header locale={locale} announcement={banner} />

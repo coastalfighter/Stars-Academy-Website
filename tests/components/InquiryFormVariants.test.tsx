@@ -20,6 +20,18 @@ describe("<InquiryForm /> variants", () => {
     expect(screen.getByLabelText(/earliest start date/i)).toBeInTheDocument();
   });
 
+  it("asks how they heard about STARS, offering job listings only to job seekers", () => {
+    const { unmount } = render(<InquiryForm fetchImpl={vi.fn()} />);
+    const family = screen.getByLabelText("How did you hear about STARS?");
+    expect(family).toHaveValue("");
+    expect(screen.getByRole("option", { name: "First Connections or early intervention" })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "A job listing" })).toBeNull();
+    unmount();
+    render(<InquiryForm fetchImpl={vi.fn()} audiences={["job-seeker"]} reasons={["careers"]} locale="es" />);
+    expect(screen.getByLabelText("¿Cómo se enteró de STARS?")).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Un anuncio de empleo" })).toBeInTheDocument();
+  });
+
   it("preselects the role from a job card", () => {
     render(<InquiryForm fetchImpl={vi.fn()} audiences={["job-seeker"]} reasons={["careers"]} defaultPosition="van-driver" />);
     expect(screen.getByLabelText(/position/i)).toHaveValue("van-driver");

@@ -151,6 +151,7 @@ Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse 
 ├── .github/workflows/preview-e2e.yml  # E2E against every Vercel preview
 ├── .github/workflows/uptime.yml     # production probe every 30 min
 ├── docs/OPERATIONS.md               # monitoring setup + incident runbook
+├── docs/ANALYTICS.md                # website insights: staff guide, QR/UTM tagging, privacy model
 ├── docs/CONTENT-CHECKLIST.md        # facts awaiting client confirmation
 ├── docs/EDITOR-GUIDE.md             # plain-language guide for clinic staff
 ├── studio/                          # Sanity Studio (separate package) + seed/content.ndjson
@@ -164,6 +165,7 @@ Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse 
 │   │   ├── api/inquiry/route.ts     # POST endpoint (delegates to lib/inquiry/handler)
 │   │   ├── api/{health,csp-report,client-error}/  # monitoring endpoints
 │   │   ├── global-error.tsx         # bilingual last-resort error page
+│   │   ├── (admin)/admin/           # staff-only: sign-in + insights dashboard (own root layout, noindex)
 │   │   ├── (en)/                    # English root layout + thin route files
 │   │   ├── (es)/es/                 # Spanish root layout + thin route files
 │   │   ├── global-not-found.tsx     # bilingual 404 for unmatched URLs
@@ -190,8 +192,9 @@ Lenis · zod · Vitest + Testing Library · Playwright + axe-core · Lighthouse 
 │       ├── inquiry/                 # request handler + email/webhook delivery
 │       ├── security/                # CSP, rate limiter (memory + Upstash), origin (CSRF) guard, body limits
 │       ├── observability/           # JSON logger, PII redaction, alerts, health, browser error reports
+│       ├── analytics/               # beacon protocol, normalisation, stores, collector, reports, staff auth
 │       └── hooks/useMediaQuery.ts
-├── tests/                           # 277 unit/component tests (incl. CMS, translation coverage, route integrity)
+├── tests/                           # 333 unit/component tests (incl. CMS, translation coverage, route integrity)
 ├── .env.example
 ├── playwright.config.ts             # projects: desktop, mobile, reduced-motion, cms
 ├── lighthouserc.cjs                 # Lighthouse scores + resource budgets
@@ -221,11 +224,12 @@ npm run dev                  # http://localhost:3000
 
 Three layers, all run by `.github/workflows/ci.yml` on every pull request and on `main`:
 
-1. **Unit and component tests** (Vitest, 277 tests): validation and the PHI guard, delivery signing, rate
+1. **Unit and component tests** (Vitest, 333 tests): analytics (normalisation, stores, collector, consent,
+   reports, staff sessions), validation and the PHI guard, delivery signing, rate
    limiting (memory, Upstash, failover), the origin guard, logging redaction, alerts, CSP and browser error
    reports, health, the uptime probe, error pages, CMS schemas, webhook signatures and preview, timeline maths, calm mode and
    WebGL detection, translation coverage and route integrity.
-2. **End-to-end** (Playwright, 96 tests across 4 projects; 85 run against previews). The suite builds the site twice: once with bundled
+2. **End-to-end** (Playwright, 104 tests across 4 projects; 85 run against previews). The suite builds the site twice: once with bundled
    content, and once with the CMS on, where Sanity is answered by `e2e/fixtures/mock-sanity.cjs`. A local
    receiver captures delivered inquiries so the HMAC signature can be checked.
    - `smoke`: every sitemap URL loads with the right `lang`, one `h1`, metadata and no console errors. Also
@@ -239,6 +243,8 @@ Three layers, all run by `.github/workflows/ci.yml` on every pull request and on
      applications pre-select the role, and cross-site or malformed posts are rejected.
    - `i18n` and `keyboard`: the language switcher, hreflang, the skip link, the FAQ disclosure and the
      mobile-menu focus trap.
+   - `analytics`: beacons are counted and show up for staff, visitors never get a cookie, GPC and the opt-out
+     switch stop all counting, and the dashboard signs in, passes axe, exports CSV and signs out.
    - `smoke › operations endpoints`: the health check, both CSP report formats, and that browser error reports
      are accepted from this site only.
    - **Against a deployment**: `E2E_BASE_URL=https://… npm run e2e`, which `preview-e2e.yml` runs for every Vercel
@@ -281,6 +287,28 @@ Rate limiting is shared across all serverless instances when Upstash Redis is co
 REST API, with no SDK, and IPs are HMAC-hashed before they leave the server. If Upstash is slow or down, each
 instance falls back to its own in-memory window, so the form stays available. Without Upstash, the in-memory
 store is exact on a single Node server and best-effort on serverless.
+
+## Website insights (privacy-friendly analytics)
+
+See **[docs/ANALYTICS.md](docs/ANALYTICS.md)**. Analytics is first-party and cookieless, and never stores an IP
+address or a visitor ID. It is built for a pediatric healthcare audience, in light of HHS guidance on tracking
+technologies.
+
+- **Tracker** (`src/lib/analytics/client.ts`, about 3 KB, no dependencies): sends one beacon per page view and per
+  meaningful tap (phone, email, directions, language, calm mode, form start) to `POST /api/collect`. It sends
+  nothing under Global Privacy Control, Do Not Track, the opt-out switch on `/privacy`, or automation.
+- **Collector**: same-origin and rate limited. Bot and GPC/DNT requests are dropped on the server too. An
+  allowlist turns beacons into bounded dimensions (known page keys, channel, device, sanitised campaign tags), and
+  only **daily aggregate counters** are incremented, in Upstash with a 13-month TTL. Open-ended values are capped
+  atomically.
+- **Conversions**: delivered inquiries are counted server-side by request type, sender, language and the new
+  optional **"How did you hear about STARS?"** field (also included in the inquiry email or webhook).
+- **Staff dashboard** at `/admin/insights`:
+  - KPI tiles with a period-over-period change, daily charts with table views, and breakdowns.
+  - 7, 30 or 90 days, plus CSV export (protected against formula injection).
+  - Shared-password sign-in with an HMAC-signed, httpOnly, SameSite=Strict session. The session is invalidated
+    when the password changes.
+  - Rate limited, `noindex`, and disallowed in robots.txt.
 
 ## Monitoring & operations
 
@@ -329,7 +357,6 @@ checklist in [docs/OPERATIONS.md](docs/OPERATIONS.md) (alerts, Upstash, uptime, 
 - ~~Milestone 4: Sanity CMS for announcements, FAQs, roles, leadership, testimonials, contact details~~
 - ~~Milestone 5: Playwright E2E (axe, forms, CMS), Lighthouse CI budgets, GitHub Actions pipeline~~
 - ~~Milestone 6: shared rate limiting, CSP reporting, error and uptime monitoring, preview E2E~~
-7. **Privacy-friendly analytics** (cookieless, first-party, no IP storage) with an updated privacy notice, plus a
-   small "how did you hear about us" field so STARS can see which referral sources bring families.
+- ~~Milestone 7: privacy-friendly analytics, "how did you hear" field, staff insights dashboard~~
 8. **Content expansion**: staff bios and a photo gallery managed in the CMS, an events calendar, and a
    resources library for families (handouts in English and Spanish).

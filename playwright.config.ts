@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import { resolve } from "node:path";
-import { CMS_PROJECT_ID, PORTS, RECEIVER_URL, SANITY_WEBHOOK_SECRET, WEBHOOK_SECRET } from "./e2e/env";
+import { CMS_PROJECT_ID, INSIGHTS_PASSWORD, INSIGHTS_SESSION_SECRET, PORTS, RECEIVER_URL, SANITY_WEBHOOK_SECRET, WEBHOOK_SECRET } from "./e2e/env";
 
 /**
  * End-to-end suite, in two modes.
@@ -30,11 +30,13 @@ const siteEnv = {
   INQUIRY_WEBHOOK_URL: `${RECEIVER_URL}/hook`,
   INQUIRY_WEBHOOK_SECRET: WEBHOOK_SECRET,
   RATE_LIMIT_MAX: "1000",
+  INSIGHTS_PASSWORD,
+  INSIGHTS_SESSION_SECRET,
 };
 
 const site = REMOTE ?? `http://127.0.0.1:${PORTS.site}`;
 const cms = `http://127.0.0.1:${PORTS.cms}`;
-const general = /(smoke|a11y|story|calm|i18n|forms|keyboard)\.spec\.ts/;
+const general = /(smoke|a11y|story|calm|i18n|forms|keyboard|analytics)\.spec\.ts/;
 
 export default defineConfig({
   testDir: "e2e",

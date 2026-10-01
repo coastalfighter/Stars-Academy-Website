@@ -79,3 +79,11 @@ describe("Spanish translation coverage", () => {
     }
   });
 });
+
+describe("privacy notice", () => {
+  it("places the analytics opt-out under the measurement section in both languages", async () => {
+    const { legalCopy } = await import("@/content/copy/legal");
+    expect(legalCopy.en.privacy.sections[3]?.title).toBe("How we measure the website");
+    expect(legalCopy.es.privacy.sections[3]?.title).toBe("Cómo medimos el sitio web");
+  });
+});

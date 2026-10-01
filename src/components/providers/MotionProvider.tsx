@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { track } from "@/lib/analytics/client";
 
 /**
  * Calm mode — a sensory-friendly setting that removes all motion, smooth
@@ -113,6 +114,7 @@ export function MotionProvider({ children }: { children: ReactNode }) {
       // Storage can be unavailable (private mode); the in-memory state still applies.
     }
     setState((s) => ({ ...s, calm, explicit: true }));
+    track("calm_mode", calm ? "on" : "off");
   }, []);
 
   const toggleCalm = useCallback(() => setCalm(!state.calm), [setCalm, state.calm]);

@@ -4,6 +4,7 @@ import {
   CHILD_AGE_LABELS,
   CONTACT_LABELS,
   DOCTOR_LABELS,
+  HEARD_FROM_LABELS,
   POSITION_LABELS,
   REASON_LABELS,
   type Inquiry,
@@ -40,6 +41,7 @@ export function toPayload(inquiry: Inquiry, receivedAt: Date) {
     hasPrimaryDoctor: inquiry.hasPrimaryDoctor ? DOCTOR_LABELS[inquiry.hasPrimaryDoctor] : "",
     position: inquiry.position ? POSITION_LABELS[inquiry.position] : "",
     startDate: inquiry.startDate,
+    heardFrom: inquiry.heardFrom ? HEARD_FROM_LABELS[inquiry.heardFrom] : "",
     message: inquiry.message,
   };
 }
@@ -59,6 +61,7 @@ export function renderEmail(payload: ReturnType<typeof toPayload>): { subject: s
     ...(payload.hasPrimaryDoctor ? ([["Has a primary care doctor", payload.hasPrimaryDoctor]] as [string, string][]) : []),
     ...(payload.position ? ([["Position", payload.position]] as [string, string][]) : []),
     ...(payload.startDate ? ([["Earliest start date", payload.startDate]] as [string, string][]) : []),
+    ...(payload.heardFrom ? ([["Heard about STARS from", payload.heardFrom]] as [string, string][]) : []),
     ["Notes", payload.message || "—"],
     ["Received", payload.receivedAt],
   ];

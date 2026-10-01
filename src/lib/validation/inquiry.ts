@@ -19,6 +19,24 @@ export const LANGUAGES = ["en", "es"] as const;
 export const CHILD_AGES = ["under-1", "1", "2", "3", "4", "5", "6"] as const;
 export const DOCTOR_ANSWERS = ["yes", "no", "not-sure"] as const;
 export const POSITIONS = ["ecds", "ecdt", "van-rider", "van-driver", "clinical", "not-sure"] as const;
+/**
+ * "How did you hear about STARS?" Optional, and the only marketing question
+ * on the form. Counted (in aggregate) by the site analytics so STARS can see
+ * which referral relationships bring families in. `job-board` is offered to
+ * job seekers only.
+ */
+export const HEARD_FROM = [
+  "doctor",
+  "therapist-school",
+  "early-intervention",
+  "friend-family",
+  "search",
+  "social",
+  "event-flyer",
+  "job-board",
+  "other",
+] as const;
+export type HeardFrom = (typeof HEARD_FROM)[number];
 
 export type Audience = (typeof AUDIENCES)[number];
 export type Reason = (typeof REASONS)[number];
@@ -61,6 +79,18 @@ export const DOCTOR_LABELS: Record<(typeof DOCTOR_ANSWERS)[number], string> = {
   yes: "Yes",
   no: "No",
   "not-sure": "Not sure",
+};
+
+export const HEARD_FROM_LABELS: Record<HeardFrom, string> = {
+  doctor: "Our doctor or clinic",
+  "therapist-school": "A therapist, school or child care",
+  "early-intervention": "First Connections or early intervention",
+  "friend-family": "A friend or family member",
+  search: "Search engine",
+  social: "Social media",
+  "event-flyer": "A flyer, event or news story",
+  "job-board": "A job listing",
+  other: "Somewhere else",
 };
 
 export const POSITION_LABELS: Record<(typeof POSITIONS)[number], string> = {
@@ -145,6 +175,7 @@ export const inquirySchema = z
     childAge: optionalEnum(CHILD_AGES),
     hasPrimaryDoctor: optionalEnum(DOCTOR_ANSWERS),
     position: optionalEnum(POSITIONS),
+    heardFrom: optionalEnum(HEARD_FROM),
     startDate: z
       .string()
       .trim()

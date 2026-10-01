@@ -28,9 +28,18 @@ const en = {
         ],
       },
       {
-        title: "Cookies, analytics and preferences",
+        title: "Cookies and preferences",
         body: [
-          "This website does not use advertising or analytics trackers. If you turn on Calm mode, your browser remembers that choice on your own device so the site stays calm on your next visit. You can clear it at any time in your browser settings.",
+          "This website does not use cookies for visitors, and it has no advertising trackers. If you turn on Calm mode, your browser remembers that choice on your own device so the site stays calm on your next visit. You can clear it at any time in your browser settings.",
+        ],
+      },
+      {
+        title: "How we measure the website",
+        body: [
+          "To understand which pages help families and which ways of finding us work, the website counts visits in a privacy-friendly way. It runs on our own website, not through Google, Facebook or any other company, and the totals are stored with our hosting providers only.",
+          "What is counted: which page was viewed, the type of device (phone, tablet or computer), the language of the page, the website or campaign link that brought you here, and taps on our phone number, email address or directions. When a form is sent, we also count the type of request and your answer to “How did you hear about STARS?” — never your name, contact details or message.",
+          "What is not collected: no cookies, no IP addresses, no visitor IDs or device fingerprints, and nothing that connects one page you view to another. Each view only adds one to a daily total, so we cannot tell who visited or follow anyone’s path through the site. Totals are kept for 13 months.",
+          "If your browser sends Global Privacy Control or Do Not Track, nothing is counted. You can also switch counting off for this browser below.",
         ],
       },
       {
@@ -46,6 +55,13 @@ const en = {
         ],
       },
     ],
+    optOut: {
+      title: "Website counting in this browser",
+      on: "Counting is on for this browser.",
+      off: "Counting is off for this browser.",
+      browserOff: "Your browser asks websites not to track you (Global Privacy Control or Do Not Track), so nothing is counted.",
+      switchLabel: "Count my visits anonymously",
+    },
     contactTitle: "Contact",
     contactBefore: "Questions about this notice? Call us at",
     contactMiddle: "or use our",
@@ -116,9 +132,18 @@ const es = {
         ],
       },
       {
-        title: "Cookies, análisis y preferencias",
+        title: "Cookies y preferencias",
         body: [
-          "Este sitio web no usa rastreadores de publicidad ni de análisis. Si activa el modo calma, su navegador recuerda esa elección en su propio dispositivo para que el sitio siga en calma en su próxima visita. Puede borrarla en cualquier momento desde la configuración de su navegador.",
+          "Este sitio web no usa cookies para los visitantes y no tiene rastreadores de publicidad. Si activa el modo calma, su navegador recuerda esa elección en su propio dispositivo para que el sitio siga en calma en su próxima visita. Puede borrarla en cualquier momento desde la configuración de su navegador.",
+        ],
+      },
+      {
+        title: "Cómo medimos el sitio web",
+        body: [
+          "Para saber qué páginas ayudan a las familias y cómo nos encuentran, el sitio web cuenta las visitas de una forma que protege su privacidad. Funciona en nuestro propio sitio, no a través de Google, Facebook ni otra empresa, y los totales se guardan solo con nuestros proveedores de alojamiento.",
+          "Lo que se cuenta: qué página se vio, el tipo de dispositivo (teléfono, tableta o computadora), el idioma de la página, el sitio web o enlace de campaña que le trajo aquí, y los toques en nuestro número de teléfono, correo electrónico o indicaciones para llegar. Cuando se envía un formulario, también contamos el tipo de solicitud y su respuesta a “¿Cómo se enteró de STARS?”, nunca su nombre, sus datos de contacto ni su mensaje.",
+          "Lo que no se recopila: ninguna cookie, ninguna dirección IP, ningún identificador de visitante ni huella del dispositivo, y nada que conecte una página que usted ve con otra. Cada visita solo suma uno a un total diario, así que no podemos saber quién nos visitó ni seguir el recorrido de nadie por el sitio. Los totales se guardan durante 13 meses.",
+          "Si su navegador envía Control Global de Privacidad (GPC) o No Rastrear (DNT), no se cuenta nada. También puede desactivar el conteo para este navegador aquí abajo.",
         ],
       },
       {
@@ -134,6 +159,13 @@ const es = {
         ],
       },
     ],
+    optOut: {
+      title: "Conteo del sitio web en este navegador",
+      on: "El conteo está activado para este navegador.",
+      off: "El conteo está desactivado para este navegador.",
+      browserOff: "Su navegador pide a los sitios web que no le rastreen (Control Global de Privacidad o No Rastrear), así que no se cuenta nada.",
+      switchLabel: "Contar mis visitas de forma anónima",
+    },
     contactTitle: "Contacto",
     contactBefore: "¿Tiene preguntas sobre este aviso? Llámenos al",
     contactMiddle: "o use nuestro",

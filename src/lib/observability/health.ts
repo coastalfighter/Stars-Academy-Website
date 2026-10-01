@@ -1,6 +1,7 @@
 import { cmsConfig } from "@/cms/config";
 import { configuredChannels } from "@/lib/inquiry/deliver";
 import { rateLimitBackend } from "@/lib/security/rateLimit";
+import { analyticsEnabled } from "@/lib/analytics/store";
 
 export type HealthReport = {
   status: "ok" | "degraded";
@@ -13,6 +14,7 @@ export type HealthReport = {
     rateLimit: "shared" | "memory";
     content: "cms" | "bundled";
     alerts: "on" | "off";
+    analytics: "shared" | "memory" | "off";
   };
 };
 
@@ -40,6 +42,7 @@ export function healthReport(env: NodeJS.ProcessEnv = process.env, now = Date.no
       rateLimit: rateLimitBackend(env),
       content: cmsConfig(env) ? "cms" : "bundled",
       alerts: env.ALERT_WEBHOOK_URL ? "on" : "off",
+      analytics: !analyticsEnabled(env) ? "off" : rateLimitBackend(env),
     },
   };
 }

@@ -44,6 +44,7 @@ test("a Spanish inquiry is delivered, signed, in the family's language", { tag: 
   await page.getByLabel("Teléfono", { exact: true }).fill("870-555-0134");
   await page.getByLabel("Edad del niño o la niña").selectOption("2");
   await page.getByRole("radio", { name: "Mensaje de texto" }).check();
+  await page.getByLabel("¿Cómo se enteró de STARS?").selectOption("early-intervention");
   await page.getByRole("checkbox").check();
   await waitPastBotCheck(page);
   await page.getByRole("button", { name: "Enviar mi solicitud" }).click();
@@ -54,7 +55,7 @@ test("a Spanish inquiry is delivered, signed, in the family's language", { tag: 
   const expected = createHmac("sha256", WEBHOOK_SECRET).update(delivery.body).digest("hex");
   expect(delivery.signature).toBe(expected);
   const { data } = JSON.parse(delivery.body);
-  expect(data).toMatchObject({ name, language: "es", siteLanguage: "es", preferredContact: "text", childAge: "2 years" });
+  expect(data).toMatchObject({ name, language: "es", siteLanguage: "es", preferredContact: "text", childAge: "2 years", heardFrom: "First Connections or early intervention" });
   // Bot-check fields never leave the server.
   expect(data).not.toHaveProperty("website");
   expect(data).not.toHaveProperty("startedAt");
